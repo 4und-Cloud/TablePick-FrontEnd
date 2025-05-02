@@ -1,5 +1,4 @@
 // 로그인 상태 관리
-
 import {createContext, ReactNode, useState} from "react";
 
 // 임시
@@ -7,7 +6,7 @@ export interface AuthContextType {
     isAuthenticated: boolean; // 로그인 여부
     user: {
         name: string;
-        image? : string;
+        image : string;
     }; // 유저 정보
     login: ( user: {name: string; image: string}) => void; // 로그인 함수 
     logout: () => void; // 로그아웃 함수
