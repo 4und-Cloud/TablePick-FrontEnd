@@ -29,7 +29,7 @@ function App() {
 
   return (
       <div className="bg-background w-full min-h-screen flex justify-center items-center">
-        <div className='bg-white w-[1200px] min-h-screen mx-auto'>
+        <div className='relative bg-white w-[1200px] min-h-screen mx-auto'>
           {shouldShowHeader && (isAuthenticated ? <AuthHeader /> : <UnAuthHeader />)}
           <PageRouter />
         </div>
