@@ -8,8 +8,13 @@ export default {
     extend: {
         colors:{
           background : '#F0F0F0',
+<<<<<<< HEAD
           'main' : '#F1815C',
           'text-accent' : '#FF7849',
+=======
+          'bg-main' : '#F1815C',
+          'text-accent' : '#F1815C',
+>>>>>>> bacdb6f (feat : 로그인용 헤더, 비로그인용 헤더 컴포넌트 구현)
           'tab-inactive' : '#777777',
           'active' : '#FF3F00',
           grey: '#D9D9D9'
