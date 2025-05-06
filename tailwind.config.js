@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
         colors:{
-          backgroud : '#F0F0F0',
+          background : '#F0F0F0',
           'bg-main' : '#F1815C',
           'text-accent' : '#F1815C',
           'tab-inactive' : '#777777',
@@ -47,6 +47,12 @@ export default {
           DEFAULT: '1px',
           'active': '10px',
           3 : '3px'
+        },
+        screens: {
+          'sm' : '640px',
+          'md' : '768px',
+          'lg' : '1024px',
+          'xl' : '1280px'
         }
     },
   },
