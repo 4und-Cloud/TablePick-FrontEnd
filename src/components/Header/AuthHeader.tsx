@@ -3,12 +3,19 @@ import profile from '@/assets/images/profile_img.jpg';
 import logo from '@/assets/images/logo_text.png';
 import search from '@/assets/images/magnifying-glass.png';
 import RoundedBtn from "../Button/RoundedBtn";
+import Dropdown from "./Dropdown";
+import { useState } from "react";
 
 export default function AuthHeader() {
     const {logout} = useAuth();
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleDd = () => {
+        setIsOpen(prev => !prev);
+    };
 
     return(
-        <header className="fixed top-0 left-0 z-50 bg-main w-full h-[80px] flex items-center justify-between px-4 gap-4">
+        <header className="fixed top-0 z-50 bg-main w-[1200px] h-[80px] flex items-center justify-between px-4 gap-2">
                     {/* logo */}
                     <div className="flex items-center">
                         <img src={logo} className='h-[40px]'/>
@@ -18,22 +25,21 @@ export default function AuthHeader() {
                         <input 
                             type="text" 
                             placeholder="조용한 식당을 검색해보세요!"
-                            className="px-4 py-2 rounded-md h-[40px] w-[400px]"/>
+                            className="px-4 py-2 rounded-md h-[40px] w-[750px]"/>
                         <button>
                             <img src={search} className="bg-white rounded-md w-[40px] h-[40px]"/>
                         </button>
                     </div>
                     {/* 프로필 + 로그아웃 버튼 */}
                     <div className="flex items-center gap-4">
-                        <img src={profile} 
+                        <img src={profile} onClick={toggleDd}
                         className="w-[40px] h-[40px] rounded-full"/>
+                        <Dropdown isOpen={isOpen} />
                         <RoundedBtn 
                             text="Logout" 
-                            width="w-[100px]"
                             onClick={logout}
                              />
-                    </div>
-                    
+                    </div>                    
                 </header>
     )
 };

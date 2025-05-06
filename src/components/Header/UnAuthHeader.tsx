@@ -7,7 +7,7 @@ import RoundedBtn from '../Button/RoundedBtn';
 export default function UnAuthHeader(){
     const { login } = useAuth();
     return(
-        <header className="fixed top-0 left-0 z-50 bg-main w-full h-[80px] flex items-center justify-between px-6">
+        <header className="fixed top-0 z-50 bg-main w-[1200px] h-[80px] flex items-center justify-between px-6">
             {/* logo */}
             <div className="flex items-center">
                 <img src={logo} className='h-[40px]'/>
@@ -17,7 +17,7 @@ export default function UnAuthHeader(){
                 <input 
                     type="text" 
                     placeholder="조용한 식당을 검색해보세요!"
-                    className="px-4 py-2 rounded-md h-[40px] w-[400px]"/>
+                    className="px-4 py-2 rounded-md h-[40px] w-[800px]"/>
                 {/* 로그인 버튼 */}
                 <button>
                     <img src={search} className="bg-white rounded-md w-[40px] h-[40px]"/>
