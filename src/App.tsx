@@ -1,11 +1,11 @@
-import Header from "./components/Header/Header"
+import { BrowserRouter } from "react-router-dom"
+import PageRouter from "./routes/pageRouter"
 function App() {
 
   return (
-    <>
-      <Header />
-      <p>table pick</p>
-    </>
+    <BrowserRouter>
+      <PageRouter />
+    </BrowserRouter>
   )
 }
 
