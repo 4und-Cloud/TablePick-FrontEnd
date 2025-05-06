@@ -8,8 +8,8 @@ export default {
     extend: {
         colors:{
           background : '#F0F0F0',
-          'bg-main' : '#F1815C',
-          'text-accent' : '#F1815C',
+          'main' : '#F1815C',
+          'text-accent' : '#FF7849',
           'tab-inactive' : '#777777',
           'active' : '#FF3F00',
           grey: '#D9D9D9'
