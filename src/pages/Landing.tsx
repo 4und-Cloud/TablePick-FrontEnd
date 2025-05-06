@@ -1,10 +1,3 @@
-
-
 export default function Landing(){
-    return(
-        <>
-            <p>랜딩</p>
-        </>
-        
-    )
+    return(<p>랜딩페이지</p>)
 }
