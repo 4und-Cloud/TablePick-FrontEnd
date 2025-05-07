@@ -16,11 +16,11 @@ export default function Dropdown( {isOpen} : DropdownProps){
         w-48 py-2 flex flex-col items-center z-50 border-main gap-[10px]"
         >
                 <TextBtn text = "마이페이지 ->"
-                hoverFontWeight={location.pathname === '/mypage' ? 'font-extrabold' : 'font-medium'} />
+                fontWeight={location.pathname === '/mypage' ? 'font-extrabold' : 'font-medium'} />
                 <TextBtn text = "예약 확인 ->" 
-                hoverFontWeight={location.pathname === '/reservation-check' ? 'font-extrabold' : 'font-medium'} />
+                fontWeight={location.pathname === '/reservation-check' ? 'font-extrabold' : 'font-medium'} />
                 <TextBtn text = "내가 작성한 게시글 ->" 
-                hoverFontWeight={location.pathname === '/my-posts' ? 'font-extrabold' : 'font-medium'}/>
+                fontWeight={location.pathname === '/my-posts' ? 'font-extrabold' : 'font-medium'}/>
             
         </div>
     )

@@ -1,26 +1,21 @@
+import { useState } from "react";
 import useAuth  from "../../hooks/useAuth";
 import profile from '@/assets/images/profile_img.jpg';
 import logo from '@/assets/images/logo_text.png';
 import search from '@/assets/images/magnifying-glass.png';
-<<<<<<< HEAD
 import RoundedBtn from "../Button/RoundedBtn";
-=======
->>>>>>> bacdb6f (feat : 로그인용 헤더, 비로그인용 헤더 컴포넌트 구현)
+import Dropdown from "./Dropdown";
 
 export default function AuthHeader() {
     const {logout} = useAuth();
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen ] = useState(false);
 
     const toggleDd = () => {
         setIsOpen(prev => !prev);
     };
 
     return(
-<<<<<<< HEAD
-        <header className="fixed top-0 left-0 z-50 bg-main w-full h-[80px] flex items-center justify-between px-4 gap-4">
-=======
-        <header className="bg-bg-main w-full h-[80px] flex items-center justify-between px-4 gap-4">
->>>>>>> bacdb6f (feat : 로그인용 헤더, 비로그인용 헤더 컴포넌트 구현)
+        <header className="fixed top-0 z-50 bg-main w-[1200px] h-[80px] flex items-center justify-between px-4 gap-4">
                     {/* logo */}
                     <div className="flex items-center">
                         <img src={logo} className='h-[40px]'/>
@@ -39,6 +34,7 @@ export default function AuthHeader() {
                     <div className="flex items-center gap-4">
                         <img src={profile} onClick={toggleDd}
                         className="w-[40px] h-[40px] rounded-full"/>
+                        <Dropdown isOpen={isOpen}/>
                         <RoundedBtn 
                             text="Logout" 
                             onClick={logout}
