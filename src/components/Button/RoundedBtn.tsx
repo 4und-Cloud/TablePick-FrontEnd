@@ -1,7 +1,8 @@
 import clsx from 'clsx';
 
 interface RoundedBtnProps{
-    text : string; // login | logout
+    text? : string; // login | logout
+    borderColor? : string; // border 색
     bgColor? : string; // 배경 색
     textColor? : string; // 텍스트 색
     width? : string; // 넓이
@@ -14,6 +15,7 @@ interface RoundedBtnProps{
 export default function RoundedBtn({
     text,
     bgColor = 'bg-white',
+    borderColor = 'border-transparent',
     textColor = 'text-black',
     width = 'w-[100px]',
     hoverColor = 'hover:bg-main',
@@ -24,8 +26,9 @@ export default function RoundedBtn({
     return (
         <button onClick={onClick} 
             className={clsx(
-                'shadow-xl h-[40px] rounded-[16px] border-[2px] border-transparent', 
+                'shadow-xl h-[40px] rounded-[16px] border-[2px]', 
                 bgColor, 
+                borderColor,
                 textColor, 
                 width, 
                 hoverColor, 
