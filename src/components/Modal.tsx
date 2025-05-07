@@ -6,7 +6,7 @@ interface ModalProps{
     footer? : React.ReactNode; // 하단 버튼 자리
 }
 
-export default function Modal( {onClose, children, footer } : ModalProps) {
+export default function Modal( {onClose, children, footer } : ModalProps) {    
     return ReactDOM.createPortal(
         <div className='fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50'>
             <div className='bg-white p-2 rounded-20 shadow-xl relative w-[540px] h-[540px] border-2 border-main flex flex-col justify-between'>
