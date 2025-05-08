@@ -51,7 +51,7 @@ export default function CardItem({
                 {tags.map((tag, i) => (
                   <span
                     key={i}
-                    className="bg-main text-white text-sm px-3 py-2 rounded-full whitespace-nowrap"
+                    className="bg-main text-white font-semibold text-sm px-3 py-2 rounded-full whitespace-nowrap"
                   >
                     {tag}
                   </span>
