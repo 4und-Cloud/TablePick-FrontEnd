@@ -1,27 +1,40 @@
-import CardItem from "../components/CardItem";
+import { CardItemProps } from "../components/CardItem";
 import place from '@/assets/images/place.png';
-import TextBtn from "../components/Button/TextBtn";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
+import List from "../components/List";
+import CircleBtn from "../components/Button/CircleBtn";
+import filter from '@/assets/images/filter.png';
 
 export default function Landing(){
-    const {currentPage, totalPages, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage} = usePagination(100, 10);
+    // 임시 더미 데이터
+    const mockData: CardItemProps[] = Array.from({length:23}, (_, i) => ({
+        image: place,
+        restaurantName: `센시티브 서울 ${i+1}`,
+        description: '서울특별시 용산구 대사관로11길 49 2f',
+        tags: ['조용해요', '주차 편해요', '분위기 좋아요', '데이트 장소', '느좋'],
+        // reservationInfo: '2025.05.08 (목) 2명 13:37',
+        // button: <RoundedBtn text='게시글 작성하러 가기' width="w-[350px]" bgColor="bg-main" height="h-[30px]" textColor="text-white" hoverBorderColor="hover:border-accent" hoverColor="hover:bg-white" hoverTextColor="hover:text-main"/>,
+        // buttonPosition: 'bottom'
+    }));
+
+    const itemsPerPage = 6;
+
+    const {currentPage, totalPages, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage} = usePagination(mockData.length, itemsPerPage);
+
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const PaginaetItems = mockData.slice(startIdx, startIdx + itemsPerPage);
     return(
-        <div className="pt-[90px]">
-            <CardItem image={place} restaurantName="센시티브서울" description="주소즈소즈소즈즈소즈조스주소주소"
-            button = {<TextBtn text="수정하기 ->" />}
-            reservationInfo={
-                <div  className="flex gap-2">
-                    <span>2025.04.28 (월)</span>
-                    <span>2명</span>
-                    <span>12:30</span>
+        <div className="pt-[80px]">
+            <div className="flex justify-end mx-6 my-1">
+                <CircleBtn image={filter} bgColor="bg-white"/>
+            </div>
+            <div>
+                <List items={PaginaetItems}/>
+                <div>
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onNextPage={goToNextPage} onPrevPage={goToPrevPage} onFirstPage={goToFirstPage} onLastPage={goToLastPage} onPageChange={setPage}/>
                 </div>
-            }
-            buttonPosition="middleRight"/>
-            <div className="mb-6">
-      </div>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} onPrevPage={goToPrevPage} onNextPage={goToNextPage} onFirstPage={goToFirstPage} onLastPage={goToLastPage}/>
-            <p>랜딩</p>
+            </div>
         </div>
         
     )

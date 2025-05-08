@@ -1,4 +1,4 @@
-type paginationProps = {
+export interface paginationProps {
     currentPage: number; // 현재 페이지
     totalPages: number; // 총 페이지
     onPrevPage: () => void; // 이전 페이지 이동
@@ -25,7 +25,7 @@ export default function Pagination( { currentPage, totalPages, onPrevPage, onNex
     };
 
     return (
-        <div className="flex items-center justify-center gap-2 mt-4">
+        <div className="flex items-center justify-center gap-2 m-2">
           <button className='bg-main text-white rounded-md px-3 py-1 disabled:opacity-40' onClick={onFirstPage}>&lt;&lt;</button>
           <button
             className="bg-main text-white rounded-md px-3 py-1 disabled:opacity-40"

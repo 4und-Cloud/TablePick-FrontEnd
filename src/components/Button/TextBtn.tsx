@@ -13,7 +13,7 @@ export default function TextBtn({
     text,
     fontWeight = 'font-medium',
     hoverFontWeight = 'hover:font-bold',
-    hoverTextColor = 'hover:text-text-accent',
+    hoverTextColor = 'hover:text-accent',
     onClick
 }: TextBtnProps) {
     return(
