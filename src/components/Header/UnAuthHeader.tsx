@@ -1,13 +1,15 @@
 import logo from '@/assets/images/logo_text.png'
 import search from '@/assets/images/magnifying-glass.png'
-import useAuth from '../../hooks/useAuth'
-import profile from '@/assets/images/profile_img.jpg';
 import RoundedBtn from '../Button/RoundedBtn';
+import useModal from '../../hooks/useModal';
+import LoginModal from '../LoginModal';
 
 export default function UnAuthHeader(){
-    const { login } = useAuth();
+    // const { login } = useAuth();
+    const {isOpen, openModal, closeModal} = useModal({initialState : false});
     return(
-        <header className="fixed top-0 z-50 bg-main w-[1200px] h-[80px] flex items-center justify-between px-6">
+        <>
+            <header className="fixed top-0 z-50 bg-main w-[1200px] h-[80px] flex items-center justify-between px-6">
             {/* logo */}
             <div className="flex items-center">
                 <img src={logo} className='h-[40px]'/>
@@ -24,8 +26,10 @@ export default function UnAuthHeader(){
                 </button>
             </div>
 
-            <RoundedBtn onClick={() => login({name: 'go5rae', image: profile
-            })} text = 'Login' />
+            <RoundedBtn onClick={openModal} text = 'Login' />
         </header>
+        <LoginModal isOpen={isOpen ?? false} onClose={closeModal} />
+        </>
+        
     )
 }

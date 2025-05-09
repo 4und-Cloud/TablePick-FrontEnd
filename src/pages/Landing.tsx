@@ -1,8 +1,6 @@
 import TextBtn from "../components/Button/TextBtn";
-import CardItem from "../components/CardItem";
 import place from '@/assets/images/place.png';
 import location from '@/assets/images/location.png';
-import List from "../components/List";
 import chqkq from '@/assets/images/chqkq.jpg';
 
 
@@ -15,6 +13,7 @@ const dummy = [
 ]
 
 export default function Landing(){
+    
     return(
         <div className="mt-[80px] p-3">
             <div className="mb-10 mt-8">
