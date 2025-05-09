@@ -2,6 +2,7 @@ import clsx from "clsx";
 
 interface TextBtnProps{
     text : string; 
+    fontSize? : string; // 텍스트 크기
     fontWeight? : string; // 기본 텍스트 굵기
     hoverFontWeight?: string; // hover 시 텍스트 굵기 
     hoverTextColor? : string; // hover 시 텍스트 색
@@ -14,6 +15,7 @@ export default function TextBtn({
     fontWeight = 'font-medium',
     hoverFontWeight = 'hover:font-bold',
     hoverTextColor = 'hover:text-accent',
+    fontSize = 'text-sm',
     onClick
 }: TextBtnProps) {
     return(
@@ -24,6 +26,7 @@ export default function TextBtn({
                 fontWeight,
                 hoverFontWeight,
                 hoverTextColor,
+                fontSize,
             )}
             >{text}</button>
     )

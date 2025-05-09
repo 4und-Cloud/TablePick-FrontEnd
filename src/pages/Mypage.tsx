@@ -23,14 +23,14 @@ export default function Mypage(){
     const {currentPage, totalPages, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage} = usePagination(mockData.length, itemsPerPage);
 
     const startIdx = (currentPage - 1) * itemsPerPage;
-    const PaginaetItems = mockData.slice(startIdx, startIdx + itemsPerPage);
+    const PaginaetedItems = mockData.slice(startIdx, startIdx + itemsPerPage);
     return(
         <div className="pt-[80px]">
             <div className="flex justify-end mx-6 my-1">
                 <CircleBtn image={filter} bgColor="bg-white"/>
             </div>
             <div>
-                <List items={PaginaetItems}/>
+                <List items={PaginaetedItems}/>
                 <div>
                     <Pagination currentPage={currentPage} totalPages={totalPages} onNextPage={goToNextPage} onPrevPage={goToPrevPage} onFirstPage={goToFirstPage} onLastPage={goToLastPage} onPageChange={setPage}/>
                 </div>
