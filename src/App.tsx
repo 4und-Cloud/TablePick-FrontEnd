@@ -9,16 +9,17 @@ function App() {
   const { isAuthenticated } = useAuth();
 
   // 현재 경로 가져오기
-  const location = useLocation();
+   const location = useLocation();
 
-  // 헤더 숨길 경로 설정
-  const hiddenHeaderRoutes = ['/login'];
+   //헤더 숨길 경로 설정
+   const hiddenHeaderRoutes = ['/login'];
   const shouldShowHeader = !hiddenHeaderRoutes.includes(location.pathname);
 
   return (
       <div className="bg-background w-full min-h-screen flex justify-center items-center">
         <div className='relative bg-white w-[1200px] min-h-screen mx-auto'>
-          {shouldShowHeader && (isAuthenticated ? <AuthHeader /> : <UnAuthHeader />)}
+          {shouldShowHeader && (isAuthenticated ? <AuthHeader /> : <UnAuthHeader />
+          )}
           <PageRouter />
         </div>
       </div>

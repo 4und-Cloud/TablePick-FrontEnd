@@ -13,7 +13,8 @@ export default {
           'tab-inactive' : '#777777',
           'active' : '#FF3F00',
           grey: '#D9D9D9',
-          'card' : '#F4F4F4'
+          'card' : '#F4F4F4',
+          'login' : '#FFF7E8'
         },
         fontWeight : {
           semibold: 600,
