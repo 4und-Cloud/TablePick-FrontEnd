@@ -8,9 +8,10 @@ interface FilterModalProps {
     selectedTags : string[];
     setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>;
     onClose : () => void;
+    onClick? : () => void;
 }
 
-export default function FilterModal  ({mode = 'filter', selectedTags, setSelectedTags, onClose} : FilterModalProps) {
+export default function FilterModal  ({mode = 'filter', selectedTags, setSelectedTags, onClose, onClick} : FilterModalProps) {
     const tabs = [
         ...(mode === 'filter' ? [{name : '음식 종류', id: 'foodType'}] : []),
         {name: '음식 / 가격', id: 'price'},
@@ -35,7 +36,7 @@ export default function FilterModal  ({mode = 'filter', selectedTags, setSelecte
     const [activeTab, setActiveTab] = useState(tabs[0].id);
 
     return (
-        <Modal onClose={onClose} close={<button onClick={onClose} className="text-main font-bold text-xl">X</button>} footer={
+        <Modal onClose={onClose} close={<button onClick={onClose} className="text-main font-bold text-xl inset-0 z-50">X</button>} footer={
             <RoundedBtn
               text="적용하기"
               bgColor="bg-main"
@@ -45,7 +46,7 @@ export default function FilterModal  ({mode = 'filter', selectedTags, setSelecte
               hoverTextColor="hover:text-main"
               hoverBorderColor="hover:border-main"
               width="w-full"
-              onClick={onClose}
+              onClick={() => {onClick?.(); onClose();}}
             />
           }>
             <div className="m-3">

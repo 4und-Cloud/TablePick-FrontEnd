@@ -5,6 +5,9 @@ import filter from '@/assets/images/filter.png';
 import List from "../components/List";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
+import FilterModal from "../components/FilterModal";
+import useModal from "../hooks/useModal";
+import { useState } from "react";
 
 export default function RestaurantList(){
     const mockData: CardItemProps[] = Array.from({length:23}, (_, i) => ({
@@ -20,15 +23,26 @@ export default function RestaurantList(){
 
     const itemsPerPage = 6;
 
+    const {isOpen, openModal, closeModal} = useModal({initialState : false});
+    const [selectedTags, setSelectedTags] =useState<string[]>([]);
+
     const {currentPage, totalPages, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage} = usePagination(mockData.length, itemsPerPage);
 
     const startIdx = (currentPage - 1) * itemsPerPage;
     const PaginaetedItems = mockData.slice(startIdx, startIdx + itemsPerPage);
+    const tagElements = selectedTags.map((tag, index) => (
+        <span key={index} className="bg-main text-white py-1 px-4 rounded-full mr-2">{tag}</span>
+    ));
     return(
         <div className="pt-[80px]">
-            <div className="flex justify-end mx-6 my-1">
-                <CircleBtn image={filter} bgColor="bg-white"/>
+            <div className="flex justify-between mx-6 my-2 flex-row">
+            <div className="flex overflow-x-auto items-center justify-center">
+                    {tagElements}
+                </div>
+                <CircleBtn onClick={openModal} image={filter} bgColor="bg-white"/>
             </div>
+            {isOpen ? (<FilterModal onClose={closeModal} selectedTags={selectedTags} setSelectedTags={setSelectedTags} mode="filter" />) : null}
+            
             <div>
                 <List linkTo='restaurants' items={PaginaetedItems}/>
                 <div>

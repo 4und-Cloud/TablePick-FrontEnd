@@ -2,7 +2,7 @@ import CardItem, {CardItemProps} from "./CardItem";
 
 interface CardListProps{
     items: CardItemProps[];
-    linkTo : string;
+    linkTo? : string;
 }
 
 export default function List( {items, linkTo} : CardListProps) {

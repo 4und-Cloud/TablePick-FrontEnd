@@ -12,6 +12,7 @@ import FilterModal from "../components/FilterModal";
 import 'react-calendar/dist/Calendar.css';
 import RoundedBtn from "../components/Button/RoundedBtn";
 import { useNavigate } from "react-router-dom";
+import { useUserExtraInfo } from "../store/UserInfoContext";
 
 const dummy = [
     {restaurantName: '센시티브서울' ,image: place, id:1},
@@ -106,6 +107,20 @@ export default function Landing(){
         // useEffect 다시 실행되어 모달 띄우는 로직 실행
     }, [location.state]);
     
+   const {setUserInfo} = useUserExtraInfo();
+
+   const handleApplyInfo = ( ) => {
+    if(!gender || !date || !phone) {
+        alert('모든 정보를 입력해주세요 ');
+        return;
+    }
+    setUserInfo({
+        gender, birthday: date.toISOString().split('T')[0],
+        phone, tags:selectedTags,
+    });
+    closeModal();
+   }
+
     return(
         <>
             {isOpen && <Modal onClose={closeModal} footer = {<RoundedBtn
@@ -117,7 +132,7 @@ export default function Landing(){
                           hoverTextColor="hover:text-main"
                           hoverBorderColor="hover:border-main"
                           width="w-full"
-                          onClick={closeModal}
+                          onClick={handleApplyInfo}
                         />} height="460px">
                 <div className="m-3">
                     <div>

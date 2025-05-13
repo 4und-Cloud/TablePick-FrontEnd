@@ -26,10 +26,8 @@ export default function ReservationCheck(){
     const startIdx = (currentPage - 1) * itemsPerPage;
     const PaginaetedItems = mockData.slice(startIdx, startIdx + itemsPerPage);
     return(
-        <div className="pt-[80px]">
-            <div className="flex justify-end mx-6 my-1">
-                <CircleBtn image={filter} bgColor="bg-white"/>
-            </div>
+        <div className="pt-[80px] m-4">
+            
             <div>
                 <List items={PaginaetedItems}/>
                 <div>
