@@ -9,6 +9,7 @@ import usePagination from "../hooks/usePagination";
 
 export default function Mypage(){
     const mockData: CardItemProps[] = Array.from({length:23}, (_, i) => ({
+        id: i +1,
         image: place,
         restaurantName: `센시티브 서울 ${i+1}`,
         description: '서울특별시 용산구 대사관로11길 49 2f',
