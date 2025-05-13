@@ -1,4 +1,6 @@
+import { useNavigate } from 'react-router-dom';
 import pic from '@/assets/images/login.png';
+
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -6,6 +8,17 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({isOpen, onClose} : LoginModalProps){
+    
+    const navigate  = useNavigate();
+
+    const handleLogin = () => {
+        onClose(); // 로그인 버튼 누를 시 로그인 모달 닫기
+        // 로그인 후 랜딩 페이지 이동하여 state 전달하여 모달 띄우기
+        setTimeout(() => {
+            navigate('/', {state:{showModal : true}});
+        }, 100); 
+    }
+    
     if(!isOpen) return null;
     
     const baseClasses =
@@ -14,7 +27,8 @@ export default function LoginModal({isOpen, onClose} : LoginModalProps){
 
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <>
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-login w-[800px] h-[600px] shadow-2xl flex relative">
                 <button
                     onClick={onClose}
@@ -31,7 +45,7 @@ export default function LoginModal({isOpen, onClose} : LoginModalProps){
                 <div className='bg-login w-1/2 flex-col flex items-center justify-center'>
                     <p className='text-main text-[40px] mb-[100px] font-bold'>Login</p>
                     <div className='flex items-center flex-col gap-4'>
-                    <button className={`${baseClasses} bg-[#FEE500] text-black hover:opacity-90 transition`}>
+                    <button onClick={handleLogin} className={`${baseClasses} bg-[#FEE500] text-black hover:opacity-90 transition`}>
                         <svg
                         className={iconClasses}
                         viewBox="0 0 24 24"
@@ -73,5 +87,8 @@ export default function LoginModal({isOpen, onClose} : LoginModalProps){
                 </div>
             </div>
         </div>
+        
+        </>
+        
     )
 }
