@@ -11,17 +11,36 @@ import { Value } from "react-calendar/src/shared/types.js";
 import FilterModal from "../components/FilterModal";
 import 'react-calendar/dist/Calendar.css';
 import RoundedBtn from "../components/Button/RoundedBtn";
-
+import { useNavigate } from "react-router-dom";
 
 const dummy = [
-    {restaurantName: '센시티브서울' ,image: place},
-    {restaurantName: '센시티브서울' ,image: chqkq},
-    {restaurantName: '센시티브서울' ,image: place},  
-    {restaurantName: '센시티브서울' ,image: place},    
+    {restaurantName: '센시티브서울' ,image: place, id:1},
+    {restaurantName: '센시티브서울' ,image: chqkq, id:2},
+    {restaurantName: '센시티브서울' ,image: place, id:3},  
+    {restaurantName: '센시티브서울' ,image: place, id:4},    
   
 ]
 
 export default function Landing(){
+
+    const navigate = useNavigate();
+
+    const handleRes = () => {
+        navigate('/restaurants');
+    }
+
+    const handlePost = () => {
+        navigate('/posts');
+    }
+
+    const handleResDetail = (id: number) => {
+        navigate(`/restaurants/${id}`);
+    }
+
+    const handlePostDetail = (id: number) => {
+        navigate(`/posts/${id}`);
+    }
+
     const location = useLocation();
     const {isOpen, closeModal, openModal} = useModal({initialState: false});
 
@@ -152,18 +171,18 @@ export default function Landing(){
                 </div> 
             </Modal>}
             {isFilterOpen && (
-                <FilterModal mode="tag" selectedTags={selectedTags} setSelectedTags={setSelectedTags} onClose={closeFilterModal}/>
+                <FilterModal mode='tag' selectedTags={selectedTags} setSelectedTags={setSelectedTags} onClose={closeFilterModal}/>
             )}
             <div className="mt-[80px] p-3">
             <div className="mb-10 mt-8">
                 <div className="flex flex-row justify-between m-4">
                     <p className="font-bold text-2xl text-gray-500 ml-2">고객님이 좋아할 매장</p>
-                    <TextBtn fontSize="text-xl" text="식당 더 보기 ->" />
+                    <TextBtn onClick={handleRes} fontSize="text-xl" text="식당 더 보기 ->" />
                 </div>
                 <div className="flex flex-col items-center justify-between">
                     <div className="flex flex-row justify-between gap-10">
                         {dummy.map((item, idx) => (
-                            <div key={idx}>
+                            <div onClick={() => handleResDetail(item.id)} key={idx}>
                                 <img src={item.image} className="w-[250px] h-[250px] rounded-20"/>
                                 <div className="mt-1 flex flex-row gap-2 items-center">
                                     <img src={loc} className="w-[18px] h-[18px]"  />
@@ -177,12 +196,12 @@ export default function Landing(){
             <div>
                 <div className="flex flex-row justify-between m-4 mb-2">
                     <p className="font-bold text-2xl text-gray-500 ml-2">고객님이 좋아할 게시글</p>
-                    <TextBtn fontSize="text-xl" text="게시글 더 보기 ->" />
+                    <TextBtn onClick={handlePost} fontSize="text-xl" text="게시글 더 보기 ->" />
                 </div>
                 <div className="flex flex-col items-center justify-between">
                     <div className="flex flex-row justify-between gap-10 mt-2">
                         {dummy.map((item, idx) => (
-                            <div key={idx}>
+                            <div onClick={() => handlePostDetail(item.id)} key={idx}>
                                 <img src={item.image} className="w-[250px] h-[250px] rounded-20"/>
                                 <div className="mt-1 flex flex-row gap-2 items-center">
                                     <img src={loc} className="w-[18px] h-[18px]"  />
