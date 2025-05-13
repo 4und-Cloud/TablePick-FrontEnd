@@ -1,6 +1,8 @@
 import location from '@/assets/images/location.png'
+import { useNavigate } from 'react-router-dom';
 
 export interface CardItemProps{
+    id: number;
     image? :string; // 이미지
     restaurantName?: string; // 식당명
     description? : string; // 주소, 게시글 내용
@@ -14,6 +16,7 @@ export interface CardItemProps{
 }
 
 export default function CardItem({
+    id,
     image,
     containerStyle,
     imageStyle,
@@ -26,8 +29,17 @@ export default function CardItem({
     buttonPosition,
 
   }: CardItemProps) {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+      if(id !== undefined) 
+      {
+        navigate(`/posts/${id}`);
+      }
+    };
+
     return (
-<div className={`relative flex flex-col p-3 mx-2 my-2 overflow-hidden ${containerStyle ?? 'border w-[370px] rounded-xl shadow-xl h-[335px] bg-card'}`}>
+<div onClick={handleClick} className={`relative flex flex-col p-3 mx-2 my-2 overflow-hidden ${containerStyle ?? 'border w-[370px] rounded-xl shadow-xl h-[335px] bg-card'}`}>
         {image && (
           <img
             src={image}
