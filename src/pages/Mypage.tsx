@@ -31,7 +31,7 @@ export default function Mypage(){
                 <CircleBtn image={filter} bgColor="bg-white"/>
             </div>
             <div>
-                <List items={PaginaetedItems}/>
+                <List linkTo="posts" items={PaginaetedItems}/>
                 <div>
                     <Pagination currentPage={currentPage} totalPages={totalPages} onNextPage={goToNextPage} onPrevPage={goToPrevPage} onFirstPage={goToFirstPage} onLastPage={goToLastPage} onPageChange={setPage}/>
                 </div>

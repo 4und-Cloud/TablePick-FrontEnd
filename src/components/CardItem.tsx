@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 export interface CardItemProps{
     id: number;
+    linkTo? : string;
     image? :string; // 이미지
     restaurantName?: string; // 식당명
     description? : string; // 주소, 게시글 내용
@@ -17,6 +18,7 @@ export interface CardItemProps{
 
 export default function CardItem({
     id,
+    linkTo,
     image,
     containerStyle,
     imageStyle,
@@ -32,10 +34,8 @@ export default function CardItem({
     const navigate = useNavigate();
 
     const handleClick = () => {
-      if(id !== undefined) 
-      {
-        navigate(`/posts/${id}`);
-      }
+      if (!id || !linkTo) return;
+      navigate(`/${linkTo}/${id}`);
     };
 
     return (
