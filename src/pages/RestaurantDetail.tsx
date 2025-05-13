@@ -3,9 +3,14 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { LatLngExpression } from 'leaflet';  // 좌표 타입을 위한 임포트
 import 'leaflet/dist/leaflet.css';
 import chqkq from '@/assets/images/chqkq.jpg';
+import useModal from '../hooks/useModal';
+import ReservationCheck from './ReservationCheck';
+import ReservationModal from '../components/ReservationModal';
 
 export default function RestaurantDetail() {
   const restaurantLocation: LatLngExpression = [37.5665, 126.978]; // 예시 좌표 (서울)
+
+    const {isOpen, openModal, closeModal} = useModal({initialState: false});
 
   const images = [
     chqkq, chqkq, chqkq,    
@@ -45,9 +50,10 @@ export default function RestaurantDetail() {
         </div>
 
         {/* 예약 버튼 */}
-        <button className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out">
+        <button onClick={openModal} className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out">
             예약하기
         </button>
+        <ReservationModal />
     </div>
 
   </div>
