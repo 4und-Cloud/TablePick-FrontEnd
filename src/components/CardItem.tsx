@@ -5,8 +5,8 @@ export interface CardItemProps{
     id: number;
     linkTo? : string;
     image? :string; // 이미지
-    restaurantName?: string; // 식당명
-    description? : string; // 주소, 게시글 내용
+    restaurantName: string; // 식당명
+    description : string; // 주소, 게시글 내용
     tags? : string[]; // 태그
     reservationInfo? : React.ReactNode; // 예약 관련 정보
     button? : React.ReactNode; // 버튼

@@ -1,16 +1,32 @@
-import { useState } from "react";
-import Modal from "./Modal"; // Modal 컴포넌트 임포트
-import RoundedBtn from "./Button/RoundedBtn"; // 버튼 컴포넌트 임포트
-import FilterModal from "../components/FilterModal"; // FilterModal 임포트
-import useModal from "../hooks/useModal"; // useModal 훅 임포트
+import { useState, useEffect } from "react";
+import Modal from "./Modal";
+import RoundedBtn from "./Button/RoundedBtn";
+import FilterModal from "../components/FilterModal";
+import useModal from "../hooks/useModal";
 
 interface PostWriteModalProps {
-  closeModal: () => void; // 모달을 닫는 함수
+  closeModal: () => void;
+  initialData?: {
+    restaurant: string;
+    content: string;
+    selectedTags: string[];
+  }; // 수정 모드일 때 사용될 초기 데이터
 }
 
-export function PostWriteModal({ closeModal }: PostWriteModalProps) {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+export function PostWriteModal({ closeModal, initialData }: PostWriteModalProps) {
+  const [selectedTags, setSelectedTags] = useState<string[]>(initialData?.selectedTags || []);
+  const [restaurant, setRestaurant] = useState<string>(initialData?.restaurant || "");
+  const [content, setContent] = useState<string>(initialData?.content || "");
+  
   const { isOpen, openModal, closeModal: closeFilterModal } = useModal({ initialState: false });
+
+  useEffect(() => {
+    if (initialData) {
+      setRestaurant(initialData.restaurant);
+      setContent(initialData.content);
+      setSelectedTags(initialData.selectedTags);
+    }
+  }, [initialData]);
 
   const handleTagToggle = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -40,7 +56,7 @@ export function PostWriteModal({ closeModal }: PostWriteModalProps) {
       }
       footer={
         <RoundedBtn
-          text="등록"
+          text={initialData ? "수정" : "등록"}
           onClick={() => {}}
           bgColor="bg-main"
           textColor="text-white"
@@ -62,7 +78,8 @@ export function PostWriteModal({ closeModal }: PostWriteModalProps) {
             id="restaurant"
             placeholder="식당 이름을 입력하세요"
             className="border-[#f1815c]/20 focus:border-[#f1815c] focus:ring-[#f1815c]/20 w-full p-2 rounded-md"
-            defaultValue="제주 흑돼지 맛집"
+            value={restaurant}
+            onChange={(e) => setRestaurant(e.target.value)}
           />
         </div>
 
@@ -75,7 +92,8 @@ export function PostWriteModal({ closeModal }: PostWriteModalProps) {
             id="content"
             placeholder="내용을 입력하세요"
             className="h-24 min-h-0 border-[#f1815c]/20 focus:border-[#f1815c] focus:ring-[#f1815c]/20 w-full p-2 rounded-md"
-            defaultValue="지난 주말 제주도 여행 중 방문한 맛집입니다. 흑돼지 바비큐가 정말 맛있었고, 서비스도 좋았습니다. 가격은 조금 있지만 맛과 분위기를 생각하면 충분히 가치 있었습니다."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
           />
         </div>
 

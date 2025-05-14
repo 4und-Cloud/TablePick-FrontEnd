@@ -3,14 +3,18 @@ import RoundedBtn from "./Button/RoundedBtn";
 import Calendar, { CalendarProps } from "react-calendar";
 import { useState } from "react";
 
-export default function ReservationModal() {
+interface ReservationModalProps {
+  closeModal: () => void;
+}
+
+export default function ReservationModal({ closeModal }: ReservationModalProps) {
   const [selectedPeople, setSelectedPeople] = useState<number>(1);
   const [selectedTime, setSelectedTime] = useState<string>("11:00");
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
   const handlePeopleSelect = (people: number) => {
     setSelectedPeople(people);
-  };                   
+  };
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
@@ -26,16 +30,17 @@ export default function ReservationModal() {
 
   const handleReservation = () => {
     if (!selectedDate) return alert("날짜를 선택해 주세요!");
-  
+
     const reservationInfo = {
       date: selectedDate.toDateString(),
       time: selectedTime,
       people: selectedPeople,
     };
-  
+
     alert(
       `✅ 예약 정보:\n\n📅 날짜: ${reservationInfo.date}\n⏰ 시간: ${reservationInfo.time}\n👤 인원: ${reservationInfo.people}명`
     );
+    closeModal(); // 예약 후 모달 닫기
   };
 
   return (
@@ -43,7 +48,9 @@ export default function ReservationModal() {
       width="400px"
       height="600px"
       close={
-        <button className="text-main font-bold text-xl inset-0 z-50">X</button>
+        <button onClick={closeModal} className="text-main font-bold text-xl inset-0 z-50">
+          X
+        </button>
       }
       footer={
         <RoundedBtn

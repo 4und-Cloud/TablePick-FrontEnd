@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import pic from '@/assets/images/login.png';
+import { kakaoLoginHandler } from '../utils/kakao';
 
 
 interface LoginModalProps {
@@ -11,12 +12,9 @@ export default function LoginModal({isOpen, onClose} : LoginModalProps){
     
     const navigate  = useNavigate();
 
-    const handleLogin = () => {
+    const handleKakaoLogin = () => {
         onClose(); // 로그인 버튼 누를 시 로그인 모달 닫기
-        // 로그인 후 랜딩 페이지 이동하여 state 전달하여 모달 띄우기
-        setTimeout(() => {
-            navigate('/', {state:{showModal : true}});
-        }, 100); 
+        kakaoLoginHandler(); // 카카오 로그인 리다이렉트
     }
     
     if(!isOpen) return null;
@@ -45,7 +43,7 @@ export default function LoginModal({isOpen, onClose} : LoginModalProps){
                 <div className='bg-login w-1/2 flex-col flex items-center justify-center'>
                     <p className='text-main text-[40px] mb-[100px] font-bold'>Login</p>
                     <div className='flex items-center flex-col gap-4'>
-                    <button onClick={handleLogin} className={`${baseClasses} bg-[#FEE500] text-black hover:opacity-90 transition`}>
+                    <button onClick={handleKakaoLogin} className={`${baseClasses} bg-[#FEE500] text-black hover:opacity-90 transition`}>
                         <svg
                         className={iconClasses}
                         viewBox="0 0 24 24"

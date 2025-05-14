@@ -8,11 +8,13 @@ import PostList from "../pages/PostList";
 import ReservationCheck from "../pages/ReservationCheck";
 import RestaurantDetail from "../pages/RestaurantDetail";
 import RestaurantList from "../pages/RestaurantList";
+import KakaoRedirect from "../pages/oauth2/KakaoRedirect";
 
 export default function PageRouter(){
     return(
         <Routes>
             <Route path='/' element={<Landing />} />
+            <Route path="/oauth2/redirect" element={<KakaoRedirect />}/>
             <Route path="/restaurants" element={<RestaurantList />} />
             <Route path="/restaurants/:id" element={<RestaurantDetail />} />
             <Route path="/posts" element={<PostList />} />
