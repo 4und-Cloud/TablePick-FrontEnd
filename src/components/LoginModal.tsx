@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import pic from '@/assets/images/login.png';
 import { kakaoLoginHandler } from '../utils/kakao';
+import { GoogleLogin } from '@react-oauth/google';
 
 
 interface LoginModalProps {
@@ -12,10 +13,18 @@ export default function LoginModal({isOpen, onClose} : LoginModalProps){
     
     const navigate  = useNavigate();
 
-    const handleKakaoLogin = () => {
-        onClose(); // 로그인 버튼 누를 시 로그인 모달 닫기
-        kakaoLoginHandler(); // 카카오 로그인 리다이렉트
-    }
+    // const handleKakaoLogin = () => {
+    //     onClose(); // 로그인 버튼 누를 시 로그인 모달 닫기
+    //     kakaoLoginHandler(); // 카카오 로그인 리다이렉트
+    // }
+
+    // const googleLogin = () => {
+    //     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?
+	// 	client_id=${ import.meta.env.VITE_GOOGLE_CLIENT_ID}
+	// 	&redirect_uri=${ process.env.REACT_APP_GOOGLE_REDIRECT_URL }
+	// 	&response_type=token
+	// 	&scope=email profile`;
+    // };
     
     if(!isOpen) return null;
     
@@ -43,7 +52,7 @@ export default function LoginModal({isOpen, onClose} : LoginModalProps){
                 <div className='bg-login w-1/2 flex-col flex items-center justify-center'>
                     <p className='text-main text-[40px] mb-[100px] font-bold'>Login</p>
                     <div className='flex items-center flex-col gap-4'>
-                    <button onClick={handleKakaoLogin} className={`${baseClasses} bg-[#FEE500] text-black hover:opacity-90 transition`}>
+                    <button onClick={() => {window.location.href = "http://localhost:8080/oauth2/authorization/kakao"}} className={`${baseClasses} bg-[#FEE500] text-black hover:opacity-90 transition`}>
                         <svg
                         className={iconClasses}
                         viewBox="0 0 24 24"
@@ -59,7 +68,7 @@ export default function LoginModal({isOpen, onClose} : LoginModalProps){
                         </svg>
                         카카오 계정으로 로그인
                     </button>
-                    <button className={`${baseClasses} bg-white text-black border border-[#dadce0] hover:bg-gray-100 transition`}>
+                    <button onClick={() => {window.location.href ='http://localhost:8080/oauth2/authorization/google'}} className={`${baseClasses} bg-white text-black border border-[#dadce0] hover:bg-gray-100 transition`}>
                         <svg className={iconClasses} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path
                             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

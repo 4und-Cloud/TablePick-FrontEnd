@@ -19,7 +19,7 @@ export default function UnAuthHeader(){
         setIsLoggedIn(true);
         closeModal();
     }
-    // const { login } = useAuth();
+     // const { login } = useAuth();
     const {isOpen, openModal, closeModal} = useModal({initialState : false});
     return(
         <>
