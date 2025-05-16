@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import pic from '@/assets/images/login.png';
 import { kakaoLoginHandler } from '../utils/kakao';
 import { GoogleLogin } from '@react-oauth/google';
+import { useState } from 'react';
+import FilterModal from './FilterModal';
 
 
 interface LoginModalProps {
@@ -10,6 +12,8 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({isOpen, onClose} : LoginModalProps){
+
+    
     
     const navigate  = useNavigate();
 
@@ -34,7 +38,7 @@ export default function LoginModal({isOpen, onClose} : LoginModalProps){
 
 
     return (
-        <>
+        <>  
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-login w-[800px] h-[600px] shadow-2xl flex relative">
                 <button

@@ -3,18 +3,20 @@ import { useUserExtraInfo } from "../store/UserInfoContext"
 import go5rae from '@/assets/images/profile_img.jpg';
 import FilterModal from "../components/FilterModal";
 import useModal from "../hooks/useModal";
+import useAuth from "../hooks/useAuth";
 
 interface MypageUserInfo {
     profileImg? : string;
-    name: string;
-    email: string;
+    name?: string;
+    email?: string;
     gender: 'male' | 'female';
-    birthday: string;
-    phone: string;
+    birthdate: string;
+    phoneNumber: string;
     tags: string[];
 }
 
 export default function Mypage() {
+    const {user} = useAuth();
 
     const {isOpen, openModal, closeModal} = useModal({initialState: false});
 
@@ -26,34 +28,35 @@ export default function Mypage() {
         name: 'go5rae',  // 더미 이름
         email: 'coqnrl115@naver.com',  // 더미 이메일
         gender: 'male',
-        birthday: '',
-        phone: '',
+        birthdate: '',
+        phoneNumber: '',
         tags: []
     });
 
     useEffect(() => {
-        // userInfo가 로드되면 formData를 업데이트
-        if (userInfo) {
-            setFormData({
-                profileImg: go5rae,
-                name: 'go5rae',
-                email: 'coqnrl115@naver.com',
-                gender: userInfo.gender as 'male' | 'female',
-                birthday: userInfo.birthday || '',
-                phone: userInfo.phone || '',
-                tags: userInfo.tags || []
-            });
+        const savedAdditionalData = localStorage.getItem('userAdditionalInfo');
+        const savedBasicData = localStorage.getItem('userInfo');
+      
+        console.log("🟡 userInfo from context:", userInfo);
+        console.log("🟢 savedAdditionalData:", savedAdditionalData);
+        console.log("🔵 savedBasicData:", savedBasicData);
+      
+        if (savedAdditionalData) {
+          const parsedAdditional = JSON.parse(savedAdditionalData);
+          console.log("✅ parsedAdditional.profileImg:", parsedAdditional.profileImg);
+          setFormData(parsedAdditional);
+        } else if (userInfo) {
+          console.log("✅ userInfo.profileImage:", userInfo.profileImage);
+          setFormData({
+            gender: userInfo.gender as 'male' | 'female',
+            birthdate: userInfo.birthdate || '',
+            phoneNumber: userInfo.phoneNumber || '',
+            tags: userInfo.tags || [],
+          });
         }
-    }, [userInfo]);
+      }, [userInfo]);
+      
 
-    useEffect(() => {
-        const savedData = localStorage.getItem('mypageUserInfo');
-        if (savedData) {
-            const parsedData = JSON.parse(savedData);
-            setFormData(parsedData);
-            setUserInfo(parsedData); // Context도 업데이트
-        }
-    }, []);
 
     const handleTagAdd = () => {
         setFormData(prev => ({
@@ -73,7 +76,7 @@ export default function Mypage() {
 
     const handleSave = () => {
         setUserInfo(formData);
-        localStorage.setItem('mypageUserInfo', JSON.stringify(formData)); // 저장
+        localStorage.setItem('userAdditionalInfo', JSON.stringify(formData)); // 저장
         alert('정보 저장 완료');
     };
 
@@ -88,7 +91,7 @@ export default function Mypage() {
                 {/* 프로필 이미지 */}
                 <div className="flex-shrink-0">
                     <img
-                        src={formData.profileImg}
+                        src={user.image || go5rae}
                         alt="Profile"
                         className="w-32 h-32 rounded-full"
                     />
@@ -138,7 +141,7 @@ export default function Mypage() {
                         type="text"
                         id="name"
                         name="name"
-                        value={formData.name}
+                        value={user.name}
                         onChange={handleChange}
                         className="mt-2 p-2 w-full border border-gray-300 rounded"
                     />
@@ -150,7 +153,7 @@ export default function Mypage() {
                         type="email"
                         id="email"
                         name="email"
-                        value={formData.email}
+                        value={user.email}
                         onChange={handleChange}
                         className="mt-2 p-2 w-full border border-gray-300 rounded"
                         readOnly
@@ -188,8 +191,8 @@ export default function Mypage() {
                     <input
                         type="date"
                         id="birth"
-                        name="birth"
-                        value={formData.birthday}
+                        name="birthdate"
+                        value={formData.birthdate}
                         onChange={handleChange}
                         className="mt-2 p-2 w-full border border-gray-300 rounded"
                     />
@@ -200,8 +203,8 @@ export default function Mypage() {
                     <input
                         type="tel"
                         id="phone"
-                        name="phone"
-                        value={formData.phone}
+                        name="phoneNumber"
+                        value={formData.phoneNumber}
                         onChange={handleChange}
                         className="mt-2 p-2 w-full border border-gray-300 rounded"
                     />

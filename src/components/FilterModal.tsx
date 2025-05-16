@@ -4,6 +4,7 @@ import Modal from "./Modal";
 import RoundedBtn from "./Button/RoundedBtn";
 
 interface FilterModalProps {
+    isOpen?: boolean;
     mode? : 'filter' | 'tag';
     selectedTags : string[];
     setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>;

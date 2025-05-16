@@ -8,6 +8,12 @@ import { useState } from 'react';
 
 export default function UnAuthHeader(){
     const navigate = useNavigate();
+    const [keyword, setKeyword] = useState('');
+
+    const handleSearch = () => {
+        if(!keyword.trim()) return;
+        navigate(`/restaurants/search?keyword=${encodeURIComponent(keyword)}&page=1`);
+    }
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -33,8 +39,9 @@ export default function UnAuthHeader(){
                 <input 
                     type="text" 
                     placeholder="조용한 식당을 검색해보세요!"
-                    className="px-4 py-2 rounded-md h-[40px] w-[800px]"/>
-                <button>
+                    className="px-4 py-2 rounded-md h-[40px] w-[800px]"
+                    onChange={(e) => setKeyword(e.target.value) }/>
+                <button onClick={handleSearch}>
                     <img src={search} className="bg-white rounded-md w-[40px] h-[40px]"/>
                 </button>
             </div>

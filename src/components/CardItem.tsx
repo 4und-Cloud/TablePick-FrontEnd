@@ -14,6 +14,7 @@ export interface CardItemProps{
     containerStyle? : string; // 카드 전체 wrapper 커스텀
     imageStyle? : string; // 이미지 커스텀
     restaurantNameStyle?: string; // 식당명 커스텀
+    onClick?:() => void;
 }
 
 export default function CardItem({
@@ -29,6 +30,7 @@ export default function CardItem({
     reservationInfo,
     button,
     buttonPosition,
+    onClick,
 
   }: CardItemProps) {
     const navigate = useNavigate();

@@ -7,7 +7,7 @@ interface ModalProps{
     initialState? : boolean;
 }
 
-export default function useModal( {initialState} : ModalProps) {
+export default function useModal( {initialState = false} : ModalProps = {}) {
     // 모달 열림/닫힘 관리
     const [isOpen, setIsOpen ] = useState(initialState);
 

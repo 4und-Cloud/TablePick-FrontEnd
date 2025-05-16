@@ -8,7 +8,21 @@ import Dropdown from "./Dropdown";
 import { useNavigate } from "react-router-dom";
 
 export default function AuthHeader() {
-    const {logout} = useAuth();
+    const [keyword, setKeyword] = useState('');
+
+    const handleSearch = () => {
+        if(!keyword.trim()) return;
+        navigate(`/restaurants/search?keyword=${encodeURIComponent(keyword)}&page=1`);
+        setKeyword('');
+    }
+
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+          handleSearch();
+        }
+      };
+
+    const {logout, user} = useAuth();
     const [isOpen, setIsOpen ] = useState(false);
 
     const navigate = useNavigate();
@@ -31,15 +45,18 @@ export default function AuthHeader() {
                     <div className="flex items-center gap-1">
                         <input 
                             type="text" 
+                            value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
+                            onKeyPress={handleKeyPress}
                             placeholder="식당을 검색해보세요!"
                             className="px-4 py-2 rounded-md h-[40px] w-[750px]"/>
-                        <button>
+                        <button onClick={handleSearch}>
                             <img src={search} className="bg-white rounded-md w-[40px] h-[40px]"/>
                         </button>
                     </div>
                     {/* 프로필 + 로그아웃 버튼 */}
                     <div className="flex items-center gap-4">
-                        <img src={profile} onClick={toggleDd}
+                        <img src={user.image || profile} onClick={toggleDd}
                         className="w-[40px] h-[40px] rounded-full"/>
                         <Dropdown isOpen={isOpen}/>
                         <RoundedBtn 

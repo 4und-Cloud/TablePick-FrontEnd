@@ -1,47 +1,68 @@
-// src/pages/OauthSuccess.tsx
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useAuth from '../../hooks/useAuth';
 
-export default function OauthSuccess() { 
-  console.log("동작 체킁");
+// 쿠키에서 토큰 가져오기 (현재는 미사용 중)
+function getTokenFromCookie(name: string): string | null {
+  const cookies = document.cookie.split(';');
+  for (let cookie of cookies) {
+    const [key, value] = cookie.trim().split('=');
+    if (key === name) {
+      return decodeURIComponent(value);
+    }
+  }
+  return null;
+}
+
+export default function OauthSuccess() {
+  const {login} = useAuth();
   const navigate = useNavigate();
-  const [user, setUser] = useState<{nickname: string; profileImageUrl: string} | null>(null);
+  const [user, setUser] = useState<{ nickname: string; profileImage: string; email:string;} | null>(null);
 
   useEffect(() => {
-    axios.post(
-          'http://localhost:8080/api/members',
-          {}, // 요청 본문 (필요 시 데이터 추가)
-          {
-            withCredentials: true, // 쿠키(Refresh Token) 포함
-          }
-    );
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const accessToken = urlParams.get("accessToken");
-
-
-    console.log('accessToken: ',accessToken);
-
-    if (accessToken) {
-      localStorage.setItem("accessToken", accessToken);
-
-      fetch('http://localhost:8080/api/me', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      .then(res => res.json())
-      .then(user => {
-        setUser({
-          nickname: user.nickname,
-          profileImageUrl: user.profileImageUrl,
+    async function fetchUserInfo() {
+      try{
+        const response = await axios.get('http://localhost:8080/api/members', {
+          headers: {
+            Accept: 'application/json',
+          },
+          withCredentials: true,
         });
-        alert('로그인 성공');
-        navigate('/');
-      })
-    }
-  }, []);
 
-  return <div>로그인 중입니다...</div>;
+        const userData = response.data;
+        if(!userData.nickname || !userData.profileImage || !userData.email) {
+          throw new Error('잘못된 사용자 데이터');
+        }
+
+        setUser({
+          email: userData.email,
+          nickname: userData.nickname,
+          profileImage: userData.profileImage,
+        });
+
+        login({
+          email: userData.email,
+          name: userData.nickname,
+          image: userData.profileImage,
+        });
+
+        localStorage.setItem('userInfo', JSON.stringify({
+          email: userData.email,
+          nickname: userData.nickname,
+          profileImage: userData.profileImage,
+        }));
+
+      
+        alert('로그인 성공');
+        navigate('/', {state: {showFilterModal : true}});
+      } catch (error) {
+        console.error('사용자 정보 가져오기 실패:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, [login, navigate]);
+
+  return <div className='mt-[80px]'>로그인 중입니다...</div>;
 }

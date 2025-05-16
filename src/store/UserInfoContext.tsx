@@ -1,9 +1,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
 interface UserExtraInfo {
-  gender: string;
-  birthday: string;
-  phone: string;
+  profileImage? : string;
+  name? :string;
+  email? : string;
+  gender: 'male' | 'female';
+  birthdate: string;
+  phoneNumber: string;
   tags: string[];
 }
 

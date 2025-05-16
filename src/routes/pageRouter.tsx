@@ -8,8 +8,8 @@ import PostList from "../pages/PostList";
 import ReservationCheck from "../pages/ReservationCheck";
 import RestaurantDetail from "../pages/RestaurantDetail";
 import RestaurantList from "../pages/RestaurantList";
-import KakaoRedirect from "../pages/oauth2/KakaoRedirect";
-import GoogleRedirect from "../pages/oauth2/GoogleRedirect";
+// import KakaoRedirect from "../pages/oauth2/KakaoRedirect";
+// import GoogleRedirect from "../pages/oauth2/GoogleRedirect";
 import OAuthSuccess from "../pages/oauth2/OAuthSuccessPage";
 
 export default function PageRouter(){

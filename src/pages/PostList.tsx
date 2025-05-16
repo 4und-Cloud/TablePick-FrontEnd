@@ -8,6 +8,8 @@ import usePagination from "../hooks/usePagination";
 import useModal from "../hooks/useModal";
 import FilterModal from "../components/FilterModal";
 import { useState } from "react";
+import dlwlszks from '@/assets/images/dlwlszlsk.jpg'
+import ehzytlwkd from '@/assets/images/ehzytlwkd.jpg'
 
 export default function PostList(){
     const mockData: CardItemProps[] = Array.from({length:23}, (_, i) => ({
@@ -20,6 +22,8 @@ export default function PostList(){
         //button: <RoundedBtn text='게시글 작성하러 가기' width="w-[350px]" bgColor="bg-main" height="h-[30px]" textColor="text-white" hoverBorderColor="hover:border-accent" hoverColor="hover:bg-white" hoverTextColor="hover:text-main"/>,
         // buttonPosition: 'bottom'
     }));
+    const [postList, setPostList] = useState<CardItemProps[]>([]);
+
 
     const itemsPerPage = 6;
 
