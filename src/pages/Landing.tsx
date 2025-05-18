@@ -5,41 +5,30 @@ import loc from '@/assets/images/location.png';
 import chqkq from '@/assets/images/chqkq.jpg';
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import Modal from "../components/Modal";
-import useModal from "../hooks/useModal";
-import Calendar from "react-calendar";
-import { Value } from "react-calendar/src/shared/types.js";
-import FilterModal from "../components/FilterModal";
-import 'react-calendar/dist/Calendar.css';
-import RoundedBtn from "../components/Button/RoundedBtn";
-import { profile } from 'console';
-import ehzytlwkd from '@/assets/images/ehzytlwkd.jpg'
+import AddinfoModal from '../components/AddInfoModal';
+import ehzytlwkd from '@/assets/images/ehzytlwkd.jpg';
 import dlwlszks from '@/assets/images/dlwlszlsk.jpg';
 
-interface UserInfo {
-  gender?: string;
-  birthdate? : string;
-  phoneNumber? : string;
-  profileImage?: string;
-}
-
+// 레스토랑 데이터 인터페이스
 interface RestaurantItem {
   id: number;
   restaurantName: string;
   imageUrl: string;
 }
 
+// 게시글 데이터 인터페이스
 interface PostItem {
   id: number;
   content: string;
   imageUrl: string;
 }
 
+// 레스토랑 카드 컴포넌트
 function RestaurantCard({ item, onClick }: { item: RestaurantItem; onClick?: () => void }) {
   return (
     <div onClick={onClick} className="cursor-pointer">
       <img
-        src={item.imageUrl} // image → imageUrl
+        src={item.imageUrl}
         className="w-[250px] h-[250px] rounded-20"
         alt={item.restaurantName}
       />
@@ -51,7 +40,7 @@ function RestaurantCard({ item, onClick }: { item: RestaurantItem; onClick?: () 
   );
 }
 
-
+// 더미 데이터
 const dummy: RestaurantItem[] = [
   { id: 1, restaurantName: '센시티브서울', imageUrl: place },
   { id: 2, restaurantName: '도마29', imageUrl: chqkq },
@@ -60,41 +49,43 @@ const dummy: RestaurantItem[] = [
 ];
 
 export default function Landing() {
-  const [posts, setPosts] = useState<PostItem[]>([]);
+  // 상태 정의
+  const [posts, setPosts] = useState<PostItem[]>([]); // 게시글 목록
+  const [restaurants, setRestaurants] = useState<RestaurantItem[]>([]); // 레스토랑 목록
+  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false); // 유저 정보 모달 열림 상태
 
-const fetchPosts = useCallback(async () => {
-  try {
-    const res = await axios.get('http://localhost:8080/api/boards/main', {
-      headers: { Accept: 'application/json' },
-      withCredentials: true,
-    });
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const postsData = res.data.content;
+  // 게시글 데이터 가져오기
+  const fetchPosts = useCallback(async () => {
+    try {
+      const res = await axios.get('http://localhost:8080/api/boards/main', {
+        headers: { Accept: 'application/json' },
+        withCredentials: true,
+      });
 
-    if (Array.isArray(postsData)) {
-      setPosts(postsData);
-    } else {
-      console.error('게시글 content가 배열이 아닙니다:', postsData);
+      const postsData = res.data.content;
+      if (Array.isArray(postsData)) {
+        setPosts(postsData);
+      } else {
+        setPosts([]);
+      }
+    } catch (error) {
+      console.error('게시글 데이터 가져오기 실패:', error);
       setPosts([]);
     }
-  } catch (error) {
-    console.error('게시글 데이터 가져오기 실패:', error);
-    setPosts([]);
-  }
-}, []);
+  }, []);
 
-  const [restaurants, setRestaurants] = useState<RestaurantItem[]>([]);
+  // 레스토랑 데이터 가져오기
   const fetchRestaurants = useCallback(async () => {
     try {
       const res = await axios.get('http://localhost:8080/api/restaurants/all', {
         headers: { Accept: 'application/json' },
         withCredentials: true,
       });
-      
-      // content 배열 추출
+
       const restaurantsData = res.data.content;
-  
-      // 배열인지 확인
       if (Array.isArray(restaurantsData)) {
         setRestaurants(restaurantsData);
       } else {
@@ -105,281 +96,89 @@ const fetchPosts = useCallback(async () => {
       console.error('레스토랑 데이터 가져오기 실패:', error);
       setRestaurants([]);
     }
-  }, [])
+  }, []);
 
-  
-
+  // 컴포넌트 마운트 시 데이터 가져오기
   useEffect(() => {
     fetchRestaurants();
     fetchPosts();
   }, [fetchRestaurants, fetchPosts]);
 
-  const navigate = useNavigate();
+  // 네비게이션 핸들러
+  const handleRes = () => navigate('/restaurants');
+  const handlePost = () => navigate('/posts');
+  const handleResDetail = (id: number) => navigate(`/restaurants/${id}`);
+  const handlePostDetail = (id: number) => navigate(`/posts/${id}`);
 
-  const handleRes = () => {navigate('/restaurants')};
-
-  const handlePost = () => {navigate('/posts')};
-
-  const handleResDitail = (id: number) => {navigate(`/restaurants/${id}`)};
-
-  const handlePostDetail = (id: number) => {navigate(`/posts/${id}`)};
-
-  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-
-  const location = useLocation();
-
-  const [date, setDate] = useState<Date | null>(null);
-  const [calOpen, setCalOpen] = useState(false);
-
-  const [gender, setGender] = useState<'male' | 'female'>();
-  const [phone, setPhone] = useState('');
-
-  // 필터 모달 훅 (custom hook)
-  const { isOpen: isFilterOpen, closeModal: closeFilterModal, openModal: openFilterModal } = useModal({ initialState: false });
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  // 모달 열기/닫기 메모이제이션
+  // 모달 열기/닫기 함수
   const openUserInfoModal = useCallback(() => setIsUserInfoModalOpen(true), []);
   const closeUserInfoModal = useCallback(() => setIsUserInfoModalOpen(false), []);
 
-  // 유저 정보 API 호출 (axios)
-  const fetchUserInfo = useCallback(async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/members', {
-        headers: { Accept: 'application/json' },
-        withCredentials: true,
-      });
-      setUserInfo(response.data);
-    } catch (error) {
-      console.error('데이터 불러오는 중 에러 발생', error);
-    }
-  }, []);
-
-  // 모달 열리면 유저정보 fetch
-  useEffect(() => {
-    if (isUserInfoModalOpen) {
-      fetchUserInfo();
-    }
-  }, [isUserInfoModalOpen, fetchUserInfo]);
-
-  // userInfo 변하면 내부 상태 세팅
-  useEffect(() => {
-    if (userInfo) {
-      setGender(userInfo.gender === 'MALE' ? 'male' : 'female');
-      setDate(userInfo.birthdate ? new Date(userInfo.birthdate) : null);
-      setPhone(userInfo.phoneNumber || '');
-    }
-  }, [userInfo]);
-
-  // react-router의 location.state 에 따라 모달 열기 처리 (showFilterModal flag)
+  // location.state.showFilterModal에 따라 모달 자동 열기
   useEffect(() => {
     if (location.state?.showFilterModal) {
       openUserInfoModal();
-
-      // showFilterModal 삭제하여 상태 초기화
+      // 상태 초기화
       const newState = { ...location.state };
       delete newState.showFilterModal;
       window.history.replaceState(newState, document.title);
     }
   }, [location.state, openUserInfoModal]);
 
-  // 캘린더 토글
-  const toggleCalendar = () => setCalOpen((prev) => !prev);
-
-  // 날짜 선택 핸들러
-  const handleDateChange = (value: Value) => {
-    if (value instanceof Date) {
-      setDate(value);
-      setCalOpen(false);
-    }
-  };
-
-  // 성별 선택 핸들러
-  const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setGender(event.target.value as 'male' | 'female');
-  };
-
-  // 전화번호 포맷팅
-  const formatPhoneNumber = (value: string) => {
-    const numbers = value.replace(/\D/g, "");
-    if (numbers.length <= 3) return numbers;
-    if (numbers.length <= 7) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
-    return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
-  };
-
-  // 전화번호 입력 핸들러
-  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhoneNumber(event.target.value);
-    setPhone(formatted);
-  }; 
-
-  // 적용 버튼 클릭시 데이터 저장 및 모달 닫기
-  const handleApply = () => {
-    const dataToSave = {
-      gender,
-      birthdate: date ? date.toISOString().slice(0,10) : '',
-      phoneNumber: phone,
-      tags: selectedTags,
-    };
-    localStorage.setItem('userAdditionalInfo', JSON.stringify(dataToSave));
-    closeUserInfoModal();
-  };
-
   return (
     <>
       {/* 유저 정보 입력 모달 */}
-      {isUserInfoModalOpen && (
-        <Modal
-          onClose={closeUserInfoModal}
-          footer={
-            <RoundedBtn
-              text="적용하기"
-              bgColor="bg-main"
-              textColor="text-white"
-              borderColor="border-main"
-              hoverColor="hover:bg-white"
-              hoverTextColor="hover:text-main"
-              hoverBorderColor="hover:border-main"
-              width="w-full"
-              onClick={handleApply}
-            />
-          }
-          height="460px"
-        >
-          <div className="m-3">
-            <div>
-              <p className="text-main font-bold text-2xl">추가 정보 입력</p>
-              <p className="text-gray-500 font-semibold">서비스 이용을 위해 추가 정보를 입력해주세요!</p>
-            </div>
-
-            <div className="mt-4">
-              <p className="font-semibold text-lg mb-2">성별</p>
-              <div className="flex space-x-2">
-                <label className="flex items-center space-x-2">
-                  <input
-                    onChange={handleGenderChange}
-                    className="text-main border-main focus:ring-main"
-                    type="radio"
-                    id="male"
-                    name="gender"
-                    value="male"
-                    checked={gender === 'male'}
-                  />
-                  <span>남성</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    onChange={handleGenderChange}
-                    className="text-main border-main focus:ring-main"
-                    type="radio"
-                    id="female"
-                    name="gender"
-                    value="female"
-                    checked={gender === 'female'}
-                  />
-                  <span>여성</span>
-                </label>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <p className="font-semibold text-lg mb-2">생년월일</p>
-              <input
-                id="birthday"
-                type="text"
-                value={date ? date.toLocaleDateString() : ''}
-                readOnly
-                onClick={toggleCalendar}
-                placeholder="생일을 선택하세요"
-                className="cursor-pointer"
-              />
-              {calOpen && (
-                <Modal onClose={toggleCalendar} width="300px" height="300px">
-                  <Calendar
-                    onChange={handleDateChange}
-                    value={date}
-                    maxDate={new Date()}
-                    selectRange={false}
-                  />
-                </Modal>
-              )}
-            </div>
-
-            <div className="mt-4">
-              <p className="font-semibold text-lg mb-2">전화번호</p>
-              <input
-                id="phone"
-                placeholder="010-0000-0000"
-                value={phone}
-                onChange={handlePhoneChange}
-                maxLength={13}
-              />
-            </div>
-
-            <div className="mt-4">
-              <RoundedBtn
-                text="+"
-                width="w-[50px]"
-                height="h-[30px]"
-                bgColor="bg-white"
-                textColor="text-black"
-                borderColor="border-main"
-                hoverColor="hover:bg-white"
-                hoverTextColor="hover:text-main"
-                hoverBorderColor="hover:border-main"
-                onClick={openFilterModal}
-              />
-              <div className="mt-4 flex flex-wrap gap-2">
-                {selectedTags.map((tag, idx) => (
-                  <span
-                    key={idx}
-                    className="px-4 py-2 font-semibold bg-main text-white rounded-20 text-sm"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </Modal>
-      )}
-
-      {/* 필터 태그 모달 */}
-      {isFilterOpen && (
-        <FilterModal
-          isOpen
-          mode="tag"
-          selectedTags={selectedTags}
-          setSelectedTags={setSelectedTags}
-          onClose={closeFilterModal}
-        />
-      )}
+      <AddinfoModal
+        isOpen={isUserInfoModalOpen}
+        onClose={closeUserInfoModal}
+      />
 
       {/* 메인 컨텐츠 */}
-      <div className="mt-[80px] p-3">
-        {/* 추천 매장 */}
-        <section className="mb-10 mt-8">
-          <div className="flex justify-between m-4">
-            <p className="font-bold text-2xl text-gray-500 ml-2">고객님이 좋아할 매장</p>
-            <TextBtn fontSize="text-xl" text="식당 더 보기 ->" onClick={handleRes}/>
-          </div>
-          <div className="flex justify-center gap-10 flex-wrap">
-            {restaurants.map((restaurant) => (
-              <RestaurantCard key={restaurant.id} item={restaurant} />
-            ))}
+      <div className="p-3 flex-1">
+        {/* 추천 매장 섹션 */}
+        <section className="p-12 border-b border-gray-300">
+          <div className="container">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tighter">
+                  회원님을 위한 맞춤 추천
+                </h2>
+                <p className="text-gray-500 mt-1 text-lg">
+                  회원님의 취향에 맞는 맛집을 추천해드려요
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-center gap-10 flex-wrap">
+              {restaurants.map((restaurant) => (
+                <RestaurantCard
+                  key={restaurant.id}
+                  item={restaurant}
+                  onClick={() => handleResDetail(restaurant.id)}
+                />
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* 추천 게시글 */}
+        {/* 추천 게시글 섹션 */}
         <section>
           <div className="flex justify-between m-4 mb-2">
-            <p className="font-bold text-2xl text-gray-500 ml-2">고객님이 좋아할 게시글</p>
-            <TextBtn fontSize="text-xl" text="게시글 더 보기 ->" onClick={handlePost} />
+            <p className="font-bold text-2xl text-gray-500 ml-2">
+              고객님이 좋아할 게시글
+            </p>
+            <TextBtn
+              fontSize="text-xl"
+              text="게시글 더 보기 ->"
+              onClick={handlePost}
+            />
           </div>
           <div className="flex justify-center gap-10 flex-wrap">
-            {dummy.map((item, idx) => (
-              <RestaurantCard key={idx} item={item}/>
+            {dummy.map((item) => (
+              <RestaurantCard
+                key={item.id}
+                item={item}
+                onClick={() => handlePostDetail(item.id)}
+              />
             ))}
           </div>
         </section>
