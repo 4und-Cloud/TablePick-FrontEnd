@@ -1,19 +1,19 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 
 export default function OauthSuccess() {
   const {login} = useAuth();
   const navigate = useNavigate();
-  const [user, setUser] = useState<{ nickname: string; profileImage: string; email:string;} | null>(null);
+  //const [setUser] = useState<{ nickname: string; profileImage: string; email:string;} | null>(null);
 
   useEffect(() => {
     async function fetchUserInfo() {
       try{
         // 쿼리 파라미터에서 프로바이더 확인
-        const params = new URLSearchParams(location.search);
-        const provider = params.get('provider') || 'kakao';
+        //const params = new URLSearchParams(location.search);
+        //const provider = params.get('provider') || 'kakao';
 
         const response = await axios.get('http://localhost:8080/api/members', {
           headers: {
@@ -34,7 +34,7 @@ export default function OauthSuccess() {
           profileImage: userData.profileImage || userData.picture
         }
 
-        setUser(normalizedUser);
+        //setUser(normalizedUser);
 
         login({
           email: normalizedUser.email,

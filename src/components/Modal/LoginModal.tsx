@@ -1,8 +1,4 @@
-import { useNavigate } from 'react-router-dom';
 import pic from '@/assets/images/login.png';
-import { useState } from 'react';
-import FilterModal from './FilterModal';
-
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -10,24 +6,6 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({isOpen, onClose} : LoginModalProps){
-
-    
-    
-    const navigate  = useNavigate();
-
-    // const handleKakaoLogin = () => {
-    //     onClose(); // 로그인 버튼 누를 시 로그인 모달 닫기
-    //     kakaoLoginHandler(); // 카카오 로그인 리다이렉트
-    // }
-
-    // const googleLogin = () => {
-    //     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?
-	// 	client_id=${ import.meta.env.VITE_GOOGLE_CLIENT_ID}
-	// 	&redirect_uri=${ process.env.REACT_APP_GOOGLE_REDIRECT_URL }
-	// 	&response_type=token
-	// 	&scope=email profile`;
-    // };
-    
     if(!isOpen) return null;
     
     const baseClasses =

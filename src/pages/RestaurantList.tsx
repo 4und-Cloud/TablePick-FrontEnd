@@ -8,19 +8,18 @@ import usePagination from "../hooks/usePagination";
 import FilterModal from "../components/Modal/FilterModal";
 import useModal from "../hooks/useModal";
 import { useState, useEffect } from "react";
-import RestaurantDetail from "./RestaurantDetail";
 import axios from "axios";
-import { useParams, useSearchParams } from "react-router-dom";
+import {useSearchParams } from "react-router-dom";
 
 
 
 export default function RestaurantList() {
   const [restaurantList, setRestaurantList] = useState<CardItemProps[]>([]);
   const [loading, setLoading] = useState(true);
-  const [backendPage, setBackendPage] = useState(1);
+  // const [backendPage, setBackendPage] = useState(1);
   const [totalPages, setTotalPages ] = useState(1);
 
-  const itemsPerPage = 6;
+  // const itemsPerPage = 6;
 
   const { isOpen, openModal, closeModal } = useModal({ initialState: false });
   const [selectedTags, setSelectedTags] = useState<string[]>([]);

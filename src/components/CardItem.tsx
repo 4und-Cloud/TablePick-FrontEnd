@@ -30,7 +30,6 @@ export default function CardItem({
     reservationInfo,
     button,
     buttonPosition,
-    onClick,
 
   }: CardItemProps) {
     const navigate = useNavigate();
@@ -97,4 +96,3 @@ export default function CardItem({
       </div>
     );
   }
-  

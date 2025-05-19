@@ -28,15 +28,15 @@ export function PostWriteModal({ closeModal, initialData }: PostWriteModalProps)
     }
   }, [initialData]);
 
-  const handleTagToggle = (tag: string) => {
-    if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter((t) => t !== tag));
-    } else {
-      if (selectedTags.length < 5) {
-        setSelectedTags([...selectedTags, tag]);
-      }
-    }
-  };
+  // const handleTagToggle = (tag: string) => {
+  //   if (selectedTags.includes(tag)) {
+  //     setSelectedTags(selectedTags.filter((t) => t !== tag));
+  //   } else {
+  //     if (selectedTags.length < 5) {
+  //       setSelectedTags([...selectedTags, tag]);
+  //     }
+  //   }
+  // };
 
   const handleTagAdd = () => {
     closeFilterModal();
