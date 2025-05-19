@@ -4,7 +4,7 @@ import { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import chqkq from '@/assets/images/chqkq.jpg';
 import useModal from '../hooks/useModal';
-import ReservationModal from '../components/ReservationModal';
+import ReservationModal from '../components/Modal/ReservationModal';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 

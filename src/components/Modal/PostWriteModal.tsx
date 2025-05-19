@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import Modal from "./Modal";
-import RoundedBtn from "./Button/RoundedBtn";
-import FilterModal from "../components/FilterModal";
-import useModal from "../hooks/useModal";
+import RoundedBtn from "../Button/RoundedBtn";
+import FilterModal from "./FilterModal";
+import useModal from "../../hooks/useModal";
 
 interface PostWriteModalProps {
   closeModal: () => void;

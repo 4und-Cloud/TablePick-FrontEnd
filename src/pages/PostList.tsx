@@ -6,7 +6,7 @@ import List from "../components/List";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
 import useModal from "../hooks/useModal";
-import FilterModal from "../components/FilterModal";
+import FilterModal from "../components/Modal/FilterModal";
 import { useState } from "react";
 import dlwlszks from '@/assets/images/dlwlszlsk.jpg'
 import ehzytlwkd from '@/assets/images/ehzytlwkd.jpg'
@@ -30,10 +30,10 @@ export default function PostList(){
     const {isOpen, openModal, closeModal} = useModal({initialState : false});
     const [selectedTags, setSelectedTags] =useState<string[]>([]);
 
-    const {currentPage, totalPages, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage} = usePagination(mockData.length, itemsPerPage);
+    //const {currentPage, totalPages, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage} = usePagination(mockData.length, itemsPerPage);
 
-    const startIdx = (currentPage - 1) * itemsPerPage;
-    const PaginatedItems = mockData.slice(startIdx, startIdx + itemsPerPage);
+    //const startIdx = (currentPage - 1) * itemsPerPage;
+    //const PaginatedItems = mockData.slice(startIdx, startIdx + itemsPerPage);
 
     const tagElements = selectedTags.map((tag, index) => (
         <span key={index} className="bg-main text-white py-1 px-4 rounded-full mr-2">{tag}</span>
@@ -49,12 +49,12 @@ export default function PostList(){
             </div> 
             
             {isOpen ? (<FilterModal onClose={closeModal} selectedTags={selectedTags} setSelectedTags={setSelectedTags} mode="filter" />) : null}
-            <div>
+            {/* <div>
                 <List linkTo="posts" items={PaginatedItems}/>
                 <div>
                     <Pagination currentPage={currentPage} totalPages={totalPages} onNextPage={goToNextPage} onPrevPage={goToPrevPage} onFirstPage={goToFirstPage} onLastPage={goToLastPage} onPageChange={setPage}/>
                 </div>
-            </div>
+            </div> */}
         </div>
         
         

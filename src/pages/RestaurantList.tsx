@@ -5,7 +5,7 @@ import filter from '@/assets/images/filter.png';
 import List from "../components/List";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
-import FilterModal from "../components/FilterModal";
+import FilterModal from "../components/Modal/FilterModal";
 import useModal from "../hooks/useModal";
 import { useState, useEffect } from "react";
 import RestaurantDetail from "./RestaurantDetail";

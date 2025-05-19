@@ -2,12 +2,13 @@ import logo from '@/assets/images/logo_nobg.png';
 import search from '@/assets/images/magnifying-glass.png';
 import RoundedBtn from '../Button/RoundedBtn';
 import useModal from '../../hooks/useModal';
-import LoginModal from '../LoginModal';
+import LoginModal from '../Modal/LoginModal';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import useAuth from '../../hooks/useAuth';
+import SearchModal from '../Modal/SearchModal';
 
-export default function UnAuthHeader() {
+export default function Header() {
     const navigate = useNavigate();
     const location = useLocation();
     const pathname = location.pathname;
@@ -27,6 +28,8 @@ export default function UnAuthHeader() {
     const handleLogin = () => {
         closeModal();
     };
+
+    const searchModal = useModal({initialState: false});
 
     return (
         <>
@@ -53,7 +56,7 @@ export default function UnAuthHeader() {
 
                     {/* 우측 영역 */}
                     <div className="flex items-center gap-4">
-                        <button type="button" className="text-muted-foreground hover:text-foreground" onClick={handleSearch}>
+                        <button onClick={searchModal.openModal} type="button" className="text-muted-foreground hover:text-foreground">
                             <img src={search} alt="Search" className="w-[32px] h-[32px]" />
                         </button>
                         {isAuthenticated ? (
@@ -88,6 +91,7 @@ export default function UnAuthHeader() {
                 </div>
             </header>
             <LoginModal isOpen={isOpen ?? false} onClose={closeModal} />
+            <SearchModal isOpen={searchModal.isOpen} onClose={searchModal.closeModal} />
         </>
     );
 }

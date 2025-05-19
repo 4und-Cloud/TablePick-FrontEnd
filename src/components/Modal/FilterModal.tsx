@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Checkbox from "./Checkbox";
+import Checkbox from "../Checkbox";
 import Modal from "./Modal";
-import RoundedBtn from "./Button/RoundedBtn";
+import RoundedBtn from "../Button/RoundedBtn";
 
 interface FilterModalProps {
     isOpen?: boolean;

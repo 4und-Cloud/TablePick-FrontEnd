@@ -7,8 +7,7 @@ import List from "../components/List";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
 import RoundedBtn from "../components/Button/RoundedBtn";
-import { PostWriteModal } from "../components/PostWriteModal";
-
+import { PostWriteModal } from "../components/Modal/PostWriteModal";
 
 export default function ReservationCheck(){
     const mockData: CardItemProps[] = Array.from({length:23}, (_, i) => ({
@@ -22,21 +21,21 @@ export default function ReservationCheck(){
     }));
 
     const itemsPerPage = 6;
-    const {currentPage, totalPages, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage} = usePagination(mockData.length, itemsPerPage);
-    const startIdx = (currentPage - 1) * itemsPerPage;
-    const PaginaetedItems = mockData.slice(startIdx, startIdx + itemsPerPage);
+    //const {currentPage, totalPages, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage} = usePagination(mockData.length, itemsPerPage);
+    //const startIdx = (currentPage - 1) * itemsPerPage;
+    //const PaginaetedItems = mockData.slice(startIdx, startIdx + itemsPerPage);
 
     // PostWriteModal 상태 관리
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return(
         <div className="pt-[80px] m-4">
-            <div>
+            {/* <div>
                 <List items={PaginaetedItems}/>
                 <div>
                     <Pagination currentPage={currentPage} totalPages={totalPages} onNextPage={goToNextPage} onPrevPage={goToPrevPage} onFirstPage={goToFirstPage} onLastPage={goToLastPage} onPageChange={setPage}/>
                 </div>
-            </div>
+            </div> */}
             {/* PostWriteModal 열기 */}
             {isModalOpen && <PostWriteModal closeModal={() => setIsModalOpen(false)} />}
         </div>

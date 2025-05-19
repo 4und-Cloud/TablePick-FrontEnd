@@ -2,11 +2,12 @@
 import React, { useCallback, useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "./Modal";
-import RoundedBtn from "./Button/RoundedBtn";
+import RoundedBtn from "../Button/RoundedBtn";
 import Calendar from "react-calendar";
 import { Value } from "react-calendar/src/shared/types.js";
 import FilterModal from "./FilterModal";
-import useModal from "../hooks/useModal";
+import useAuth from "../../hooks/useAuth";
+import useModal from "../../hooks/useModal";
 import 'react-calendar/dist/Calendar.css';
 
 // 유저 정보 인터페이스 정의

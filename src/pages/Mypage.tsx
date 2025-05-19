@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useUserExtraInfo } from "../store/UserInfoContext"
 import go5rae from '@/assets/images/profile_img.jpg';
-import FilterModal from "../components/FilterModal";
+import FilterModal from "../components/Modal/FilterModal";
 import useModal from "../hooks/useModal";
 import useAuth from "../hooks/useAuth";
 

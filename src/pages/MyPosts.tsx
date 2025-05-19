@@ -7,7 +7,7 @@ import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
 import RoundedBtn from "../components/Button/RoundedBtn";
 import { useState } from "react";
-import { PostWriteModal } from "../components/PostWriteModal";
+import { PostWriteModal } from "../components/Modal/PostWriteModal";
 
 export default function MyPosts() {
   const mockData: CardItemProps[] = Array.from({ length: 23 }, (_, i) => ({
@@ -49,8 +49,8 @@ const [content, setContent] = useState<string>('');
 
   const { currentPage, totalPages, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage } = usePagination(mockData.length, itemsPerPage);
 
-  const startIdx = (currentPage - 1) * itemsPerPage;
-  const PaginatedItems = mockData.slice(startIdx, startIdx + itemsPerPage);
+   const startIdx = (currentPage - 1) * itemsPerPage;
+   const PaginatedItems = mockData.slice(startIdx, startIdx + itemsPerPage);
 
   const handleEditClick = (post: CardItemProps) => {
     setSelectedPost(post); // 클릭된 게시글의 데이터를 설정

@@ -1,5 +1,5 @@
 import Modal from "./Modal";
-import RoundedBtn from "./Button/RoundedBtn";
+import RoundedBtn from "../Button/RoundedBtn";
 import Calendar, { CalendarProps } from "react-calendar";
 import { useState } from "react";
 

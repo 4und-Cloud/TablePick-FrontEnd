@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import pic from '@/assets/images/login.png';
-import { kakaoLoginHandler } from '../utils/kakao';
+import { kakaoLoginHandler } from '../../../utils/kakao';
 import { GoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
 import FilterModal from './FilterModal';
