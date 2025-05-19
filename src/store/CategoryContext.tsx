@@ -31,7 +31,7 @@ export const CategoryProvider = ({children} : {children: React.ReactNode}) => {
     };
     useEffect(() => {
         fetchCategory();
-    }, [fetchCategory]);
+    }, []);
 
     return(
         <CategoryContext.Provider value={{category, fetchCategory}}>

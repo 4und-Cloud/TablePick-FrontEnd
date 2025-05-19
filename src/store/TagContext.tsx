@@ -39,7 +39,7 @@ export const TagProvider = ({children} : {children: React.ReactNode}) => {
 
     useEffect(() => {
         fetchTags();
-    }, [fetchTags]);
+    }, []);
         
     return(
         <TagContext.Provider value={{tags, fetchTags }}>

@@ -21,9 +21,11 @@ export default function SearchModal({ isOpen, onClose, onClick }: SearchModalPro
   if (!isOpen) return null;
 
   const handleItemClick = (item: string) => {
-    if (!selectedItems.includes(item)) {
+    if (selectedItems.includes(item)) return;
+    if(selectedItems.length >= 3) return;
+
       setSelectedItems((prev) => [...prev, item]);
-    }
+      
   };
 
   const handleItemRemove = (item: string) => {
@@ -38,8 +40,8 @@ export default function SearchModal({ isOpen, onClose, onClick }: SearchModalPro
 
   return (
     <Modal
-      width="1000px"
-      height="900px"
+      width="900px"
+      height="500px"
       onClose={onClose}
       close={
         <button onClick={onClose} className="text-main font-bold text-xl inset-0 z-50">
@@ -89,25 +91,7 @@ export default function SearchModal({ isOpen, onClose, onClick }: SearchModalPro
           </button>
         </div>
 
-        {/* 음식 종류 */}
-        <div>
-          <p className="text-md font-semibold text-gray-700">음식 종류</p>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {category.map((category: Category) => (
-              <button
-                key={category.id}
-                onClick={() => handleItemClick(category.name)}
-                className={`border px-3 py-1 rounded-full text-sm transition ${
-                  selectedItems.includes(category.name)
-                    ? 'bg-main text-white border-main'
-                    : 'border-main text-main hover:bg-main hover:text-white'
-                }`}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
-        </div>
+    
 
         {/* 카테고리 */}
         <div>
