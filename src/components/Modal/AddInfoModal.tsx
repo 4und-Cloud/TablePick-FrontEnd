@@ -6,7 +6,6 @@ import RoundedBtn from "../Button/RoundedBtn";
 import Calendar from "react-calendar";
 import { Value } from "react-calendar/src/shared/types.js";
 import FilterModal from "./FilterModal";
-import useAuth from "../../hooks/useAuth";
 import useModal from "../../hooks/useModal";
 import 'react-calendar/dist/Calendar.css';
 

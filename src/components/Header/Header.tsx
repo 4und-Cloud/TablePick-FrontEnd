@@ -3,31 +3,30 @@ import search from '@/assets/images/magnifying-glass.png';
 import RoundedBtn from '../Button/RoundedBtn';
 import useModal from '../../hooks/useModal';
 import LoginModal from '../Modal/LoginModal';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import SearchModal from '../Modal/SearchModal';
 
 export default function Header() {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
     const location = useLocation();
     const pathname = location.pathname;
-    const [keyword, setKeyword] = useState('');
+    //const [keyword, setKeyword] = useState('');
     const { isAuthenticated, user, logout } = useAuth();
     const { isOpen, openModal, closeModal } = useModal({ initialState: false });
 
-    const handleSearch = () => {
-        if (!keyword.trim()) return;
-        navigate(`/restaurants/search?keyword=${encodeURIComponent(keyword)}&page=1`);
-    };
-
-    const handleClick = () => {
-        navigate('/');
-    };
-
-    const handleLogin = () => {
-        closeModal();
-    };
+    // const handleSearch = () => {
+    //     if (!keyword.trim()) return;
+    //     navigate(`/restaurants/search?keyword=${encodeURIComponent(keyword)}&page=1`);
+    // };
+    //
+    // const handleClick = () => {
+    //     navigate('/');
+    // };
+    //
+    // const handleLogin = () => {
+    //     closeModal();
+    // };
 
     const searchModal = useModal({initialState: false});
 

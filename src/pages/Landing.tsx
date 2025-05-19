@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import AddinfoModal from '../components/Modal/AddInfoModal';
 import content from '@/assets/images/content.png';
-import SearchModal from '../components/Modal/SearchModal';
 
 // 레스토랑 데이터 인터페이스
 interface RestaurantItem {
@@ -159,7 +158,7 @@ function PostCard({
 
 export default function Landing() {
   // 상태 정의
-  const [posts, setPosts] = useState<PostItem[]>([]); // 게시글 목록
+  //const [posts, setPosts] = useState<PostItem[]>([]); // 게시글 목록
   const [restaurants, setRestaurants] = useState<RestaurantItem[]>([]); // 레스토랑 목록
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false); // 유저 정보 모달 열림 상태
 
@@ -214,10 +213,8 @@ export default function Landing() {
   }, [fetchRestaurants]);
 
   // 네비게이션 핸들러
-  const handleRes = () => navigate('/restaurants');
-  const handlePost = () => navigate('/posts');
   const handleResDetail = (id: number) => navigate(`/restaurants/${id}`);
-  const handlePostDetail = (id: number) => navigate(`/posts/${id}`);
+  // const handlePostDetail = (id: number) => navigate(`/posts/${id}`);
 
   // 모달 열기/닫기 함수
   const openUserInfoModal = useCallback(() => setIsUserInfoModalOpen(true), []);
