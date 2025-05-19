@@ -33,7 +33,7 @@ export default function Header() {
 
     return (
         <>
-            <header className="py-4 px-6 sticky top-0 z-50 w-full border-b bg-white border-main backdrop-blur">
+            <header className="py-4 px-6 sticky top-0 z-50 w-full bg-white  backdrop-blur">
                 <div className="container flex h-16 items-center justify-between">
                     {/* logo */}
                     <Link to="/" className="flex items-center gap-2">

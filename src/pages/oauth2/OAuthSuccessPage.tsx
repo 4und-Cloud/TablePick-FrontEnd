@@ -23,6 +23,7 @@ export default function OauthSuccess() {
         });
 
         const userData = response.data;
+        console.log(userData)
         if( !userData.email) {
           throw new Error('잘못된 사용자 데이터');
         }
