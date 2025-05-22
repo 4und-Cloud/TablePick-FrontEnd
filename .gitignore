@@ -22,7 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.env
 
-# 프로젝트 전체에서 firebaseConfig.ts 파일 무시
-**/firebaseConfig.ts
-**/*firebaseConfig*.ts
+### FCM 관련 민감 정보
+**/firebase-messaging-sw.js
+**/**/firebase-messaging-sw.js
+**/**/**/firebase-messaging-sw.js
+
+**/firebase.ts
+**/**/firebase.ts
+**/**/**/firebase.ts
