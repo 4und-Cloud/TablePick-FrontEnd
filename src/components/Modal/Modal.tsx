@@ -9,7 +9,7 @@ interface ModalProps{
     height? : string;
 }
 
-export default function Modal( { onClose, close, children, footer, width = '400px', height = '500px' } : ModalProps) {    
+export default function Modal( { close, children, footer, width = '400px', height = '500px' } : ModalProps) {
     return ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
             <div

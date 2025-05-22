@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useTagContext } from "../../store/TagContext";
+import {useTagContext} from "../../store/TagContext";
 import { Tag } from "../../store/TagContext";
 import search from '@/assets/images/magnifying-glass.png';
 import RoundedBtn from "../Button/RoundedBtn";
 import Modal from "./Modal";
-import { Category, useCategoryContext } from "../../store/CategoryContext";
+// import { Category, useCategoryContext } from "../../store/CategoryContext";
 
 interface SearchModalProps {
   isOpen?: boolean;
@@ -14,7 +14,7 @@ interface SearchModalProps {
 
 export default function SearchModal({ isOpen, onClose, onClick }: SearchModalProps) {
   const { tags } = useTagContext();
-  const { category } = useCategoryContext();
+  //  const { category } = useCategoryContext();
   const [inputText, setInputText] = useState('');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
