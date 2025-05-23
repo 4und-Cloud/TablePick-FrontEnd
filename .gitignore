@@ -25,12 +25,10 @@ dist-ssr
 .env
 
 ### FCM 관련 민감 정보
+firebase-messaging-sw.js
 **/firebase-messaging-sw.js
-**/**/firebase-messaging-sw.js
-**/**/**/firebase-messaging-sw.js
 
+firebase.ts
 **/firebase.ts
-**/**/firebase.ts
-**/**/**/firebase.ts
 
 
