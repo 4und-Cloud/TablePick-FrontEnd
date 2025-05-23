@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import { getMemberNotifications } from "../lib/firebase"
 import useAuth from "../hooks/useAuth"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { useNavigate } from "react-router-dom"
+import { getMemberNotifications } from "../lib/firebase"
 
 // 알림 타입 정의
 interface Notification {
