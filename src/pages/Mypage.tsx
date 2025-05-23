@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { useUserExtraInfo } from "../store/UserInfoContext"
+import {useEffect, useState} from "react";
+import {useUserExtraInfo} from "../store/UserInfoContext"
 import go5rae from '@/assets/images/profile_img.jpg';
 import FilterModal from "../components/Modal/FilterModal";
 import useModal from "../hooks/useModal";
 import useAuth from "../hooks/useAuth";
 
 interface MypageUserInfo {
-    profileImg? : string;
+    profileImg?: string;
     name?: string;
     email?: string;
     gender: 'male' | 'female';
@@ -22,7 +22,7 @@ export default function Mypage() {
 
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-    const { userInfo, setUserInfo } = useUserExtraInfo();
+    const {userInfo, setUserInfo} = useUserExtraInfo();
     const [formData, setFormData] = useState<MypageUserInfo>({
         profileImg: go5rae,
         name: 'go5rae',  // 더미 이름
@@ -36,38 +36,37 @@ export default function Mypage() {
     useEffect(() => {
         const savedAdditionalData = localStorage.getItem('userAdditionalInfo');
         const savedBasicData = localStorage.getItem('userInfo');
-      
+
         console.log("🟡 userInfo from context:", userInfo);
         console.log("🟢 savedAdditionalData:", savedAdditionalData);
         console.log("🔵 savedBasicData:", savedBasicData);
-      
+
         if (savedAdditionalData) {
-          const parsedAdditional = JSON.parse(savedAdditionalData);
-          console.log("✅ parsedAdditional.profileImg:", parsedAdditional.profileImg);
-          setFormData(parsedAdditional);
+            const parsedAdditional = JSON.parse(savedAdditionalData);
+            console.log("✅ parsedAdditional.profileImg:", parsedAdditional.profileImg);
+            setFormData(parsedAdditional);
         } else if (userInfo) {
-          console.log("✅ userInfo.profileImage:", userInfo.profileImage);
-          setFormData({
-            gender: userInfo.gender as 'male' | 'female',
-            birthdate: userInfo.birthdate || '',
-            phoneNumber: userInfo.phoneNumber || '',
-            tags: userInfo.tags || [],
-          });
+            console.log("✅ userInfo.profileImage:", userInfo.profileImage);
+            setFormData({
+                gender: userInfo.gender as 'male' | 'female',
+                birthdate: userInfo.birthdate || '',
+                phoneNumber: userInfo.phoneNumber || '',
+                tags: userInfo.tags || [],
+            });
         }
-      }, [userInfo]);
-      
+    }, [userInfo]);
 
 
     const handleTagAdd = () => {
         setFormData(prev => ({
-          ...prev,
-          tags: selectedTags
+            ...prev,
+            tags: selectedTags
         }));
         closeModal();
-      };
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData(prevState => ({
             ...prevState,
             [name]: value
@@ -79,7 +78,6 @@ export default function Mypage() {
         localStorage.setItem('userAdditionalInfo', JSON.stringify(formData)); // 저장
         alert('정보 저장 완료');
     };
-
 
 
     return (
@@ -101,11 +99,11 @@ export default function Mypage() {
                 <div className="flex-grow">
                     <div className="mb-4">
                         <label htmlFor="tags" className="block text-sm font-medium text-gray-700">관심 태그</label>
-                        
+
                         <div className="mt-2 relative">
                             <div className="flex flex-wrap gap-2 pr-12 max-h-32 overflow-y-auto rounded pt-2 ">
                                 {formData.tags.length > 0 ? (
-                                    
+
                                     formData.tags.map((tag, index) => (
                                         <span
                                             key={index}
@@ -118,17 +116,22 @@ export default function Mypage() {
                                     <p className="text-gray-500">선택된 태그가 없습니다.</p>
                                 )}
                             </div>
-                            
+
                             <button
-                            type="button"
-                            onClick={() => {setSelectedTags(formData.tags); openModal();}}
-                            className="px-3 bg-main text-white rounded-full text-lg absolute right-0 top-1/2 -translate-y-1/2"
-                        >
-                            +
-                        </button>
+                                type="button"
+                                onClick={() => {
+                                    setSelectedTags(formData.tags);
+                                    openModal();
+                                }}
+                                className="px-3 bg-main text-white rounded-full text-lg absolute right-0 top-1/2 -translate-y-1/2"
+                            >
+                                +
+                            </button>
                         </div>
-                        
-                        {isOpen && (<FilterModal mode="tag" selectedTags={selectedTags} setSelectedTags={setSelectedTags} onClick={handleTagAdd} onClose={closeModal} />)}
+
+                        {isOpen && (
+                            <FilterModal mode="tag" selectedTags={selectedTags} setSelectedTags={setSelectedTags}
+                                         onClick={handleTagAdd} onClose={closeModal}/>)}
                     </div>
                 </div>
             </div>
@@ -210,7 +213,6 @@ export default function Mypage() {
                     />
                 </div>
 
-                
 
                 <div className="flex justify-end space-x-4">
                     <button
@@ -230,7 +232,7 @@ export default function Mypage() {
                 </div>
             </div>
 
-            
+
         </div>
     );
 }

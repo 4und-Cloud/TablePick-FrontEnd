@@ -1,6 +1,6 @@
 // auth 커스텀 훅
-import { useContext } from "react"
-import { AuthContext, type AuthContextType } from "../store/AuthContext"
+import {useContext} from "react"
+import {AuthContext, type AuthContextType} from "../store/AuthContext"
 
 // 훅 선언
 export default function useAuth(): AuthContextType {

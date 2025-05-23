@@ -1,5 +1,5 @@
 export default function Test() {
-    return(
+    return (
         <>
             <div>
                 테스트

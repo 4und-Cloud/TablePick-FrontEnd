@@ -1,10 +1,10 @@
-import { useState } from "react";
+import {useState} from "react";
 
 export default function usePagination(totalPagesFromBackend: number) {
     const [currentPage, setCurrentPage] = useState(1);
 
-    const setPage = (page:number) => {
-        if(page >= 1 && page <= totalPagesFromBackend) {
+    const setPage = (page: number) => {
+        if (page >= 1 && page <= totalPagesFromBackend) {
             setCurrentPage(page);
         }
     };
@@ -12,7 +12,7 @@ export default function usePagination(totalPagesFromBackend: number) {
     const goToNextPage = () => {
         setPage(currentPage + 1);
     };
-    
+
     const goToPrevPage = () => {
         setPage(currentPage - 1);
     };
@@ -25,7 +25,7 @@ export default function usePagination(totalPagesFromBackend: number) {
         setPage(totalPagesFromBackend);
     }
 
-    return{
+    return {
         currentPage, totalPagesFromBackend, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage
     };
 };
