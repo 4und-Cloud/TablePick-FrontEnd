@@ -1,5 +1,5 @@
 import pic from "@/assets/images/login.png"
-import {getFCMToken, getSavedFCMToken, saveFCMToken} from "../../lib/firebase"
+import { getFCMToken, getSavedFCMToken, saveFCMToken } from "../../lib/firebase"
 import {useState} from "react"
 
 interface LoginModalProps {

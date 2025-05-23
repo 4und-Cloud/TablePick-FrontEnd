@@ -7,6 +7,6 @@ export const kakaoLoginHandler = () => {
 
     // console.log(REST_API_KEY);
     // console.log(REDIRECT_URI);
-    const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;    
+    const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
     window.location.href = link;
 };
