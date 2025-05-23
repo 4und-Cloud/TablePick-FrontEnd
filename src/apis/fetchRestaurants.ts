@@ -9,7 +9,7 @@
 // }
 
 // export const fetchRestaurants = async(token : string) : Promise<RestaurantData[]> => {
-//     const response = await axios.get(`${import.meta..env.VITE_TABLE_PICK_URL}/api/restaurants/list`, {
+//     const response = await axios.get(`${import.meta.env.VITE_TABLE_PICK_URL}/api/restaurants/list`, {
 //         headers: {
 //             Authorization: `Bearer ${token}`,
 //         },

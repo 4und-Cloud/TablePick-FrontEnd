@@ -1,18 +1,9 @@
-<<<<<<< HEAD
 import { useEffect, useState } from "react"
 import useAuth from "../hooks/useAuth"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { useNavigate } from "react-router-dom"
 import { getMemberNotifications } from "../lib/firebase"
-=======
-import {useEffect, useState} from "react"
-import {getMemberNotifications} from "../lib/firebase"
-import useAuth from "../hooks/useAuth"
-import {format} from "date-fns"
-import {ko} from "date-fns/locale"
-import {useNavigate} from "react-router-dom"
->>>>>>> 5f5f8e81c804eb1fcf31ce362911a9336c354061
 
 // 알림 타입 정의
 interface Notification {
@@ -25,7 +16,7 @@ interface Notification {
 }
 
 export default function NotificationsPage() {
-    const {user, isAuthenticated} = useAuth()
+    const { user, isAuthenticated } = useAuth()
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -144,7 +135,7 @@ export default function NotificationsPage() {
     // 날짜 포맷팅 함수
     const formatDate = (dateString: string) => {
         try {
-            return format(new Date(dateString), "yyyy년 MM월 dd일 HH:mm", {locale: ko})
+            return format(new Date(dateString), "yyyy년 MM월 dd일 HH:mm", { locale: ko })
         } catch (e) {
             return dateString
         }
@@ -200,8 +191,7 @@ export default function NotificationsPage() {
                                                 <h3 className={`font-bold ${style.textColor}`}>{notification.title || style.label}</h3>
                                                 <p className="text-gray-700 mt-1">{notification.message}</p>
                                             </div>
-                                            <span
-                                                className="text-sm text-gray-500">{formatDate(notification.sentAt)}</span>
+                                            <span className="text-sm text-gray-500">{formatDate(notification.sentAt)}</span>
                                         </div>
                                     </div>
                                 </div>

@@ -1,6 +1,7 @@
+
 import type React from "react"
-import {useState} from "react"
-import {deleteFCMToken} from "../../lib/firebase"
+import { useState } from "react"
+import { deleteFCMToken } from "../../lib/firebase"
 
 interface LogoutButtonProps {
     userId: string | number
@@ -9,7 +10,7 @@ interface LogoutButtonProps {
     children?: React.ReactNode
 }
 
-export default function LogoutButton({userId, onLogout, className = "", children}: LogoutButtonProps) {
+export default function LogoutButton({ userId, onLogout, className = "", children }: LogoutButtonProps) {
     const [isLoggingOut, setIsLoggingOut] = useState(false)
 
     const handleLogout = async () => {

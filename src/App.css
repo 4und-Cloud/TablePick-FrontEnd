@@ -8,9 +8,9 @@
 
 .border-top {
     position: relative;
-}
-
-.border-top::before {
+  }
+  
+  .border-top::before {
     content: '';
     position: absolute;
     top: 0;
@@ -18,4 +18,5 @@
     width: 100%;
     height: 1px;
     background-color: #d1d5db; /* Tailwind의 border-gray-300 */
-}
+  }
+  
