@@ -1,23 +1,29 @@
-import { useState } from "react";
+import {useState} from "react";
 import Checkbox from "../Checkbox";
 import Modal from "./Modal";
 import RoundedBtn from "../Button/RoundedBtn";
 
 interface FilterModalProps {
     isOpen?: boolean;
-    mode? : 'filter' | 'tag';
-    selectedTags : string[];
+    mode?: 'filter' | 'tag';
+    selectedTags: string[];
     setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>;
-    onClose : () => void;
-    onClick? : () => void;
+    onClose: () => void;
+    onClick?: () => void;
 }
 
-export default function FilterModal  ({mode = 'filter', selectedTags, setSelectedTags, onClose, onClick} : FilterModalProps) {
+export default function FilterModal({
+                                        mode = 'filter',
+                                        selectedTags,
+                                        setSelectedTags,
+                                        onClose,
+                                        onClick
+                                    }: FilterModalProps) {
     const tabs = [
-        ...(mode === 'filter' ? [{name : '음식 종류', id: 'foodType'}] : []),
+        ...(mode === 'filter' ? [{name: '음식 종류', id: 'foodType'}] : []),
         {name: '음식 / 가격', id: 'price'},
-        {name : '분위기' , id : 'vibe'},
-        {name : '기타', id:'etc'},
+        {name: '분위기', id: 'vibe'},
+        {name: '기타', id: 'etc'},
     ];
 
     const handleToggleTag = (tag: string) => {
@@ -37,19 +43,24 @@ export default function FilterModal  ({mode = 'filter', selectedTags, setSelecte
     const [activeTab, setActiveTab] = useState(tabs[0].id);
 
     return (
-        <Modal onClose={onClose} close={<button onClick={onClose} className="text-main font-bold text-xl inset-0 z-50">X</button>} footer={
-            <RoundedBtn
-              text="적용하기"
-              bgColor="bg-main"
-              textColor="text-white"
-              borderColor="border-main"
-              hoverColor="hover:bg-white"
-              hoverTextColor="hover:text-main"
-              hoverBorderColor="hover:border-main"
-              width="w-full"
-              onClick={() => {onClick?.(); onClose();}}
-            />
-          }>
+        <Modal onClose={onClose}
+               close={<button onClick={onClose} className="text-main font-bold text-xl inset-0 z-50">X</button>}
+               footer={
+                   <RoundedBtn
+                       text="적용하기"
+                       bgColor="bg-main"
+                       textColor="text-white"
+                       borderColor="border-main"
+                       hoverColor="hover:bg-white"
+                       hoverTextColor="hover:text-main"
+                       hoverBorderColor="hover:border-main"
+                       width="w-full"
+                       onClick={() => {
+                           onClick?.();
+                           onClose();
+                       }}
+                   />
+               }>
             <div className="m-3">
                 <p className="text-main font-bold text-2xl mb-2">{mode === 'filter' ? '필터' : '태그 추가'}</p>
 
@@ -90,20 +101,23 @@ export default function FilterModal  ({mode = 'filter', selectedTags, setSelecte
                 {/* 태그 내용 */}
                 <div className="space-y-4 mt-4 text-lg">
                     {activeTab === 'foodType' && (
-                        <Checkbox tags={['일식', '중식', '한식']} selected={selectedTags} onToggle={handleToggleTag} />
+                        <Checkbox tags={['일식', '중식', '한식']} selected={selectedTags} onToggle={handleToggleTag}/>
                     )}
                     {activeTab === 'price' && (
-                        <Checkbox tags={['가성비가 좋아요', '비싸요', '나쁘지 않은 가격']} selected={selectedTags} onToggle={handleToggleTag} />
+                        <Checkbox tags={['가성비가 좋아요', '비싸요', '나쁘지 않은 가격']} selected={selectedTags}
+                                  onToggle={handleToggleTag}/>
                     )}
                     {activeTab === 'vibe' && (
-                        <Checkbox tags={['조용해요', '시끄러워요', '작업하기 좋아요']} selected={selectedTags} onToggle={handleToggleTag} />
+                        <Checkbox tags={['조용해요', '시끄러워요', '작업하기 좋아요']} selected={selectedTags}
+                                  onToggle={handleToggleTag}/>
                     )}
                     {activeTab === 'etc' && (
-                        <Checkbox tags={['주차하기 좋아요', '특별한 메뉴가 있어요', '주차장이 좁아요']} selected={selectedTags} onToggle={handleToggleTag} />
+                        <Checkbox tags={['주차하기 좋아요', '특별한 메뉴가 있어요', '주차장이 좁아요']} selected={selectedTags}
+                                  onToggle={handleToggleTag}/>
                     )}
                 </div>
 
-                
+
             </div>
         </Modal>
     );

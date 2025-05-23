@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 
 export interface Category {
     id: number;
@@ -13,11 +13,11 @@ interface CategoryContextType {
 
 const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
 
-export const CategoryProvider = ({children} : {children: React.ReactNode}) => {
+export const CategoryProvider = ({children}: { children: React.ReactNode }) => {
     const [category, setCategory] = useState<Category[]>([]);
 
-    const fetchCategory = async() => {
-        try{
+    const fetchCategory = async () => {
+        try {
             const {data} = await axios.get('http://localhost:8080/api/category', {
                 headers: {
                     Accept: 'Application/json'
@@ -33,7 +33,7 @@ export const CategoryProvider = ({children} : {children: React.ReactNode}) => {
         fetchCategory();
     }, []);
 
-    return(
+    return (
         <CategoryContext.Provider value={{category, fetchCategory}}>
             {children}
         </CategoryContext.Provider>
@@ -42,7 +42,7 @@ export const CategoryProvider = ({children} : {children: React.ReactNode}) => {
 
 export const useCategoryContext = () => {
     const context = useContext(CategoryContext);
-    if(!context) {
+    if (!context) {
         throw new Error('useCategoryContext must be used within a CategoryProvider');
     }
     return context;
