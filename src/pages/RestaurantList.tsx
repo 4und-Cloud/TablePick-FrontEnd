@@ -87,7 +87,7 @@ export default function RestaurantList() {
 
             {isOpen && (
                 <FilterModal onClose={closeModal} selectedTags={selectedTags} setSelectedTags={setSelectedTags}
-                             mode="filter"/>
+                         />
             )}
 
             <div>

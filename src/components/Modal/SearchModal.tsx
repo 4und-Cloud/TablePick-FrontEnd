@@ -4,7 +4,6 @@ import { Tag } from "../../store/TagContext";
 import search from '@/assets/images/magnifying-glass.png';
 import RoundedBtn from "../Button/RoundedBtn";
 import Modal from "./Modal";
-// import { Category, useCategoryContext } from "../../store/CategoryContext";
 
 interface SearchModalProps {
   isOpen?: boolean;

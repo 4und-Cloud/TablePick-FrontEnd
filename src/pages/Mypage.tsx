@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useUserExtraInfo } from "../store/UserInfoContext"
 import go5rae from '@/assets/images/profile_img.jpg';
-import FilterModal from "../components/Modal/FilterModal";
-import useModal from "../hooks/useModal";
+//import FilterModal from "../components/Modal/FilterModal";
+//import useModal from "../hooks/useModal";
 import useAuth from "../hooks/useAuth";
+//import defaultProfile from '@/assets/images/user.png';
 
 interface MypageUserInfo {
     profileImg? : string;
-    name?: string;
+    nickname?: string;
     email?: string;
     gender: 'male' | 'female';
     birthdate: string;
@@ -18,14 +19,14 @@ interface MypageUserInfo {
 export default function Mypage() {
     const {user} = useAuth();
 
-    const {isOpen, openModal, closeModal} = useModal({initialState: false});
+    //const {isOpen, openModal, closeModal} = useModal({initialState: false});
 
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    //const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
     const { userInfo, setUserInfo } = useUserExtraInfo();
     const [formData, setFormData] = useState<MypageUserInfo>({
         profileImg: go5rae,
-        name: 'go5rae',  // 더미 이름
+        nickname: 'go5rae',  // 더미 이름
         email: 'coqnrl115@naver.com',  // 더미 이메일
         gender: 'male',
         birthdate: '',
@@ -58,13 +59,13 @@ export default function Mypage() {
       
 
 
-    const handleTagAdd = () => {
-        setFormData(prev => ({
-          ...prev,
-          tags: selectedTags
-        }));
-        closeModal();
-      };
+    // const handleTagAdd = () => {
+    //     setFormData(prev => ({
+    //       ...prev,
+    //       tags: selectedTags
+    //     }));
+    //     closeModal();
+    //   };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -91,7 +92,7 @@ export default function Mypage() {
                 {/* 프로필 이미지 */}
                 <div className="flex-shrink-0">
                     <img
-                        src={user.image || go5rae}
+                        src={user.profileImage}
                         alt="Profile"
                         className="w-32 h-32 rounded-full"
                     />
@@ -119,16 +120,16 @@ export default function Mypage() {
                                 )}
                             </div>
                             
-                            <button
+                            {/* <button
                             type="button"
                             onClick={() => {setSelectedTags(formData.tags); openModal();}}
                             className="px-3 bg-main text-white rounded-full text-lg absolute right-0 top-1/2 -translate-y-1/2"
                         >
                             +
-                        </button>
+                        </button> */}
                         </div>
                         
-                        {isOpen && (<FilterModal mode="tag" selectedTags={selectedTags} setSelectedTags={setSelectedTags} onClick={handleTagAdd} onClose={closeModal} />)}
+                        {/* {isOpen && (<FilterModal selectedTags={selectedTags} setSelectedTags={setSelectedTags} onClick={handleTagAdd} onClose={closeModal} />)} */}
                     </div>
                 </div>
             </div>
@@ -141,7 +142,7 @@ export default function Mypage() {
                         type="text"
                         id="name"
                         name="name"
-                        value={user.name}
+                        value={user.nickname}
                         onChange={handleChange}
                         className="mt-2 p-2 w-full border border-gray-300 rounded"
                     />
