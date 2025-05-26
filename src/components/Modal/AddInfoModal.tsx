@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Modal from "./Modal";
-import RoundedBtn from "../Button/RoundedBtn";
-import Calendar from "react-calendar";
-import {Value} from "react-calendar/src/shared/types.js";
-import FilterModal from "./FilterModal";
-import useModal from "../../hooks/useModal";
-import useAuth from "../../hooks/useAuth";
-import { useTagContext } from "../../store/TagContext";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Modal from './Modal';
+import RoundedBtn from '../Button/RoundedBtn';
+import Calendar from 'react-calendar';
+import { Value } from 'react-calendar/src/shared/types.js';
+import FilterModal from './FilterModal';
+import useModal from '../../hooks/useModal';
+import useAuth from '../../hooks/useAuth';
+import { useTagContext } from '../../store/TagContext';
 import 'react-calendar/dist/Calendar.css';
 
 interface AddinfoModalProps {
@@ -25,16 +25,26 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
   const [phone, setPhone] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
 
-  const { isOpen: isFilterModalOpen, openModal: openFilterModal, closeModal: closeFilterModal } = useModal({
+  const {
+    isOpen: isFilterModalOpen,
+    openModal: openFilterModal,
+    closeModal: closeFilterModal,
+  } = useModal({
     initialState: false,
   });
 
-  console.log('useModal:', useModal())
+  console.log('useModal:', useModal());
 
   useEffect(() => {
     if (isOpen && user && tags.length > 0) {
       console.log('user.tags : ', user.tags);
-      setGender(user.gender === 'MALE' ? 'male' : user.gender === 'FEMALE' ? 'female' : undefined);
+      setGender(
+        user.gender === 'MALE'
+          ? 'male'
+          : user.gender === 'FEMALE'
+            ? 'female'
+            : undefined
+      );
       setDate(user.birthdate ? new Date(user.birthdate) : null);
       setPhone(user.phoneNumber || '');
       if (Array.isArray(user.tags)) {
@@ -61,7 +71,8 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
   const formatPhoneNumber = (value: string) => {
     const numbers = value.replace(/\D/g, '');
     if (numbers.length <= 3) return numbers;
-    if (numbers.length <= 7) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    if (numbers.length <= 7)
+      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
     return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
   };
 
@@ -72,9 +83,10 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
 
   const handleApply = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
+      const apiUrl = 'http://localhost:8080';
       const updatedData = {
-        gender: gender === 'male' ? 'MALE' : gender === 'female' ? 'FEMALE' : '',
+        gender:
+          gender === 'male' ? 'MALE' : gender === 'female' ? 'FEMALE' : '',
         birthdate: date ? date.toISOString().slice(0, 10) : '',
         phoneNumber: phone,
         tags: selectedTagIds,
@@ -82,7 +94,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
 
       await axios.patch(`${apiUrl}/api/members`, updatedData, {
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/json',
         },
         withCredentials: true,
@@ -129,7 +141,9 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
         <div className="m-3 space-y-4">
           <div>
             <p className="text-main font-bold text-2xl">추가 정보 입력</p>
-            <p className="text-gray-500 font-semibold">서비스 이용을 위해 추가 정보를 입력해주세요!</p>
+            <p className="text-gray-500 font-semibold">
+              서비스 이용을 위해 추가 정보를 입력해주세요!
+            </p>
           </div>
 
           {/* 성별 */}
@@ -222,14 +236,13 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
         selectedTags={selectedTagIds}
         setSelectedTags={setSelectedTagIds}
         onClose={() => {
-          console.log("FilterModal 닫기 호출");
+          console.log('FilterModal 닫기 호출');
           closeFilterModal();
         }}
         onClick={() => {
-          console.log("FilterModal 적용, 선택된 태그:", selectedTagIds);
+          console.log('FilterModal 적용, 선택된 태그:', selectedTagIds);
           closeFilterModal();
         }}
-        
       />
     </>
   );
