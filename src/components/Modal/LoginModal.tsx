@@ -47,9 +47,7 @@ export default function LoginModal({isOpen, onClose}: LoginModalProps) {
                 {once: true},
             )
 
-            // 로그인 URL로 리다이렉트
-            // window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`
-            const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL || "http://localhost:8080"
+            const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
             window.location.href = `${apiUrl}/oauth2/authorization/${provider}`
         } catch (error) {
             console.error("로그인 처리 중 오류:", error)

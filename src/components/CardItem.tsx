@@ -18,20 +18,19 @@ export interface CardItemProps {
 }
 
 export default function CardItem({
-                                     id,
-                                     linkTo,
-                                     image,
-                                     containerStyle,
-                                     imageStyle,
-                                     restaurantNameStyle,
-                                     restaurantName,
-                                     description,
-                                     tags = [],
-                                     reservationInfo,
-                                     button,
-                                     buttonPosition,
-
-                                 }: CardItemProps) {
+    id,
+    linkTo,
+    image,
+    containerStyle,
+    imageStyle,
+    restaurantNameStyle,
+    restaurantName,
+    description,
+    tags = [],
+    reservationInfo,
+    button,
+    buttonPosition,
+  }: CardItemProps) {
     const navigate = useNavigate();
 
     const handleClick = () => {

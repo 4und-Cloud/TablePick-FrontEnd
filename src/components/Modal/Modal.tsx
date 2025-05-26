@@ -3,13 +3,17 @@ import ReactDOM from 'react-dom';
 interface ModalProps {
     onClose?: () => void;
     children: React.ReactNode;
-    close?: React.ReactNode; // 닫기 버튼 자리
-    footer?: React.ReactNode; // 하단 버튼 자리
-    width?: string;
-    height?: string;
+    close? : React.ReactNode; // 닫기 버튼 자리
+    footer? : React.ReactNode; // 하단 버튼 자리
+    width? : string;
+    height? : string;
+    type? : string;
 }
 
-export default function Modal({close, children, footer, width = '400px', height = '500px'}: ModalProps) {
+export default function Modal( { close, children, footer, width = '400px', height = '500px', type } : ModalProps) {
+
+    console.log('modal:', close)
+    console.log('type:', type)
     return ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
             <div
