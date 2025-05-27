@@ -1,20 +1,31 @@
-import {useEffect, useState} from "react";
-import {useUserExtraInfo} from "../store/UserInfoContext"
+import { useState, useEffect } from "react";
+import { useUserExtraInfo } from "../store/UserInfoContext"
 import go5rae from '@/assets/images/profile_img.jpg';
 //import FilterModal from "../components/Modal/FilterModal";
 //import useModal from "../hooks/useModal";
 import useAuth from "../hooks/useAuth";
-//import defaultProfile from '@/assets/images/user.png';
+import defaultProfile from '@/assets/images/user.png';
+import { useTagContext } from "../store/TagContext";
+import { deflate } from "zlib";
+
+type Gender = '' | 'male' | 'female';
 
 interface MypageUserInfo {
-    profileImg? : string;
-    nickname?: string;
-    email?: string;
-    gender: 'male' | 'female';
-    birthdate: string;
-    phoneNumber: string;
-    tags: string[];
+  profileImage? : string;
+  nickname?: string;
+  email?: string;
+	gender: Gender;
+  birthdate: string;
+  phoneNumber: string;
+  memberTags: number[];
 }
+
+// gender 값을 정규화하는 함수
+const normalizeGender = (gender?: string): Gender => {
+  if (!gender) return '';
+  const normalized = gender.toUpperCase();
+  return normalized === 'MALE' ? 'male' : normalized === 'FEMALE' ? 'female' : '';
+};
 
 export default function Mypage() {
     const {user} = useAuth();
@@ -23,7 +34,7 @@ export default function Mypage() {
 
     //const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-    const {userInfo, setUserInfo} = useUserExtraInfo();
+    const { userInfo, setUserInfo } = useUserExtraInfo();
     const [formData, setFormData] = useState<MypageUserInfo>({
         profileImg: go5rae,
         nickname: 'go5rae',  // 더미 이름
@@ -37,25 +48,26 @@ export default function Mypage() {
     useEffect(() => {
         const savedAdditionalData = localStorage.getItem('userAdditionalInfo');
         const savedBasicData = localStorage.getItem('userInfo');
-
+      
         console.log("🟡 userInfo from context:", userInfo);
         console.log("🟢 savedAdditionalData:", savedAdditionalData);
         console.log("🔵 savedBasicData:", savedBasicData);
-
+      
         if (savedAdditionalData) {
-            const parsedAdditional = JSON.parse(savedAdditionalData);
-            console.log("✅ parsedAdditional.profileImg:", parsedAdditional.profileImg);
-            setFormData(parsedAdditional);
+          const parsedAdditional = JSON.parse(savedAdditionalData);
+          console.log("✅ parsedAdditional.profileImg:", parsedAdditional.profileImg);
+          setFormData(parsedAdditional);
         } else if (userInfo) {
-            console.log("✅ userInfo.profileImage:", userInfo.profileImage);
-            setFormData({
-                gender: userInfo.gender as 'male' | 'female',
-                birthdate: userInfo.birthdate || '',
-                phoneNumber: userInfo.phoneNumber || '',
-                tags: userInfo.tags || [],
-            });
+          console.log("✅ userInfo.profileImage:", userInfo.profileImage);
+          setFormData({
+            gender: userInfo.gender as 'male' | 'female',
+            birthdate: userInfo.birthdate || '',
+            phoneNumber: userInfo.phoneNumber || '',
+            tags: userInfo.tags || [],
+          });
         }
-    }, [userInfo]);
+      }, [userInfo]);
+      
 
 
     // const handleTagAdd = () => {
@@ -67,7 +79,7 @@ export default function Mypage() {
     //   };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
             [name]: value
@@ -81,30 +93,32 @@ export default function Mypage() {
     };
 
 
-    return (
-        <div className="mt-[120px] max-w-3xl mx-auto p-6 bg-white rounded-md shadow relative">
-            <h2 className="text-xl font-bold text-orange-500 mb-6">회원 정보 수정</h2>
 
-            {/* 좌측: 이미지와 관심 태그 */}
-            <div className="flex items-start mb-6 space-x-6">
-                {/* 프로필 이미지 */}
-                <div className="flex-shrink-0">
-                    <img
-                        src={user.profileImage}
-                        alt="Profile"
-                        className="w-32 h-32 rounded-full"
-                    />
-                </div>
+	return (
+		<>
+			<div className="mt-[80px] max-w-3xl mx-auto p-6 bg-white rounded-md shadow relative">
+        <h2 className="text-xl font-bold text-orange-500 mb-6">회원 정보 수정</h2>
+
+        {/* 좌측: 이미지와 관심 태그 */}
+        <div className="flex items-start mb-6 space-x-6">
+          {/* 프로필 이미지 */}
+          <div className="flex-shrink-0">
+            <img
+              src={formData.profileImage || defaultProfile}
+              alt="Profile"
+              className="w-32 h-32 rounded-full"
+            />
+          </div>
 
                 {/* 관심 태그 */}
                 <div className="flex-grow">
                     <div className="mb-4">
                         <label htmlFor="tags" className="block text-sm font-medium text-gray-700">관심 태그</label>
-
+                        
                         <div className="mt-2 relative">
                             <div className="flex flex-wrap gap-2 pr-12 max-h-32 overflow-y-auto rounded pt-2 ">
                                 {formData.tags.length > 0 ? (
-
+                                    
                                     formData.tags.map((tag, index) => (
                                         <span
                                             key={index}
@@ -118,84 +132,82 @@ export default function Mypage() {
                                 )}
                             </div>
                             
-                            {/* <button
-                            type="button"
-                            onClick={() => {setSelectedTags(formData.tags); openModal();}}
-                            className="px-3 bg-main text-white rounded-full text-lg absolute right-0 top-1/2 -translate-y-1/2"
-                        >
-                            +
-                        </button> */}
-                        </div>
-                        
-                        {/* {isOpen && (<FilterModal selectedTags={selectedTags} setSelectedTags={setSelectedTags} onClick={handleTagAdd} onClose={closeModal} />)} */}
-                    </div>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {setSelectedTags(formData.memberTags); openModal();}}
+                  className="px-3 bg-main text-white rounded-full text-lg absolute right-0 top-1/2 -translate-y-1/2"
+                >
+                	+
+                </button>
+              </div>
             </div>
+          </div>
+        </div>
 
-            {/* 우측: form */}
-            <div>
-                <div className="mb-4">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">이름</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={user.nickname}
-                        onChange={handleChange}
-                        className="mt-2 p-2 w-full border border-gray-300 rounded"
-                    />
-                </div>
+        {/* 우측: form */}
+        <div>
+          <div className="mb-4">
+            <label htmlFor="nickname" className="block text-sm font-medium text-gray-700">이름</label>
+            <input
+              type="text"
+              id="nickname"
+              name="nickname"
+              value={formData.nickname}
+              onChange={handleChange}
+              className="mt-2 p-2 w-full border border-gray-300 rounded"
+            />
+          </div>
 
-                <div className="mb-4">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">이메일</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={user.email}
-                        onChange={handleChange}
-                        className="mt-2 p-2 w-full border border-gray-300 rounded"
-                        readOnly
-                    />
-                </div>
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">이메일</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="mt-2 p-2 w-full border border-gray-300 rounded"
+              readOnly
+            />
+        	</div>
 
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">성별</label>
-                    <div className="flex items-center">
-                        <label className="mr-5">
-                            <input
-                                className="mr-2"
-                                type="radio"
-                                name="gender"
-                                value="male"
-                                checked={formData.gender === 'male'}
-                                onChange={handleChange}
-                            /> 남성
-                        </label>
-                        <label>
-                            <input
-                                className="mr-2"
-                                type="radio"
-                                name="gender"
-                                value="female"
-                                checked={formData.gender === 'female'}
-                                onChange={handleChange}
-                            /> 여성
-                        </label>
-                    </div>
-                </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">성별</label>
+            <div className="flex items-center">
+              <label className="mr-5">
+                <input
+                  className="mr-2"
+                  type="radio"
+                  name="gender"
+                  value="male"
+                  checked={formData.gender === 'male'}
+                  onChange={handleChange}
+                /> 남성
+              </label>
+              <label>
+                <input
+                	className="mr-2"
+                  type="radio"
+                  name="gender"
+                  value="female"
+                  checked={formData.gender === 'female'}
+                  onChange={handleChange}
+                /> 여성
+              </label>
+            </div>
+          </div>
 
-                <div className="mb-4">
-                    <label htmlFor="birth" className="block text-sm font-medium text-gray-700">생일</label>
-                    <input
-                        type="date"
-                        id="birth"
-                        name="birthdate"
-                        value={formData.birthdate}
-                        onChange={handleChange}
-                        className="mt-2 p-2 w-full border border-gray-300 rounded"
-                    />
-                </div>
+          <div className="mb-4">
+            <label htmlFor="birth" className="block text-sm font-medium text-gray-700">생일</label>
+            <input
+              type="date"
+              id="birth"
+              name="birthdate"
+              value={formData.birthdate}
+              onChange={handleChange}
+              className="mt-2 p-2 w-full border border-gray-300 rounded"
+            />
+          </div>
 
                 <div className="mb-4">
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700">전화번호</label>
@@ -209,6 +221,7 @@ export default function Mypage() {
                     />
                 </div>
 
+                
 
                 <div className="flex justify-end space-x-4">
                     <button
@@ -228,7 +241,7 @@ export default function Mypage() {
                 </div>
             </div>
 
-
+            
         </div>
     );
 }

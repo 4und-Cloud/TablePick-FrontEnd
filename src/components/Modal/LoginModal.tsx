@@ -55,7 +55,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         { once: true }
       );
 
-      const apiUrl = 'http://localhost:8080';
+      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
       window.location.href = `${apiUrl}/oauth2/authorization/${provider}`;
     } catch (error) {
       console.error('로그인 처리 중 오류:', error);
@@ -75,7 +75,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </button>
           {/* 왼쪽 영역 */}
           <div className="w-1/2 flex items-center justify-center ">
-            <img src={pic || '/placeholder.svg'} alt="로그인 이미지" />
+            <img src={pic} alt="로그인 이미지" />
           </div>
           <div className="absolute bg-black bg-opacity-10 left-1/2 w-px h-full transform -translate-x-1/2"></div>
           {/* 오른쪽 영역 */}
