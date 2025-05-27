@@ -48,7 +48,7 @@ export default function AuthHeader() {
         <div className="container flex h-16 items-center justify-between">
           {/* logo */}
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo || '/placeholder.svg'} alt="Logo" className="h-10" />
+            <img src={logo} alt="Logo" className="h-10" />
           </Link>
 
           {/* 네비게이션 */}
@@ -103,7 +103,7 @@ export default function AuthHeader() {
               className="text-muted-foreground hover:text-foreground"
             >
               <img
-                src={search || '/placeholder.svg'}
+                src={search}
                 alt="Search"
                 className="w-[32px] h-[32px]"
               />
@@ -116,7 +116,7 @@ export default function AuthHeader() {
                 className="text-muted-foreground hover:text-foreground relative"
               >
                 <img
-                  src={alarmRing || '/placeholder.svg'}
+                  src={alarmRing}
                   alt="Notifications"
                   className="w-[32px] h-[32px]"
                 />

@@ -80,7 +80,7 @@ function RestaurantCard({
       {/* 이미지 컨테이너 */}
       <div className="w-full h-[250px] overflow-hidden">
         <img
-          src={item.imageUrl || '/placeholder.svg'}
+          src={item.imageUrl}
           alt={item.name}
           className="w-full h-full object-cover"
         />
@@ -102,7 +102,7 @@ function RestaurantCard({
           {/* 주소 */}
           <div className="flex items-start text-medium text-gray-600 mt-1 gap-1">
             <img
-              src={loc || '/placeholder.svg'}
+              src={loc}
               alt="location icon"
               className="w-4 h-4 mr-1"
             />
@@ -162,7 +162,7 @@ function PostCard({ item, onClick }: { item: PostItem; onClick?: () => void }) {
           {/* 내용 */}
           <div className="flex items-start text-medium text-gray-600 mt-1 gap-1">
             <img
-              src={content || '/placeholder.svg'}
+              src={content}
               alt="location icon"
               className="w-4 h-4 mr-1"
             />

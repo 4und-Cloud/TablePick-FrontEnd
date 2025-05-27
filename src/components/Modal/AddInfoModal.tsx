@@ -37,7 +37,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
 
   useEffect(() => {
     if (isOpen && user && tags.length > 0) {
-      console.log('user.tags : ', user.tags);
+      console.log('user.tags : ', user.memberTags);
       setGender(
         user.gender === 'MALE'
           ? 'male'
@@ -47,8 +47,8 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
       );
       setDate(user.birthdate ? new Date(user.birthdate) : null);
       setPhone(user.phoneNumber || '');
-      if (Array.isArray(user.tags)) {
-        setSelectedTagIds(user.tags.map((id: string | number) => Number(id)));
+      if (Array.isArray(user.memberTags)) {
+        setSelectedTagIds(user.memberTags.map((id: string | number) => Number(id)));
       } else {
         setSelectedTagIds([]);
       }
@@ -89,10 +89,10 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
           gender === 'male' ? 'MALE' : gender === 'female' ? 'FEMALE' : '',
         birthdate: date ? date.toISOString().slice(0, 10) : '',
         phoneNumber: phone,
-        tags: selectedTagIds,
+        memberTags: selectedTagIds,
       };
 
-      await axios.patch(`${apiUrl}/api/members`, updatedData, {
+      await axios.post(`${apiUrl}/api/members`, updatedData, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
         gender: updatedData.gender,
         birthdate: updatedData.birthdate,
         phoneNumber: updatedData.phoneNumber,
-        tags: selectedTagIds,
+        memberTags: selectedTagIds,
       };
 
       login(updatedUserInfo);

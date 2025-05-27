@@ -7,7 +7,7 @@ export interface UserInfo {
   gender?: string;
   birthdate?: string;
   phoneNumber?: string;
-  tags?: number[];
+  memberTags?: number[];
 }
 export interface AuthContextType {
   isAuthenticated: boolean; // 로그인 여부
@@ -37,7 +37,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     gender: '',
     birthdate: '',
     phoneNumber: '',
-    tags: [],
+    memberTags: [],
   });
   useEffect(() => {
     // 로컬 스토리지에서 사용자 정보 가져오기
@@ -66,14 +66,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   // login
   const login = (userData: UserInfo) => {
     console.log('AuthContext - 로그인 함수 호출됨:', userData);
-    // // 사용자 ID가 있는지 확인
-    // if (typeof userData.id !== 'number' || userData.id <= 0) {
-    //   console.error(
-    //     'AuthContext - 로그인 실패: 유효한 사용자 ID가 없습니다',
-    //     userData
-    //   );
-    //   return;
-    // }
     setIsAuthenticated(true);
     setUser(userData);
     localStorage.setItem('userInfo', JSON.stringify(userData));
@@ -106,7 +98,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       email: '',
       gender: '',
       phoneNumber: '',
-      tags: [],
+      memberTags: [],
     });
     // 로컬 스토리지 초기화
     localStorage.removeItem('userInfo');
