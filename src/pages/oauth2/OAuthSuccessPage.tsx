@@ -26,7 +26,17 @@ export default function OauthSuccess() {
         console.log("OAuth 성공 페이지 - 사용자 데이터:", userData);
         if (!userData || !userData.email || !userData.id) {
           throw new Error("잘못된 사용자 데이터");
-        };
+        }
+
+         let memberTagsForAuthContext: number[] = [];
+        if (Array.isArray(userData.memberTagIds)) {
+            memberTagsForAuthContext = userData.memberTagIds.map((tagId: any) => Number(tagId)).filter((id: number) => !isNaN(id));
+        } else {
+            console.warn("서버 응답에 memberTagIds 필드가 없거나 배열이 아닙니다:", userData.memberTagIds);
+            // memberTagIds가 없으면 빈 배열로 초기화 (기존 로직 유지)
+            memberTagsForAuthContext = []; 
+        }
+
         
         const isUserRecentlyCreated = userData.createAt ? isRecentlyCreated(userData.createAt) : false;
 
@@ -44,7 +54,7 @@ export default function OauthSuccess() {
           gender: userData.gender || '',
           birthdate: userData.birthdate || '',
           phoneNumber: userData.phoneNumber || '',
-          memberTags: userData.memberTags || [],
+          memberTags: memberTagsForAuthContext,
           createAt: userData.createAt || '',
           isNewUser: shouldShowAdditionalInfoModal
         };

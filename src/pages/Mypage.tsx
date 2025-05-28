@@ -4,18 +4,20 @@ import useModal from "../hooks/useModal";
 import useAuth from "../hooks/useAuth";
 import defaultProfile from '@/assets/images/user.png';
 import { useTagContext } from "../store/TagContext";
-import { deflate } from "zlib";
 
 type Gender = '' | 'male' | 'female';
 
 interface MypageUserInfo {
-  profileImage? : string;
-  nickname?: string;
-  email?: string;
-	gender: Gender;
-  birthdate: string;
-  phoneNumber: string;
-  memberTags: number[];
+  id: number;
+  profileImage : string;
+  nickname: string;
+  email: string;
+	gender?: string;
+  birthdate?: string;
+  phoneNumber?: string;
+  memberTags?: number[];
+  createAt?: string;
+  isNewUser?: boolean;
 }
 
 // gender 값을 정규화하는 함수
@@ -27,78 +29,75 @@ const normalizeGender = (gender?: string): Gender => {
 
 export default function Mypage() {
 	const { tags } = useTagContext();
-  const {user} = useAuth();
+  const {user, login} = useAuth();
   const {isOpen, openModal, closeModal} = useModal({initialState: false});
 	const [selectedTags, setSelectedTags] = useState<number[]>([]);
 	const [initialFormData, setInitialFormData] = useState<MypageUserInfo | null>(null);
 
   const [formData, setFormData] = useState<MypageUserInfo>({
-    profileImage: user.profileImage || defaultProfile,
-    nickname: user.nickname || '',  // 더미 이름
-    email: user.email || '',  // 더미 이메일
-		gender: normalizeGender(user?.gender),
-    birthdate: user.birthdate || '',
-    phoneNumber: user.phoneNumber || '',
-    memberTags: user.memberTags?.map((tag: any) => tag.id) || [],
-	});
-	
+    id: 0, // 기본값 설정
+    profileImage: defaultProfile,
+    nickname: '',
+    email: '',
+    gender: '',
+    birthdate: '',
+    phoneNumber: '',
+    memberTags: [], // 빈 배열로 초기화
+    createAt: '',
+    isNewUser: false,
+  });
+
 	const tagNames = useMemo(() => {
   return (formData.memberTags || []).map(tagId => {
     const match = tags.find(tag => tag.id === tagId);
     return match ? match.name : '';
   });
-	}, [formData.memberTags, tags]);
-
+  }, [formData.memberTags, tags]);
+  
   useEffect(() => {
-		// 1. userInfo가 있으면 우선 불러오기
-		const savedUserInfo = localStorage.getItem('userInfo');
-		
-		if (savedUserInfo) {
-			let parsedUserInfo : MypageUserInfo = JSON.parse(savedUserInfo);
-			// user와 이메일이 다르면 user로 덮어쓰기
-			if (user && parsedUserInfo.email !== user.email) {
-				const newFormData = {
-					profileImage: user.profileImage || defaultProfile,
-					nickname: user.nickname || '',
-					email: user.email || '',
-					gender: normalizeGender(user.gender),
-					birthdate: user.birthdate || '',
-					phoneNumber: user.phoneNumber || '',
-					memberTags: user.memberTags || [],
-				};
-				setFormData(newFormData);
-				setInitialFormData(newFormData);
-			} else {
-				const normalizedData = {
-					...parsedUserInfo,
-					gender: normalizeGender(parsedUserInfo.gender),
-				};
-				setFormData(normalizedData);
-				setInitialFormData(normalizedData);
-			}
-		} else if (user) {
-			// 3. 저장된 데이터 없으면 user 기본값 세팅
-			setFormData({
-				profileImage: user.profileImage || defaultProfile,
-				nickname: user.nickname || '',
-				email: user.email || '',
-				gender: normalizeGender(user.gender),
-				birthdate: user.birthdate || '',
-				phoneNumber: user.phoneNumber || '',
-				memberTags: user.memberTags || [],
-			});
-  	}
-	}, [user]);
+    if (user) { // user 객체가 null이 아닐 때만 실행
+      const newFormData: MypageUserInfo = {
+        id: user.id,
+        profileImage: user.profileImage || defaultProfile,
+        nickname: user.nickname,
+        email: user.email,
+        gender: normalizeGender(user.gender),
+        birthdate: user.birthdate || '',
+        phoneNumber: user.phoneNumber || '',
+        memberTags: user.memberTags || [],
+        createAt: user.createAt || '',
+        isNewUser: user.isNewUser || false,
+      };
+      setFormData(newFormData);
+      setInitialFormData(newFormData);
+      setSelectedTags(newFormData.memberTags || []);
+    }
+  }, [user, setFormData, setInitialFormData, setSelectedTags]);
 
 	const handleTagAdd = () => {
 		setFormData((prev) => {
 			const updatedFormData = {
 				...prev,
-				memberTags: selectedTags.map(Number)
-			};
-			localStorage.setItem('userInfo', JSON.stringify(updatedFormData));
-			return updatedFormData;
-		});
+				memberTags: selectedTags
+      };
+      return updatedFormData;
+    });
+    if (user) {
+        const updatedUser : MypageUserInfo = {
+          ...user,
+          id: user.id,
+          nickname: user.nickname,
+          email: user.email,
+          profileImage: user.profileImage,
+          gender: user.gender,
+          memberTags: selectedTags,
+          birthdate: user.birthdate,
+          phoneNumber: user.phoneNumber,
+          createAt: user.createAt,
+          isNewUser: user.isNewUser,
+        };
+         login(updatedUser);
+      }
 		closeModal();
   };
 
@@ -113,7 +112,7 @@ export default function Mypage() {
 	const handleCancel = () => {
 		if (initialFormData) {
 			setFormData(initialFormData);
-			setSelectedTags(initialFormData.memberTags);
+			setSelectedTags(initialFormData.memberTags || []);
 		}
 		alert('수정이 취소되었습니다');
 	};
@@ -123,7 +122,7 @@ export default function Mypage() {
 			const apiUrl = 'http://localhost:8080';
 			const requestBody = {
       nickname: formData.nickname,
-      gender: formData.gender.toUpperCase(),
+      gender: formData.gender?.toUpperCase() || '',
       birthdate: formData.birthdate,
       phoneNumber: formData.phoneNumber,
       profileImage: formData.profileImage || defaultProfile,
@@ -144,19 +143,33 @@ export default function Mypage() {
 				const errorData = await res.text();
 				console.log('error res : ', errorData);
 				throw new Error('유저 정보 저장 실패');
-			}
-			const text = await res.text();
+      }
+      let resData = null;
+      const text = await res.text();
 			if (text) {
 				const data = JSON.parse(text);
-				console.log('저장 성공 :', data); 
+				console.log('저장 성공 :', resData); 
 				localStorage.setItem('userInfo', JSON.stringify({
 				...formData,
-				memberTags: data.memberTags?.map((tag: any) => tag.id) || formData.memberTags,
+				memberTags: data.memberTags?.map((tag: any) => tag.id) || formData.memberTags || [],
 			}));
 			} else {
 				console.log('저장 성공');
-				localStorage.setItem('userInfo', JSON.stringify(formData));
-			}
+      }
+      
+      const updatedUser: MypageUserInfo = {
+        ...user,
+        id: user.id,
+        nickname: formData.nickname,
+        gender: formData.gender ? formData.gender.toUpperCase() : undefined,
+        birthdate: formData.birthdate,
+        phoneNumber: formData.phoneNumber,
+        profileImage: formData.profileImage || defaultProfile,
+        memberTags: formData.memberTags,
+        createAt: user.createAt,
+        isNewUser: user.isNewUser,
+      };
+      login(updatedUser);
 			
 			setInitialFormData(formData);
 			alert('정보 저장 완료');
@@ -204,7 +217,15 @@ export default function Mypage() {
                             
                 <button
                   type="button"
-                  onClick={() => {setSelectedTags(formData.memberTags); openModal();}}
+                  onClick={() => {
+                    // user가 null이 아닐 때만 memberTags 접근
+                    if (user && user.memberTags) {
+                      setSelectedTags(user.memberTags); 
+                    } else {
+                      setSelectedTags([]); // user 또는 memberTags가 없으면 빈 배열로
+                    }
+                    openModal();
+                  }}
                   className="px-3 bg-main text-white rounded-full text-lg absolute right-0 top-1/2 -translate-y-1/2"
                 >
                 	+

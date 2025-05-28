@@ -100,6 +100,12 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
         withCredentials: true,
       });
 
+      if (!user) { // user가 null일 경우 대비
+          console.error('사용자 정보가 없어 추가 정보를 저장할 수 없습니다.');
+          alert('사용자 정보가 없어 추가 정보를 저장할 수 없습니다. 다시 로그인해주세요.');
+          return;
+      }
+
       const updatedUserInfo = {
         ...user!,
         gender: updatedData.gender,
