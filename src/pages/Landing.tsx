@@ -18,51 +18,54 @@ interface RestaurantItem {
 // 게시글 데이터 인터페이스
 interface PostItem {
   id: number;
-  name: string;
+  restaurantName: string;
+  restaurantAddress: string;
   content: string;
-  categoryName: string;
-  restaurantTags: string[];
+  restaurantCategoryName: string;
+  memberNickname: string;
+  memberProfileImage: string;
+  //tagNames: string[];
   imageUrl: string;
 }
 
-const dummy: PostItem[] = [
-  {
-    id: 1,
-    name: '도쿄시장',
-    content: '연어맛집',
-    categoryName: '이자카야',
-    restaurantTags: ['가성비', '서민적인'],
-    imageUrl:
-      'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
-  },
-  {
-    id: 2,
-    name: '도쿄시장',
-    content: '연어맛집 진짜 최고 맛집',
-    categoryName: '이자카야',
-    restaurantTags: ['가성비', '서민적인'],
-    imageUrl:
-      'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
-  },
-  {
-    id: 3,
-    name: '도쿄시장',
-    content: '연어맛집',
-    categoryName: '이자카야',
-    restaurantTags: ['가성비', '서민적인'],
-    imageUrl:
-      'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
-  },
-  {
-    id: 4,
-    name: '도쿄시장',
-    content: '연어맛집',
-    categoryName: '이자카야',
-    restaurantTags: ['가성비', '서민적인'],
-    imageUrl:
-      'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
-  },
-];
+// const dummy: PostItem[] = [
+//   {
+//     id: 1,
+//     name: '도쿄시장',
+//     content: '연어맛집',
+//     categoryName: '이자카야',
+//     restaurantTags: ['가성비', '서민적인'],
+//     imageUrl:
+//       'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
+//   },
+//   {
+//     id: 2,
+//     name: '도쿄시장',
+//     content: '연어맛집 진짜 최고 맛집',
+//     categoryName: '이자카야',
+//     restaurantTags: ['가성비', '서민적인'],
+//     imageUrl:
+//       'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
+//   },
+//   {
+//     id: 3,
+//     name: '도쿄시장',
+//     content: '연어맛집',
+//     categoryName: '이자카야',
+//     restaurantTags: ['가성비', '서민적인'],
+//     imageUrl:
+//       'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
+//   },
+//   {
+//     id: 4,
+//     name: '도쿄시장',
+//     content: '연어맛집',
+//     categoryName: '이자카야',
+//     restaurantTags: ['가성비', '서민적인'],
+//     imageUrl:
+//       'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
+//   },
+// ];
 
 // 레스토랑 카드 컴포넌트
 function RestaurantCard({
@@ -141,7 +144,7 @@ function PostCard({ item, onClick }: { item: PostItem; onClick?: () => void }) {
       <div className="w-full h-[250px] overflow-hidden">
         <img
           src={item.imageUrl}
-          alt={item.name}
+          alt={item.restaurantName}
           className="w-full h-full object-cover"
         />
       </div>
@@ -151,10 +154,10 @@ function PostCard({ item, onClick }: { item: PostItem; onClick?: () => void }) {
         {/* 이름 + 카테고리 */}
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-semibold truncate">{item.name}</span>
-            {item.categoryName && (
+            <span className="text-xl font-semibold truncate">{item.restaurantName}</span>
+            {item.restaurantCategoryName && (
               <span className="text-sm bg-main text-white px-2 py-0.5 rounded-full">
-                {item.categoryName}
+                {item.restaurantCategoryName}
               </span>
             )}
           </div>
@@ -171,10 +174,10 @@ function PostCard({ item, onClick }: { item: PostItem; onClick?: () => void }) {
         </div>
 
         {/* 태그 */}
-        {item.restaurantTags.length > 0 && (
+        {/* {item.restaurantCategoryName.length > 0 && (
           <div className="mt-2 overflow-x-auto scrollbar-hide">
             <div className="flex gap-2 w-max">
-              {item.restaurantTags.map((tag, index) => (
+              {item.tagNames.map((tag, index) => (
                 <span
                   key={index}
                   className="whitespace-nowrap bg-gray-200 text-primary text-sm px-2 py-0.5 rounded-full"
@@ -184,7 +187,7 @@ function PostCard({ item, onClick }: { item: PostItem; onClick?: () => void }) {
               ))}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
@@ -192,32 +195,34 @@ function PostCard({ item, onClick }: { item: PostItem; onClick?: () => void }) {
 
 export default function Landing() {
   // 상태 정의
-  //const [posts, setPosts] = useState<PostItem[]>([]); // 게시글 목록
+  const [posts, setPosts] = useState<PostItem[]>([]); // 게시글 목록
   const [restaurants, setRestaurants] = useState<RestaurantItem[]>([]); // 레스토랑 목록
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false); // 유저 정보 모달 열림 상태
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 게시글 데이터 가져오기
-  // const fetchPosts = useCallback(async () => {
-  //   try {
-  //     const res = await axios.get('http://localhost:8080/api/boards/main', {
-  //       headers: { Accept: 'application/json' },
-  //       withCredentials: true,
-  //     });
+  //게시글 데이터 가져오기
+  const fetchPosts = useCallback(async () => {
+    try {
+      const apiUrl = 'http://localhost:8080';
+      const res = await axios.get(`${apiUrl}/api/boards/main`, {
+        headers: { Accept: 'application/json' },
+        withCredentials: true,
+      });
 
-  //     const postsData = res.data.content;
-  //     if (Array.isArray(postsData)) {
-  //       setPosts(postsData);
-  //     } else {
-  //       setPosts([]);
-  //     }
-  //   } catch (error) {
-  //     console.error('게시글 데이터 가져오기 실패:', error);
-  //     setPosts([]);
-  //   }
-  // }, []);
+      const postsData = res.data;
+      console.log('res.data : ', postsData);
+      if (Array.isArray(postsData)) {
+        setPosts(postsData);
+      } else {
+        setPosts([]);
+      }
+    } catch (error) {
+      console.error('게시글 데이터 가져오기 실패:', error);
+      setPosts([]);
+    }
+  }, []);
 
   // 레스토랑 데이터 가져오기
   const fetchRestaurants = useCallback(async () => {
@@ -244,12 +249,12 @@ export default function Landing() {
   // 컴포넌트 마운트 시 데이터 가져오기
   useEffect(() => {
     fetchRestaurants();
-    //fetchPosts();
-  }, [fetchRestaurants]);
+    fetchPosts();
+  }, [fetchRestaurants, fetchPosts]);
 
   // 네비게이션 핸들러
   const handleResDetail = (id: number) => navigate(`/restaurants/${id}`);
-  // const handlePostDetail = (id: number) => navigate(`/posts/${id}`);
+  const handlePostDetail = (id: number) => navigate(`/posts/${id}`);
 
   // 모달 열기/닫기 함수
   const openUserInfoModal = useCallback(() => setIsUserInfoModalOpen(true), []);
@@ -258,7 +263,7 @@ export default function Landing() {
     []
   );
 
-  // location.state.showFilterModal에 따라 모달 자동 열기
+  //location.state.showFilterModal에 따라 모달 자동 열기
   useEffect(() => {
     if (location.state?.showFilterModal) {
       openUserInfoModal();
@@ -275,7 +280,7 @@ export default function Landing() {
       <AddinfoModal isOpen={isUserInfoModalOpen} onClose={closeUserInfoModal} />
 
       {/* 메인 컨텐츠 */}
-      <div className="p-3 flex-1">
+      <div className="p-3 flex flex-1 flex-col items-center">
         {/* 추천 매장 섹션 */}
         <section className="p-8 border-b border-gray-300">
           <div className="container">
@@ -289,7 +294,7 @@ export default function Landing() {
                 </p>
               </div>
             </div>
-            <div className="flex justify-center gap-10 flex-wrap:no-wrap">
+            <div className="flex justify-center gap-10 flex-nowrap">
               {restaurants.map((restaurant) => (
                 <RestaurantCard
                   key={restaurant.id}
@@ -314,12 +319,12 @@ export default function Landing() {
                 </p>
               </div>
             </div>
-            <div className="flex justify-center gap-10 flex-wrap:no-wrap">
-              {dummy.map((item) => (
+            <div className="flex justify-center gap-10 flex-nowrap">
+              {posts.map((post) => (
                 <PostCard
-                  key={item.id}
-                  item={item}
-                  onClick={() => handleResDetail(item.id)}
+                  key={post.id}
+                  item={post}
+                  onClick={() => handlePostDetail(post.id)}
                 />
               ))}
             </div>

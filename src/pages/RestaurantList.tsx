@@ -19,7 +19,6 @@ export default function RestaurantList() {
 
   // const itemsPerPage = 6;
 
-  const { isOpen, openModal, closeModal } = useModal({ initialState: false });
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const {
@@ -89,21 +88,12 @@ export default function RestaurantList() {
   ));
 
   return (
-    <div className="pt-[80px]">
+    <div>
       <div className="flex justify-between mx-6 my-2 flex-row">
         <div className="flex overflow-x-auto items-center justify-center">
           {tagElements}
         </div>
-        <CircleBtn onClick={openModal} image={filter} bgColor="bg-white" />
       </div>
-
-      {isOpen && (
-        <FilterModal
-          onClose={closeModal}
-          selectedTags={selectedTags}
-          setSelectedTags={setSelectedTags}
-        />
-      )}
 
       <div>
         {loading ? (
