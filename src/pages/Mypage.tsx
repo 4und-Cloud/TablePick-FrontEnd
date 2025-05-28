@@ -6,18 +6,20 @@ import go5rae from '@/assets/images/profile_img.jpg';
 import useAuth from "../hooks/useAuth";
 import defaultProfile from '@/assets/images/user.png';
 import { useTagContext } from "../store/TagContext";
-import { deflate } from "zlib";
 
 type Gender = '' | 'male' | 'female';
 
 interface MypageUserInfo {
-  profileImage? : string;
-  nickname?: string;
-  email?: string;
-	gender: Gender;
-  birthdate: string;
-  phoneNumber: string;
-  memberTags: number[];
+  id: number;
+  profileImage : string;
+  nickname: string;
+  email: string;
+	gender?: string;
+  birthdate?: string;
+  phoneNumber?: string;
+  memberTags?: number[];
+  createAt?: string;
+  isNewUser?: boolean;
 }
 
 // gender 값을 정규화하는 함수
@@ -28,71 +30,156 @@ const normalizeGender = (gender?: string): Gender => {
 };
 
 export default function Mypage() {
-    const {user} = useAuth();
+	const { tags } = useTagContext();
+  const {user, login} = useAuth();
+  const {isOpen, openModal, closeModal} = useModal({initialState: false});
+	const [selectedTags, setSelectedTags] = useState<number[]>([]);
+	const [initialFormData, setInitialFormData] = useState<MypageUserInfo | null>(null);
 
-    //const {isOpen, openModal, closeModal} = useModal({initialState: false});
+  const [formData, setFormData] = useState<MypageUserInfo>({
+    id: 0, // 기본값 설정
+    profileImage: defaultProfile,
+    nickname: '',
+    email: '',
+    gender: '',
+    birthdate: '',
+    phoneNumber: '',
+    memberTags: [], // 빈 배열로 초기화
+    createAt: '',
+    isNewUser: false,
+  });
 
-    //const [selectedTags, setSelectedTags] = useState<string[]>([]);
+	const tagNames = useMemo(() => {
+  return (formData.memberTags || []).map(tagId => {
+    const match = tags.find(tag => tag.id === tagId);
+    return match ? match.name : '';
+  });
+  }, [formData.memberTags, tags]);
+  
+  useEffect(() => {
+    if (user) { // user 객체가 null이 아닐 때만 실행
+      const newFormData: MypageUserInfo = {
+        id: user.id,
+        profileImage: user.profileImage || defaultProfile,
+        nickname: user.nickname,
+        email: user.email,
+        gender: normalizeGender(user.gender),
+        birthdate: user.birthdate || '',
+        phoneNumber: user.phoneNumber || '',
+        memberTags: user.memberTags || [],
+        createAt: user.createAt || '',
+        isNewUser: user.isNewUser || false,
+      };
+      setFormData(newFormData);
+      setInitialFormData(newFormData);
+      setSelectedTags(newFormData.memberTags || []);
+    }
+  }, [user, setFormData, setInitialFormData, setSelectedTags]);
 
-    const { userInfo, setUserInfo } = useUserExtraInfo();
-    const [formData, setFormData] = useState<MypageUserInfo>({
-        profileImg: go5rae,
-        nickname: 'go5rae',  // 더미 이름
-        email: 'coqnrl115@naver.com',  // 더미 이메일
-        gender: 'male',
-        birthdate: '',
-        phoneNumber: '',
-        tags: []
+	const handleTagAdd = () => {
+		setFormData((prev) => {
+			const updatedFormData = {
+				...prev,
+				memberTags: selectedTags
+      };
+      return updatedFormData;
     });
+    if (user) {
+        const updatedUser : MypageUserInfo = {
+          ...user,
+          id: user.id,
+          nickname: user.nickname,
+          email: user.email,
+          profileImage: user.profileImage,
+          gender: user.gender,
+          memberTags: selectedTags,
+          birthdate: user.birthdate,
+          phoneNumber: user.phoneNumber,
+          createAt: user.createAt,
+          isNewUser: user.isNewUser,
+        };
+         login(updatedUser);
+      }
+		closeModal();
+  };
 
-    useEffect(() => {
-        const savedAdditionalData = localStorage.getItem('userAdditionalInfo');
-        const savedBasicData = localStorage.getItem('userInfo');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+	};
+	
+	const handleCancel = () => {
+		if (initialFormData) {
+			setFormData(initialFormData);
+			setSelectedTags(initialFormData.memberTags || []);
+		}
+		alert('수정이 취소되었습니다');
+	};
+
+	const handleSave = async () => {
+		try {
+			const apiUrl = 'http://localhost:8080';
+			const requestBody = {
+      nickname: formData.nickname,
+      gender: formData.gender?.toUpperCase() || '',
+      birthdate: formData.birthdate,
+      phoneNumber: formData.phoneNumber,
+      profileImage: formData.profileImage || defaultProfile,
+      memberTagsId : formData.memberTags
+			};
+			console.log('req body :', requestBody, null, 2);
+			const res = await fetch(`${apiUrl}/api/members`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept' : 'application/json'
+				},
+				credentials : 'include',
+				body: JSON.stringify(requestBody),
+			});
+
+			if (!res.ok) {
+				const errorData = await res.text();
+				console.log('error res : ', errorData);
+				throw new Error('유저 정보 저장 실패');
+      }
+      let resData = null;
+      const text = await res.text();
+			if (text) {
+				const data = JSON.parse(text);
+				console.log('저장 성공 :', resData); 
+				localStorage.setItem('userInfo', JSON.stringify({
+				...formData,
+				memberTags: data.memberTags?.map((tag: any) => tag.id) || formData.memberTags || [],
+			}));
+			} else {
+				console.log('저장 성공');
+      }
       
-        console.log("🟡 userInfo from context:", userInfo);
-        console.log("🟢 savedAdditionalData:", savedAdditionalData);
-        console.log("🔵 savedBasicData:", savedBasicData);
-      
-        if (savedAdditionalData) {
-          const parsedAdditional = JSON.parse(savedAdditionalData);
-          console.log("✅ parsedAdditional.profileImg:", parsedAdditional.profileImg);
-          setFormData(parsedAdditional);
-        } else if (userInfo) {
-          console.log("✅ userInfo.profileImage:", userInfo.profileImage);
-          setFormData({
-            gender: userInfo.gender as 'male' | 'female',
-            birthdate: userInfo.birthdate || '',
-            phoneNumber: userInfo.phoneNumber || '',
-            tags: userInfo.tags || [],
-          });
-        }
-      }, [userInfo]);
-      
-
-
-    // const handleTagAdd = () => {
-    //     setFormData(prev => ({
-    //       ...prev,
-    //       tags: selectedTags
-    //     }));
-    //     closeModal();
-    //   };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    const handleSave = () => {
-        setUserInfo(formData);
-        localStorage.setItem('userAdditionalInfo', JSON.stringify(formData)); // 저장
-        alert('정보 저장 완료');
-    };
-
-
+      const updatedUser: MypageUserInfo = {
+        ...user,
+        id: user.id,
+        nickname: formData.nickname,
+        gender: formData.gender ? formData.gender.toUpperCase() : undefined,
+        birthdate: formData.birthdate,
+        phoneNumber: formData.phoneNumber,
+        profileImage: formData.profileImage || defaultProfile,
+        memberTags: formData.memberTags,
+        createAt: user.createAt,
+        isNewUser: user.isNewUser,
+      };
+      login(updatedUser);
+			
+			setInitialFormData(formData);
+			alert('정보 저장 완료');
+		} catch (error) {
+			console.error('유저 정보 저장 실패 :', error);
+			alert('정보 저장 실패');
+		}
+  };
 
 	return (
 		<>
@@ -134,7 +221,15 @@ export default function Mypage() {
                             
                 <button
                   type="button"
-                  onClick={() => {setSelectedTags(formData.memberTags); openModal();}}
+                  onClick={() => {
+                    // user가 null이 아닐 때만 memberTags 접근
+                    if (user && user.memberTags) {
+                      setSelectedTags(user.memberTags); 
+                    } else {
+                      setSelectedTags([]); // user 또는 memberTags가 없으면 빈 배열로
+                    }
+                    openModal();
+                  }}
                   className="px-3 bg-main text-white rounded-full text-lg absolute right-0 top-1/2 -translate-y-1/2"
                 >
                 	+

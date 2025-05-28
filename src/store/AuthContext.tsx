@@ -1,4 +1,6 @@
 import { createContext, type ReactNode, useEffect, useState } from 'react';
+
+type Gender = '' | 'male' | 'female';
 export interface UserInfo {
   id: number;
   email: string;
