@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import AddinfoModal from '../components/Modal/AddInfoModal';
 import content from '@/assets/images/content.png';
+import useAuth from '../hooks/useAuth';
 
 // 레스토랑 데이터 인터페이스
 interface RestaurantItem {
@@ -197,10 +198,11 @@ export default function Landing() {
   // 상태 정의
   const [posts, setPosts] = useState<PostItem[]>([]); // 게시글 목록
   const [restaurants, setRestaurants] = useState<RestaurantItem[]>([]); // 레스토랑 목록
-  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false); // 유저 정보 모달 열림 상태
-
+  const { user, isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [isAddInfoModalOpen, setIsAddInfoModalOpen] = useState(false);
 
   //게시글 데이터 가져오기
   const fetchPosts = useCallback(async () => {
@@ -257,27 +259,30 @@ export default function Landing() {
   const handlePostDetail = (id: number) => navigate(`/posts/${id}`);
 
   // 모달 열기/닫기 함수
-  const openUserInfoModal = useCallback(() => setIsUserInfoModalOpen(true), []);
-  const closeUserInfoModal = useCallback(
-    () => setIsUserInfoModalOpen(false),
-    []
-  );
-
-  //location.state.showFilterModal에 따라 모달 자동 열기
   useEffect(() => {
-    if (location.state?.showFilterModal) {
-      openUserInfoModal();
-      // 상태 초기화
-      const newState = { ...location.state };
-      delete newState.showFilterModal;
-      window.history.replaceState(newState, document.title);
+    if (isAuthenticated && user?.isNewUser) {
+      setIsAddInfoModalOpen(true);
+    } else {
+      setIsAddInfoModalOpen(false);
     }
-  }, [location.state, openUserInfoModal]);
+  }, [isAuthenticated, user]);
+  
+  const handleCloseAddInfoModal = useCallback(() => {
+    setIsAddInfoModalOpen(false);
+    if (user?.id) {
+      localStorage.setItem(`hasCompletedAdditionalInfo_${user.id}`, 'true');
+      const updatedUser = { ...user, isNewUser: false };
+      login(updatedUser);
+    }
+  }, [user, login]);
 
   return (
     <>
       {/* 유저 정보 입력 모달 */}
-      <AddinfoModal isOpen={isUserInfoModalOpen} onClose={closeUserInfoModal} />
+      {isAddInfoModalOpen && (
+        <AddinfoModal isOpen={isAddInfoModalOpen} onClose={handleCloseAddInfoModal} />
+      )}
+      
 
       {/* 메인 컨텐츠 */}
       <div className="p-3 flex flex-1 flex-col items-center">

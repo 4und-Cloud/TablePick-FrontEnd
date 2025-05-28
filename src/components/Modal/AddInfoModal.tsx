@@ -36,8 +36,8 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
   console.log('useModal:', useModal());
 
   useEffect(() => {
-    if (isOpen && user && tags.length > 0) {
-      console.log('user.tags : ', user.memberTags);
+    if (isOpen && user) {
+      console.log('user : ', user);
       setGender(
         user.gender === 'MALE'
           ? 'male'
@@ -53,7 +53,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
         setSelectedTagIds([]);
       }
     }
-  }, [isOpen, user, tags]);
+  }, [isOpen, user]);
 
   const toggleCalendar = () => setCalOpen((prev) => !prev);
 
@@ -101,11 +101,12 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
       });
 
       const updatedUserInfo = {
-        ...user,
+        ...user!,
         gender: updatedData.gender,
         birthdate: updatedData.birthdate,
         phoneNumber: updatedData.phoneNumber,
         memberTags: selectedTagIds,
+        isNewUser: false,
       };
 
       login(updatedUserInfo);

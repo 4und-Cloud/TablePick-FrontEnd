@@ -8,6 +8,8 @@ export interface UserInfo {
   birthdate?: string;
   phoneNumber?: string;
   memberTags?: number[];
+  createAt?: string;
+  isNewUser?: boolean;
 }
 export interface AuthContextType {
   isAuthenticated: boolean; // 로그인 여부
@@ -38,6 +40,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     birthdate: '',
     phoneNumber: '',
     memberTags: [],
+    createAt: '',
+    isNewUser: false
   });
   useEffect(() => {
     // 로컬 스토리지에서 사용자 정보 가져오기
@@ -52,7 +56,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         console.log('AuthContext - 파싱된 사용자 정보:', userData);
         // 사용자 ID가 있는지 확인
         if (userData && userData.id) {
-          setUser(userData);
+          setUser({...userData, isNewUser: userData.isNewUser || false});
           setIsAuthenticated(true);
           console.log('AuthContext - 사용자 인증 상태 설정됨:', true);
         } else {
@@ -99,6 +103,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       gender: '',
       phoneNumber: '',
       memberTags: [],
+      createAt: '',
+      isNewUser: false
     });
     // 로컬 스토리지 초기화
     localStorage.removeItem('userInfo');

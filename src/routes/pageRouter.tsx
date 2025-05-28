@@ -5,7 +5,7 @@ import Landing from "../pages/Landing";
 import Mypage from "../pages/Mypage";
 import PostDetail from "../pages/PostDetail";
 import PostList from "../pages/PostList";
-//import ReservationCheck from "../pages/ReservationCheck";
+import ReservationCheck from "../pages/ReservationCheck";
 import RestaurantDetail from "../pages/RestaurantDetail";
 import RestaurantList from "../pages/RestaurantList";
 // import KakaoRedirect from "../pages/oauth2/KakaoRedirect";
@@ -24,7 +24,7 @@ export default function PageRouter() {
             <Route path="/posts/:id" element={<PostDetail/>}/>
             <Route path="/mypage" element={<Mypage/>}/>
             {/*<Route path="/my-posts" element={<MyPosts/>} />*/}
-            {/*<Route path="/reservation-check" element={<ReservationCheck/>} /> */}
+            <Route path="/reservation-check" element={<ReservationCheck/>} />
             <Route path="/notifications" element={<NotificationsPage/>}/>
         </Routes>
     );
