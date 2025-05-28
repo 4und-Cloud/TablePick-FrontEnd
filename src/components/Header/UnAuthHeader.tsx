@@ -14,15 +14,15 @@ export default function UnAuthHeader() {
 
   return (
     <>
-      <header className="py-4 px-6 sticky top-0 z-50 w-full bg-white backdrop-blur">
-        <div className="container flex h-16 items-center justify-between">
+      <header className="py-4 sticky top-0 z-50 w-full border-b flex justify-center border-main bg-white backdrop-blur">
+        <div className="container gap-32 flex h-16  items-center justify-around">
           {/* logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center">
             <img src={logo} alt="Logo" className="h-10" />
           </Link>
 
           {/* 네비게이션 */}
-          <nav className="flex items-center gap-10">
+          <nav className="flex items-center gap-16">
             <Link
               to="/"
               className={`text-lg font-bold ${pathname === "/" ? "text-main" : "text-black"} transition-colors hover:text-main`}

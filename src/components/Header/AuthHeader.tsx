@@ -44,10 +44,10 @@ export default function AuthHeader() {
 
   return (
     <>
-      <header className="py-4 px-6 sticky top-0 z-50 w-full bg-white backdrop-blur">
-        <div className="container flex h-16 items-center justify-between">
+      <header className="py-4 sticky top-0 z-50 border-b flex justify-center border-main bg-white backdrop-blur">
+        <div className="flex  gap-24 h-16 items-center justify-around">
           {/* logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center">
             <img src={logo} alt="Logo" className="h-10" />
           </Link>
 

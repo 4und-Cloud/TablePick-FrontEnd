@@ -57,7 +57,7 @@ export default function RestaurantDetail() {
     const restaurantLocation: LatLngExpression = [37.5665, 126.978] // 예시 좌표
 
     return (
-        <div className="pt-4 p-2 mt-[80px] min-h-screen flex flex-col">
+        <div className="pt-4 p-2 min-h-screen flex flex-col">
             {/* 이미지 + 정보 */}
             <div className="flex flex-row gap-2 mb-8 flex-1">
                 {/* 이미지 */}
