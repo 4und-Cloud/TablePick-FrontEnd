@@ -44,13 +44,13 @@ export default function RestaurantDetail() {
     }, [id])
 
     // 예약 성공 처리 함수
-    const handleReservationSuccess = () => {
-        setReservationSuccess(true)
-        closeModal()
+    // const handleReservationSuccess = () => {
+    //     setReservationSuccess(true)
+    //     closeModal()
 
-        // 예약 성공 메시지 표시
-        alert("예약이 완료되었습니다! 예약 시간에 맞춰 알림을 보내드립니다.")
-    }
+    //     // 예약 성공 메시지 표시
+    //     // alert("예약이 완료되었습니다! 예약 시간에 맞춰 알림을 보내드립니다.")
+    // }
 
     if (!data) return <div className="mt-20 text-center">로딩 중...</div>
 
@@ -144,7 +144,7 @@ export default function RestaurantDetail() {
 
             {/* 예약 모달 */}
             {isOpen && (
-                <ReservationModal closeModal={closeModal} onSuccess={handleReservationSuccess}
+                <ReservationModal closeModal={closeModal}
                                   restaurantId={Number(id)}/>
             )}
         </div>
