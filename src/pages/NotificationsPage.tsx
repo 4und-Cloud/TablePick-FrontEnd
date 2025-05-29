@@ -3,7 +3,7 @@ import useAuth from '../hooks/useAuth';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
-import { getMemberNotifications } from '../lib/firebase';
+import { getMemberNotifications, getNotificationTypes } from '../lib/firebase';
 
 /**
  * 알림 데이터 인터페이스
@@ -31,13 +31,38 @@ interface Notification {
   reservationId?: number;
 }
 
+interface NotificationType {
+  id: number;
+  type: string;
+  title: string;
+  description: string;
+}
+
 export default function NotificationsPage() {
   const { user, isAuthenticated } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notificationTypes, setNotificationTypes] = useState<
+    NotificationType[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<string>('');
+  const [selectedRestaurant, setSelectedRestaurant] = useState<string>('all');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // 알림 타입 정보 가져오기
+    async function fetchNotificationTypes() {
+      try {
+        const types = await getNotificationTypes();
+        setNotificationTypes(types);
+      } catch (err) {
+        console.error('알림 타입 조회 오류:', err);
+      }
+    }
+
+    fetchNotificationTypes();
+  }, []);
 
   useEffect(() => {
     // 디버깅 정보 추가
@@ -106,50 +131,48 @@ export default function NotificationsPage() {
 
   // 알림 타입에 따른 아이콘 및 색상 설정
   const getNotificationStyle = (type: string) => {
-    switch (type) {
-      case 'RESERVATION_24H':
-        return {
-          icon: '',
-          bgColor: 'bg-blue-100',
-          textColor: 'text-blue-800',
-          label: '예약 24시간 전 알림',
-        };
-      case 'RESERVATION_3H':
-        return {
-          icon: '',
-          bgColor: 'bg-yellow-100',
-          textColor: 'text-yellow-800',
-          label: '예약 3시간 전 알림',
-        };
-      case 'RESERVATION_1H':
-        return {
-          icon: '',
-          bgColor: 'bg-orange-100',
-          textColor: 'text-orange-800',
-          label: '예약 1시간 전 알림',
-        };
-      case 'REVIEW_REQUEST':
-        return {
-          icon: '',
-          bgColor: 'bg-green-100',
-          textColor: 'text-green-800',
-          label: '리뷰 요청 알림',
-        };
-      case 'WELCOME':
-        return {
-          icon: '',
-          bgColor: 'bg-purple-100',
-          textColor: 'text-purple-800',
-          label: '환영 알림',
-        };
-      default:
-        return {
-          icon: '',
-          bgColor: 'bg-gray-100',
-          textColor: 'text-gray-800',
-          label: '일반 알림',
-        };
-    }
+    const notificationType = notificationTypes.find((nt) => nt.type === type);
+
+    // 기본 스타일 설정
+    const baseStyle = {
+      icon: '',
+      bgColor: 'bg-gray-100',
+      textColor: 'text-gray-800',
+      label: notificationType?.title || '일반 알림',
+    };
+
+    // 타입별 스타일 매핑
+    const typeStyles: Record<string, { bgColor: string; textColor: string }> = {
+      RESERVATION_1DAY_BEFORE: {
+        bgColor: 'bg-blue-100',
+        textColor: 'text-blue-800',
+      },
+      RESERVATION_3HOURS_BEFORE: {
+        bgColor: 'bg-orange-100',
+        textColor: 'text-orange-800',
+      },
+      RESERVATION_1HOUR_BEFORE: {
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-800',
+      },
+      RESERVATION_COMPLETED: {
+        bgColor: 'bg-green-100',
+        textColor: 'text-green-800',
+      },
+      REGISTER_COMPLETED: {
+        bgColor: 'bg-purple-100',
+        textColor: 'text-purple-800',
+      },
+      RESERVATION_3HOURS_AFTER: {
+        bgColor: 'bg-indigo-100',
+        textColor: 'text-indigo-800',
+      },
+    };
+
+    return {
+      ...baseStyle,
+      ...(typeStyles[type] || {}),
+    };
   };
 
   // 날짜 포맷팅 함수
@@ -210,6 +233,17 @@ export default function NotificationsPage() {
     return processedMessage;
   };
 
+  // 식당 목록 추출
+  const restaurants = Array.from(
+    new Set(notifications.map((n) => n.restaurantName).filter(Boolean))
+  ).sort();
+
+  // 필터링된 알림 목록
+  const filteredNotifications = notifications.filter((notification) => {
+    if (selectedRestaurant === 'all') return true;
+    return notification.restaurantName === selectedRestaurant;
+  });
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -238,13 +272,38 @@ export default function NotificationsPage() {
     <div className="container mx-auto px-4 py-8 mt-[80px]">
       <h1 className="text-2xl font-bold text-main mb-6">내 알림 목록</h1>
 
-      {notifications.length === 0 ? (
+      {/* 식당 필터 */}
+      <div className="mb-6">
+        <label
+          htmlFor="restaurant-filter"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        ></label>
+        <select
+          id="restaurant-filter"
+          value={selectedRestaurant}
+          onChange={(e) => setSelectedRestaurant(e.target.value)}
+          className="block w-full max-w-xs px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-main focus:border-main"
+        >
+          <option value="all">전체 알림</option>
+          {restaurants.map((restaurant) => (
+            <option key={restaurant} value={restaurant}>
+              {restaurant}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {filteredNotifications.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500 text-lg">알림이 없습니다.</p>
+          <p className="text-gray-500 text-lg">
+            {selectedRestaurant === 'all'
+              ? '알림이 없습니다.'
+              : '선택한 식당의 알림이 없습니다.'}
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
-          {[...notifications]
+          {[...filteredNotifications]
             .sort(
               (a, b) =>
                 new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
