@@ -1,31 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export default function usePagination(totalPagesFromBackend: number) {
-    const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0); // 0-based로 초기화
 
-    const setPage = (page:number) => {
-        if(page >= 1 && page <= totalPagesFromBackend) {
-            setCurrentPage(page);
-        }
-    };
+  useEffect(() => {
+    const lastPageIndex = totalPagesFromBackend > 0 ? totalPagesFromBackend - 1 : 0;
 
-    const goToNextPage = () => {
-        setPage(currentPage + 1);
-    };
-    
-    const goToPrevPage = () => {
-        setPage(currentPage - 1);
-    };
-
-    const goToFirstPage = () => {
-        setPage(1);
+    if (currentPage < 0) {
+      setCurrentPage(0);
+    } else if (currentPage > lastPageIndex && totalPagesFromBackend > 0) {
+      setCurrentPage(lastPageIndex);
     }
+  }, [currentPage, totalPagesFromBackend]);
 
-    const goToLastPage = () => {
-        setPage(totalPagesFromBackend);
-    }
+  const goToNextPage = useCallback(() => {
+    const lastPageIndex = totalPagesFromBackend > 0 ? totalPagesFromBackend - 1 : 0;
+    setCurrentPage((prevPage) => (prevPage < lastPageIndex ? prevPage + 1 : prevPage));
+  }, [totalPagesFromBackend]);
 
-    return{
-        currentPage, totalPagesFromBackend, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage
-    };
-};
+  const goToPrevPage = useCallback(() => {
+    setCurrentPage((prevPage) => (prevPage > 0 ? prevPage - 1 : prevPage));
+  }, []);
+
+  const setPage = useCallback(
+    (page: number) => {
+      const lastPageIndex = totalPagesFromBackend > 0 ? totalPagesFromBackend - 1 : 0;
+      if (page >= 0 && page <= lastPageIndex) {
+        setCurrentPage(page);
+      } else if (page < 0) {
+        setCurrentPage(0);
+      } else if (page > lastPageIndex) {
+        setCurrentPage(lastPageIndex);
+      }
+    },
+    [totalPagesFromBackend]
+  );
+
+  const goToFirstPage = useCallback(() => {
+    setCurrentPage(0);
+  }, []);
+
+  const goToLastPage = useCallback(() => {
+    const lastPageIndex = totalPagesFromBackend > 0 ? totalPagesFromBackend - 1 : 0;
+    setCurrentPage(lastPageIndex);
+  }, [totalPagesFromBackend]);
+
+  return {
+    currentPage,
+    goToNextPage,
+    goToPrevPage,
+    setPage,
+    goToFirstPage,
+    goToLastPage,
+  };
+}

@@ -4,19 +4,21 @@ import type { Tag } from "../../store/TagContext";
 import search from '@/assets/images/magnifying-glass.png';
 import RoundedBtn from "../Button/RoundedBtn";
 import Modal from "./Modal";
+import { useNavigate } from "react-router-dom";
+
 interface SearchModalProps {
   isOpen?: boolean;
   onClose: () => void;
-  onClick?: (keyword: string, tagIds: number[]) => void;
   currentKeyword?: string; 
   currentTagIds?: number[]; 
 }
 
-export default function SearchModal({ isOpen, onClose, onClick, currentKeyword = '', currentTagIds = [] }: SearchModalProps) {
+export default function SearchModal({ isOpen, onClose, currentKeyword = '', currentTagIds = [] }: SearchModalProps) {
   const { tags: availableTags } = useTagContext();
   const [inputText, setInputText] = useState(currentKeyword);
   const [selectedItems, setSelectedItems] = useState<number[]>(currentTagIds);
-  
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
 
   const handleItemClick = (tagId: number) => {
@@ -27,14 +29,25 @@ export default function SearchModal({ isOpen, onClose, onClick, currentKeyword =
   };
 
   const handleItemRemove = (tagId: number) => {
-    setSelectedItems((prev) => prev.filter((id) => id !== tagId));
+    setSelectedItems((prev) => prev.filter((id) => id !== id));
   };
 
   const handleSubmit = () => {
     const keyword = inputText.trim();
     const tagIds = selectedItems; 
 
-    onClick?.(keyword, tagIds);
+    const newSearchParams = new URLSearchParams();
+    if (keyword) {
+      newSearchParams.set('keyword', keyword);
+    }
+    if (tagIds.length > 0) {
+      newSearchParams.set('tagIds', tagIds.join(','));
+    }
+    newSearchParams.set('page','1');
+
+    const targetUrl = `/restaurants?${newSearchParams.toString()}`;
+
+    navigate(targetUrl);
     onClose();
   };
 

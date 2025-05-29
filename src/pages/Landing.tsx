@@ -29,45 +29,6 @@ interface PostItem {
   imageUrl: string;
 }
 
-// const dummy: PostItem[] = [
-//   {
-//     id: 1,
-//     name: '도쿄시장',
-//     content: '연어맛집',
-//     categoryName: '이자카야',
-//     restaurantTags: ['가성비', '서민적인'],
-//     imageUrl:
-//       'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
-//   },
-//   {
-//     id: 2,
-//     name: '도쿄시장',
-//     content: '연어맛집 진짜 최고 맛집',
-//     categoryName: '이자카야',
-//     restaurantTags: ['가성비', '서민적인'],
-//     imageUrl:
-//       'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
-//   },
-//   {
-//     id: 3,
-//     name: '도쿄시장',
-//     content: '연어맛집',
-//     categoryName: '이자카야',
-//     restaurantTags: ['가성비', '서민적인'],
-//     imageUrl:
-//       'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
-//   },
-//   {
-//     id: 4,
-//     name: '도쿄시장',
-//     content: '연어맛집',
-//     categoryName: '이자카야',
-//     restaurantTags: ['가성비', '서민적인'],
-//     imageUrl:
-//       'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqmuhN9M4zJ0xd1RV3SFornU57tQeew43EU3OQbcyso3gAzC3udD41aAPfYawJBiF6O11_NK-3TGkSIMjPzFNXgGGHh8ioG7CxJBrOYciRPYE9ApVdSw2FCYj1lDdP-ZjjTgePF3g=w408-h306-k-no',
-//   },
-// ];
-
 // 레스토랑 카드 컴포넌트
 function RestaurantCard({
   item,
@@ -115,7 +76,7 @@ function RestaurantCard({
         </div>
 
         {/* 태그 */}
-        {item.restaurantTags.length > 0 && (
+        {item.restaurantTags && item.restaurantTags.length > 0 && ( // item.restaurantTags가 존재하고 길이가 0보다 큰지 확인
           <div className="mt-2 overflow-x-auto scrollbar-hide">
             <div className="flex gap-2 w-max">
               {item.restaurantTags.map((tag, index) => (
@@ -204,17 +165,18 @@ export default function Landing() {
 
   const [isAddInfoModalOpen, setIsAddInfoModalOpen] = useState(false);
 
+  const redirectUrl = location.state?.redirectUrl || '/';
+
   //게시글 데이터 가져오기
   const fetchPosts = useCallback(async () => {
     try {
-      const apiUrl = 'http://localhost:8080';
+      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
       const res = await axios.get(`${apiUrl}/api/boards/main`, {
         headers: { Accept: 'application/json' },
         withCredentials: true,
       });
 
       const postsData = res.data;
-      console.log('res.data : ', postsData);
       if (Array.isArray(postsData)) {
         setPosts(postsData);
       } else {
@@ -239,7 +201,6 @@ export default function Landing() {
       if (Array.isArray(restaurantsData)) {
         setRestaurants(restaurantsData);
       } else {
-        console.error('content가 배열이 아닙니다:', restaurantsData);
         setRestaurants([]);
       }
     } catch (error) {
@@ -265,10 +226,11 @@ export default function Landing() {
     } else {
       setIsAddInfoModalOpen(false);
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user?.isNewUser, isAddInfoModalOpen]);
   
   const handleCloseAddInfoModal = useCallback(() => {
     setIsAddInfoModalOpen(false);
+    window.location.href = redirectUrl;
     if (user?.id) {
       localStorage.setItem(`hasCompletedAdditionalInfo_${user.id}`, 'true');
       const updatedUser = { ...user, isNewUser: false };

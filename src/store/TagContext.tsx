@@ -31,7 +31,6 @@ export const TagProvider = ({children} : {children: React.ReactNode}) => {
                 withCredentials: true
             });
             setTags(data);
-            //console.log(data);
         } catch (error) {
             console.log('데이터 가져오기 실패');
         }

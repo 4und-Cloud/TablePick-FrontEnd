@@ -13,7 +13,6 @@ export default function useModal( {initialState = false} : ModalProps = {}) {
 
     // 모달 열림 함수
     const openModal = () =>{
-        console.log('openModal:')
         setIsOpen(true);
     };
 

@@ -113,7 +113,6 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
       }
 
       const data = await res.json();
-      console.log('게시글 작성 성공:', data);
       alert('게시글이 성공적으로 작성되었습니다!');
       closeModal();
     } catch (error) {

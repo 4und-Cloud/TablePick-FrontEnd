@@ -12,8 +12,6 @@ interface ModalProps{
 
 export default function Modal( { close, children, footer, width = '400px', height = '500px', type } : ModalProps) {
 
-    console.log('modal:', close)
-    console.log('type:', type)
     return ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
             <div

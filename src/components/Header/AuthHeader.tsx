@@ -33,7 +33,6 @@ export default function AuthHeader() {
             credentials: 'include',
           }
         );
-        console.log('FCM 토큰 삭제');
       }
       logout();
     } catch (error) {

@@ -40,7 +40,6 @@ export default function FilterModal({
         <button
     onClick={(e) => {
       e.stopPropagation();
-      console.log("X 버튼 클릭됨");
       onClose();
     }}
     className="text-main font-bold text-xl absolute top-2 right-2"
@@ -59,7 +58,6 @@ export default function FilterModal({
           hoverBorderColor="hover:border-main"
           width="w-full"
           onClick={() => {
-            console.log("적용하기 버튼 클릭됨, 선택된 태그:", selectedTags);
             onClick?.();
             onClose();
           }}

@@ -33,11 +33,9 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
     initialState: false,
   });
 
-  console.log('useModal:', useModal());
 
   useEffect(() => {
     if (isOpen && user) {
-      console.log('user : ', user);
       setGender(
         user.gender === 'MALE'
           ? 'male'
@@ -243,11 +241,9 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
         selectedTags={selectedTagIds}
         setSelectedTags={setSelectedTagIds}
         onClose={() => {
-          console.log('FilterModal 닫기 호출');
           closeFilterModal();
         }}
         onClick={() => {
-          console.log('FilterModal 적용, 선택된 태그:', selectedTagIds);
           closeFilterModal();
         }}
       />

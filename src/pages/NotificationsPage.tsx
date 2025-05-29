@@ -65,9 +65,6 @@ export default function NotificationsPage() {
   }, []);
 
   useEffect(() => {
-    // 디버깅 정보 추가
-    console.log('인증 상태:', isAuthenticated);
-    console.log('사용자 정보:', user);
     setDebugInfo(
       `인증 상태: ${isAuthenticated ? '로그인됨' : '로그인 안됨'}, 사용자 ID: ${user?.id || '없음'}`
     );
@@ -75,7 +72,6 @@ export default function NotificationsPage() {
     async function fetchNotifications() {
       // 로컬 스토리지에서 사용자 정보 직접 확인 (디버깅용)
       const localUser = localStorage.getItem('infoUser');
-      console.log('로컬 스토리지 사용자 정보:', localUser);
 
       let userId = user?.id;
 
@@ -84,7 +80,6 @@ export default function NotificationsPage() {
         try {
           const parsedUser = JSON.parse(localUser);
           userId = parsedUser.id;
-          console.log('로컬 스토리지에서 가져온 사용자 ID:', userId);
         } catch (err) {
           console.error('로컬 스토리지 사용자 정보 파싱 오류:', err);
         }
@@ -100,7 +95,6 @@ export default function NotificationsPage() {
         setLoading(true);
         // SENT 상태의 알림만 가져오기
         const data = await getMemberNotifications(userId, 'SENT');
-        console.log('가져온 알림 데이터:', data);
         setNotifications(data);
         setError(null);
       } catch (err) {

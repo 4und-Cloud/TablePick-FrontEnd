@@ -48,19 +48,14 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     // 로컬 스토리지에서 사용자 정보 가져오기
     const savedUser = localStorage.getItem('userInfo');
-    console.log(
-      'AuthContext - 로컬 스토리지에서 가져온 사용자 정보:',
-      savedUser
-    );
+
     if (savedUser) {
       try {
         const userData = JSON.parse(savedUser);
-        console.log('AuthContext - 파싱된 사용자 정보:', userData);
         // 사용자 ID가 있는지 확인
         if (userData && userData.id) {
           setUser({...userData, isNewUser: userData.isNewUser || false});
           setIsAuthenticated(true);
-          console.log('AuthContext - 사용자 인증 상태 설정됨:', true);
         } else {
           console.warn('AuthContext - 사용자 ID가 없습니다:', userData);
         }
@@ -71,15 +66,12 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   }, []);
   // login
   const login = (userData: UserInfo) => {
-    console.log('AuthContext - 로그인 함수 호출됨:', userData);
     setIsAuthenticated(true);
     setUser(userData);
     localStorage.setItem('userInfo', JSON.stringify(userData));
-    console.log('AuthContext - 로그인 성공, 로컬 스토리지에 저장됨');
   };
   // logout => 해결
   const logout = async () => {
-    console.log('AuthContext - 로그아웃 함수 호출됨');
     try {
       const apiUrl = 'http://localhost:8080';
       const res = await fetch(`${apiUrl}/api/members/logout`, {

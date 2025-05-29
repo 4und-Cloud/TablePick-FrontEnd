@@ -25,6 +25,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     try {
       setIsLoggingIn(true);
 
+      const currentUrl = window.location.pathname + window.location.search;
+      const redirectUrl = encodeURIComponent(currentUrl);
+
       // 로그인 성공 후 FCM 토큰 처리를 위한 이벤트 리스너 설정
       window.addEventListener(
         'message',
@@ -56,7 +59,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       );
 
       const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-      window.location.href = `${apiUrl}/oauth2/authorization/${provider}`;
+      window.location.href = `${apiUrl}/oauth2/authorization/${provider}?redirect=${redirectUrl}`;
     } catch (error) {
       console.error('로그인 처리 중 오류:', error);
       setIsLoggingIn(false);

@@ -152,7 +152,6 @@ export async function getFCMToken() {
     }
 
     // FCM 토큰 요청
-    console.log('FCM 토큰 요청 중...');
     const currentToken = await getToken(messaging, {
       vapidKey:
         'BJU5QrpqOX0cekAcEVGx8NKmAobnUKzEfRqQGKgNvSG61sdBht3KkQPCcB2wDfbkT5NvrYIE5ktp6wBsZOrrPTw',
@@ -160,7 +159,6 @@ export async function getFCMToken() {
     });
 
     if (currentToken) {
-      console.log('FCM 토큰 발급 성공:', currentToken.substring(0, 10) + '...');
       // 토큰을 로컬 스토리지에 저장하여 중복 발급 방지
       localStorage.setItem('fcm_token', currentToken);
       return currentToken;
@@ -198,7 +196,6 @@ export async function saveFCMToken(userId: number | string, token: string) {
     );
 
     if (response.ok) {
-      console.log('FCM 토큰이 서버에 저장되었습니다.');
       return true;
     } else {
       console.error('FCM 토큰 저장 실패:', await response.text());
@@ -229,7 +226,6 @@ export async function deleteFCMToken(userId: number | string) {
     );
 
     if (response.ok) {
-      console.log('FCM 토큰이 서버에서 삭제되었습니다.');
       return true;
     } else {
       console.error('FCM 토큰 삭제 실패:', await response.text());
@@ -246,7 +242,6 @@ export function setupNotificationListener(callback?: (payload: any) => void) {
   if (!messaging) return;
 
   onMessage(messaging, (payload) => {
-    console.log('메시지 수신:', payload);
 
     // 브라우저 알림 표시
     if (Notification.permission === 'granted' && payload.notification) {
@@ -277,16 +272,12 @@ export async function getMemberNotifications(
       ? `${apiUrl}/api/notifications/member/${memberId}?status=${status}`
       : `${apiUrl}/api/notifications/member/${memberId}`;
 
-    console.log('알림 목록 조회 URL:', url);
-    console.log('조회 중인 회원 ID:', memberId);
-
     const response = await fetch(url, {
       credentials: 'include',
     });
 
     if (response.ok) {
       const notifications = await response.json();
-      console.log('알림 목록 조회 성공:', notifications);
       return notifications;
     } else {
       console.error('알림 목록 조회 실패:', await response.text());
