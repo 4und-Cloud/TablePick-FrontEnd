@@ -11,31 +11,27 @@ interface ReservationData {
   reservationDate: string;
   reservationTime: string;
   reservationStatus: string;
+  restaurantId: number;
+  restaurantName: string;
+  restaurantAddress: string;
+  restaurantImage: string;
 }
 
-export default function ReservationCheck(){
-  // const mockData: CardItemProps[] = Array.from({length:23}, (_, i) => ({
-    //     id : i + 1,
-    //     image: place,
-    //     restaurantName: `센시티브 서울 ${i+1}`,
-    //     description: '서울특별시 용산구 대사관로11길 49 2f',
-    //     reservationInfo: '2025.05.08 (목) 2명 13:37',
-    //     button: <RoundedBtn text='게시글 작성하러 가기' width="w-[350px]" bgColor="bg-main" height="h-[30px]" textColor="text-white" hoverBorderColor="hover:border-accent" hoverColor="hover:bg-white" hoverTextColor="hover:text-main" onClick={() => setIsModalOpen(true)} />,
-    //     buttonPosition: 'bottom'
-    // }));
-
-    // const itemsPerPage = 6;
-    //const {currentPage, totalPages, goToNextPage, goToPrevPage, setPage, goToFirstPage, goToLastPage} = usePagination(mockData.length, itemsPerPage);
-    //const startIdx = (currentPage - 1) * itemsPerPage;
-    //const PaginaetedItems = mockData.slice(startIdx, startIdx + itemsPerPage);
-
-    // PostWriteModal 상태 관리
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default function ReservationCheck() {
   const [reservations, setReservations] = useState<CardItemProps[]>([]);
+  const [selectedReservationId, setSelectedReservationId] = useState<number | null>(null);
+  const [selectedReservationData, setSelectedReservationData] = useState<ReservationData | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchReservationCheck();
   }, []);
+
+  useEffect(() => {
+    if (selectedReservationData !== null && selectedReservationId !== null) {
+      setIsModalOpen(true);
+    }
+  }, [selectedReservationData, selectedReservationId]);
 
   const fetchReservationCheck = async () => {
     try {
@@ -49,32 +45,128 @@ export default function ReservationCheck(){
 
       if (!res.ok) {
         const errorText = await res.text();
-        console.log('응답 실패 :', errorText);
+        console.error('응답 실패 :', errorText);
         throw new Error('예약 정보 불러오기 실패');
-      };
+      }
 
       const data: ReservationData[] = await res.json();
-      console.log('data : ', data);
+      console.log('API에서 불러온 예약 데이터 : ', data);
 
-      // const formattedReservations: CardItemProps[] = data.map(reservations => ({
-      //   id: reservations.id,
-        
-      // }))
+      const formattedReservations: CardItemProps[] = data.map(reservation => ({
+        id: reservation.id,
+        image: reservation.restaurantImage || place,
+        restaurantName: reservation.restaurantName,
+        description: reservation.restaurantAddress,
+        reservationInfo: `${reservation.reservationDate} (${new Date(reservation.reservationDate).toLocaleDateString('ko-KR', { weekday: 'short' })}) ${reservation.partySize}명 ${reservation.reservationTime}`,
+        button: (
+          <div className="flex flex-row gap-2 w-full justify-between"> 
+            <RoundedBtn
+              text='게시글 작성하러 가기'
+              width="w-[170px]"
+              bgColor="bg-main"
+              height="h-[30px]"
+              textColor="text-white"
+              hoverBorderColor="hover:border-accent"
+              hoverColor="hover:bg-white"
+              hoverTextColor="hover:text-main"
+              onClick={() => {
+                setSelectedReservationId(reservation.id);
+                setSelectedReservationData(reservation);
+              }}
+            />
+
+            <RoundedBtn
+              text='예약 취소'
+              width="w-[170px]" 
+              bgColor="bg-red-500"
+              height="h-[30px]"
+              textColor="text-white"
+              hoverBorderColor="hover:border-red-700"
+              hoverColor="hover:bg-white"
+              hoverTextColor="hover:text-red-500"
+              onClick={() => handleCancelReservation(reservation.id)}
+            />
+          </div>
+        ),
+        buttonPosition: 'bottom'
+      }));
+
+      setReservations(formattedReservations);
+
     } catch (error) {
-      console.log('데이터 불러오기 실패');
-      }
+      console.error('데이터 불러오기 실패:', error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedReservationId(null);
+    setSelectedReservationData(null);
+    fetchReservationCheck();
+  };
+
+  const handleCancelReservation = async (reservationId: number) => {
+    if (!window.confirm('정말로 이 예약을 취소하시겠습니까?')) {
+      return alert('취소가 완료되었습니다.');
     }
 
-    return(
-        <div className="pt-[80px] m-4">
-            <div>
-                {/* <List items={PaginaetedItems}/> */}
-                <div>
-                    {/* <Pagination currentPage={currentPage} totalPages={totalPages} onNextPage={goToNextPage} onPrevPage={goToPrevPage} onFirstPage={goToFirstPage} onLastPage={goToLastPage} onPageChange={setPage}/> */}
-                </div>
-            </div>
-            {/* PostWriteModal 열기 */}
-            {isModalOpen && <PostWriteModal closeModal={() => setIsModalOpen(false)} />}
+    try {
+      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
+      const res = await fetch(`${apiUrl}/api/reservations/${reservationId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('예약 취소 실패 응답:', errorText);
+        try {
+            const errorJson = JSON.parse(errorText);
+            if (errorJson.message) {
+                alert(`예약 취소 실패: ${errorJson.message}`);
+            } else {
+                alert(`예약 취소 실패: ${res.statusText}`);
+            }
+        } catch (e) {
+            alert(`예약 취소 실패: ${res.statusText}`);
+        }
+        throw new Error(`예약 취소 실패: ${res.status} ${res.statusText}`);
+      }
+
+      alert('예약이 성공적으로 취소되었습니다.');
+      fetchReservationCheck();
+    } catch (error) {
+      console.error('예약 취소 중 오류 발생:', error);
+      alert('예약 취소 중 오류가 발생했습니다.');
+    }
+  };
+
+  return (
+    <div className="pt-[80px] m-4">
+      <div>
+        {reservations.length > 0 ? (
+          <List items={reservations} />
+        ) : (
+          <p className="text-center text-gray-500 mt-10">예약 내역이 없습니다.</p>
+        )}
+
+        <div>
         </div>
-    )
+      </div>
+      {isModalOpen && selectedReservationData && (
+        <PostWriteModal
+          closeModal={handleCloseModal}
+          reservationId={selectedReservationId}
+          initialData={{
+            restaurant: selectedReservationData.restaurantName,
+            content: "",
+            selectedTagIds: []
+          }}
+        />
+      )}
+    </div>
+  );
 }

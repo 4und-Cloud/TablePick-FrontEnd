@@ -5,7 +5,7 @@ export interface CardItemProps{
     id: number;
     linkTo? : string;
     image? :string; // 이미지
-    restaurantName: string; // 식당명
+    restaurantName?: string; // 식당명
     description : string; // 주소, 게시글 내용
     tags? : string[]; // 태그
     reservationInfo? : React.ReactNode; // 예약 관련 정보
@@ -14,7 +14,8 @@ export interface CardItemProps{
     containerStyle? : string; // 카드 전체 wrapper 커스텀
     imageStyle? : string; // 이미지 커스텀
     restaurantNameStyle?: string; // 식당명 커스텀
-    onClick?:() => void;
+  onClick?: () => void;
+  onDelete?: (id: number) => void;
 }
 
 export default function CardItem({
@@ -29,7 +30,8 @@ export default function CardItem({
     tags = [],
     reservationInfo,
     button,
-    buttonPosition,
+  buttonPosition,
+    onDelete,
   }: CardItemProps) {
     const navigate = useNavigate();
 
@@ -37,6 +39,14 @@ export default function CardItem({
       if (!id || !linkTo) return;
       navigate(`/${linkTo}/${id}`);
     };
+  
+  const handleDeleteClick = (event: React.MouseEvent) => {
+    event.stopPropagation(); // 카드 클릭 이벤트가 발생하지 않도록 전파 중단
+    if (onDelete) {
+      onDelete(id); // onDelete 콜백 호출
+    }
+  };
+
 
     return (
 <div onClick={handleClick} className={`relative flex flex-col p-3 mx-2 my-2 overflow-hidden ${containerStyle ?? 'border w-[370px] rounded-xl shadow-xl h-[335px] bg-card'}`}>
@@ -84,6 +94,11 @@ export default function CardItem({
               </div>
             )}
           </div>
+
+          {onDelete && (
+            <button className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 text-xs font-bold hover:bg-red-600"
+          onClick={handleDeleteClick}>삭제 </button>
+          )}
   
           {/* 버튼 (절대 위치) */}
           {button && buttonPosition === 'bottom' && (

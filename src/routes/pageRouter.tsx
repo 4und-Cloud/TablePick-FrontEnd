@@ -1,7 +1,7 @@
 import {Route, Routes} from "react-router-dom";
 import Landing from "../pages/Landing";
 
-//import MyPosts from "../pages/MyPosts";
+import MyPosts from "../pages/MyPosts";
 import Mypage from "../pages/Mypage";
 import PostDetail from "../pages/PostDetail";
 import PostList from "../pages/PostList";
@@ -23,7 +23,7 @@ export default function PageRouter() {
             <Route path="/posts" element={<PostList />} />
             <Route path="/posts/:id" element={<PostDetail/>}/>
             <Route path="/mypage" element={<Mypage/>}/>
-            {/*<Route path="/my-posts" element={<MyPosts/>} />*/}
+            <Route path="/my-posts" element={<MyPosts/>} />
             <Route path="/reservation-check" element={<ReservationCheck/>} />
             <Route path="/notifications" element={<NotificationsPage/>}/>
         </Routes>
