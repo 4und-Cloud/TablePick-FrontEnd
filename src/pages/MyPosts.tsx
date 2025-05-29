@@ -38,7 +38,6 @@ export default function MyPosts() {
           console.log('게시글 삭제 실패 응답 :', res.status, errorText);
           throw new Error('게시글 삭제 실패');
         }
-        console.log(`${id}  삭제 성공 `);
         fetchMypost();
       } catch (error) {
         console.error('삭제 중 오류 발생', error);
@@ -63,7 +62,6 @@ export default function MyPosts() {
         throw new Error('내 게시글 정보 불러오기');
       }
       const data: Mypost[] = await res.json();
-      console.log('게시글 데이터 : ', data);
 
       const formattedMypost: CardItemProps[] = data.map(post => ({
         id: post.id,

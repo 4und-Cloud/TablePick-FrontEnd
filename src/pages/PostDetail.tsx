@@ -2,6 +2,7 @@ import location from '@/assets/images/location.png';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useModal from '../hooks/useModal';
+import defaultPost from '@/assets/images/restaurant.png';
 
 type PostData = {
   id: number;
@@ -12,7 +13,7 @@ type PostData = {
   memberProfileImage: string;
   content: string;
   tagNames: string[];
-  imageUrls: { imageUrl: string }
+  imageUrls: string[];
   createdAt: string;
 }
 
@@ -24,7 +25,8 @@ export default function PostDetail() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await fetch(`/api/boards/${id}`);
+        const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
+        const res = await fetch(`${apiUrl}/api/boards/${id}`);
         const json = await res.json();
         setData(json);
       } catch (error) {
@@ -33,6 +35,10 @@ export default function PostDetail() {
     }
     if (id) fetchPost();
   }, [id]);
+
+  if (!data) {
+    return <div className="p-5 text-center text-gray-500">게시글을 불러오는 중이거나 존재하지 않습니다...</div>;
+  }
 
   return (
     <div className="p-5">
@@ -49,13 +55,29 @@ export default function PostDetail() {
 
       {/* 이미지 영역 */}
       <div className="flex flex-row gap-2 my-4">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="w-[calc(33.333%-1rem)] aspect-square bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-            <img src={data?.imageUrls.imageUrl} className="object-cover w-full h-full rounded-lg"
-                                referrerPolicy="no-referrer"/>
+        {data.imageUrls && data.imageUrls.length > 0 ? (
+          data.imageUrls.slice(0, 3).map((imageUrl, i) => ( // 최대 3개의 이미지만 렌더링
+            <div key={i} className="w-[calc(33.333%-1rem)] aspect-square bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+              <img
+                src={imageUrl || defaultPost} // 수정된 부분: 배열의 각 URL을 직접 사용
+                alt={`Post Image ${i + 1}`}
+                className="object-cover w-full h-full rounded-lg"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          ))
+        ) : (
+          // 이미지가 없을 경우 대체 UI
+          <div className="w-full aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
+            <img
+                src={defaultPost} // 수정된 부분: 배열의 각 URL을 직접 사용
+                className="object-cover w-full h-full rounded-lg"
+                referrerPolicy="no-referrer"
+              />
           </div>
-        ))}
+        )}
       </div>
+
 
       {/* 태그 영역 */}
       {/* <div className="my-4">

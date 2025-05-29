@@ -130,7 +130,6 @@ export default function Mypage() {
       profileImage: formData.profileImage || defaultProfile,
       memberTagsId : formData.memberTags
 			};
-			console.log('req body :', requestBody, null, 2);
 			const res = await fetch(`${apiUrl}/api/members`, {
 				method: 'PATCH',
 				headers: {
@@ -150,14 +149,11 @@ export default function Mypage() {
       const text = await res.text();
 			if (text) {
 				const data = JSON.parse(text);
-				console.log('저장 성공 :', resData); 
 				localStorage.setItem('userInfo', JSON.stringify({
 				...formData,
 				memberTags: data.memberTags?.map((tag: any) => tag.id) || formData.memberTags || [],
 			}));
-			} else {
-				console.log('저장 성공');
-      }
+      } 
       
       const updatedUser: MypageUserInfo = {
         ...user,

@@ -29,7 +29,6 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time)
-    console.log('시간 클릭 :', time);
   }
 
   const handleDateChange: CalendarProps["onChange"] = (value) => {
@@ -65,15 +64,12 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
       }
 
       const data = await res.json();
-      console.log('data: ',data);
       const times = Array.isArray(data) ? data : (data.availableTimes || []);
-      console.log('times:', times);
 
       setAvailableTimes(times
         .map((time : string) => time.substring(0, 5)));
 
       setSelectedTime(times.length > 0 && typeof times[0] === 'string' && times[0] !== null ? (times[0] as string).substring(0, 5) : '');
-      console.log('fetch 후 selectedTime : ', selectedTime);
     } catch (error) {
       console.error('예약 가능 시간 로드 오류 :', error);
       setAvailableTimes([]);
@@ -119,8 +115,6 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
         partySize: selectedPeople,
       };
 
-      console.log('전송될 예약 데이터 :', JSON.stringify(reservationData));
-
       const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
 
       // 예약 API 호출
@@ -140,7 +134,6 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
 
       let result;
       const resText = await response.text();
-      console.log('예약 응답 : ', resText);
 
       if (resText) {
         try {
@@ -150,7 +143,6 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
           throw new Error('예약 성공 응답 형식 올바르지 않음');
         }
       } else {
-        console.log('예약 서버 응답 본문 비었음 , but 성공');
         result = { id: 'unknown', status: 'SUCCESS' };
       }
 

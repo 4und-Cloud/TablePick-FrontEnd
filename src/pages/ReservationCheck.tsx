@@ -50,11 +50,10 @@ export default function ReservationCheck() {
       }
 
       const data: ReservationData[] = await res.json();
-      console.log('API에서 불러온 예약 데이터 : ', data);
 
       const formattedReservations: CardItemProps[] = data.map(reservation => ({
         id: reservation.id,
-        image: reservation.restaurantImage || place,
+        image: reservation.restaurantImage,
         restaurantName: reservation.restaurantName,
         description: reservation.restaurantAddress,
         reservationInfo: `${reservation.reservationDate} (${new Date(reservation.reservationDate).toLocaleDateString('ko-KR', { weekday: 'short' })}) ${reservation.partySize}명 ${reservation.reservationTime}`,
@@ -106,8 +105,9 @@ export default function ReservationCheck() {
   };
 
   const handleCancelReservation = async (reservationId: number) => {
-    if (!window.confirm('정말로 이 예약을 취소하시겠습니까?')) {
-      return alert('취소가 완료되었습니다.');
+    const isConfirmed = window.confirm('정말로 이 예약을 취소하시겠습니까?');
+    if (!isConfirmed) {
+      return; // "취소"를 누르면 함수 종료, 알림 없음
     }
 
     try {
@@ -145,7 +145,7 @@ export default function ReservationCheck() {
   };
 
   return (
-    <div className="pt-[80px] m-4">
+    <div className="m-4">
       <div>
         {reservations.length > 0 ? (
           <List items={reservations} />

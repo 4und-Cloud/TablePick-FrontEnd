@@ -12,26 +12,60 @@ import defaultProfile from '@/assets/images/user.png';
 export default function OauthSuccess() {
   const { login } = useAuth();
   const navigate = useNavigate();
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLoginProcessed, setIsLoginProcessed] = useState(false); // 로그인 처리 플래그
+
   useEffect(() => {
-    async function fetchUserInfo() {
+    let isMounted = true; // 마운트 상태 체크
+
+    async function fetchUserInfoAndHandleFCM() {
+      if (!isMounted) return; // 컴포넌트가 언마운트된 경우 중단
+
       try {
         setLoading(true);
+
+        // FCM 토큰 처리와 사용자 정보 요청을 병렬로 실행
         const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-        const response = await axios.get(`${apiUrl}/api/members`, {
-          headers: {
-            Accept: 'application/json',
-          },
-          withCredentials: true,
-        });
-        const userData = response.data;
-        console.log('OAuth 성공 페이지 - 사용자 데이터:', userData);
+        const [userResponse, fcmToken] = await Promise.all([
+          axios.get(`${apiUrl}/api/members`, {
+            headers: {
+              Accept: 'application/json',
+            },
+            withCredentials: true,
+          }),
+          (async () => {
+            try {
+              let token = getSavedFCMToken();
+              if (!token) {
+                token = await getFCMToken();
+              }
+              return token;
+            } catch (fcmError) {
+              console.error('FCM 토큰 가져오기 실패:', fcmError);
+              return null;
+            }
+          })(),
+        ]);
+
+        const userData = userResponse.data;
+
         if (!userData || !userData.email || !userData.id) {
           throw new Error('잘못된 사용자 데이터');
         }
 
+        // FCM 토큰 서버 저장 (에러 무시)
+        if (fcmToken && userData.id) {
+          try {
+            await saveFCMToken(userData.id, fcmToken);
+          } catch (fcmError) {
+            console.error('FCM 토큰 서버 저장 실패:', fcmError);
+          }
+        } else {
+          console.warn('FCM 토큰 또는 사용자 ID가 없음');
+        }
+
+        // 사용자 태그 처리
         let memberTagsForAuthContext: number[] = [];
         if (Array.isArray(userData.memberTagIds)) {
           memberTagsForAuthContext = userData.memberTagIds
@@ -42,7 +76,6 @@ export default function OauthSuccess() {
             '서버 응답에 memberTagIds 필드가 없거나 배열이 아닙니다:',
             userData.memberTagIds
           );
-          // memberTagIds가 없으면 빈 배열로 초기화 (기존 로직 유지)
           memberTagsForAuthContext = [];
         }
 
@@ -54,8 +87,6 @@ export default function OauthSuccess() {
           `hasCompletedAdditionalInfo_${userData.id}`
         );
 
-        // isNewUser는 최근 생성되었고 AND 아직 추가 정보 모달을 완료하지 않은 경우
-        // false, 신규 유저가 아닌 경우
         const shouldShowAdditionalInfoModal =
           isUserRecentlyCreated && !hasCompletedAdditionalnfo;
 
@@ -71,57 +102,51 @@ export default function OauthSuccess() {
           createAt: userData.createAt || '',
           isNewUser: shouldShowAdditionalInfoModal,
         };
-        console.log(
-          'OAuth 성공 페이지 - 정규화된 사용자 데이터:',
-          normalizedUser
-        );
-        // 로그인 처리
-        login(normalizedUser);
-        // 로컬 스토리지에 사용자 정보 저장
-        localStorage.setItem('userInfo', JSON.stringify(normalizedUser));
-        console.log('OAuth 성공 페이지 - 로컬 스토리지에 사용자 정보 저장됨');
-        // FCM 토큰 처리는 로그인 성공 후에 비동기적으로 처리
-        setTimeout(async () => {
-          try {
-            // FCM 토큰 처리
-            let fcmToken = getSavedFCMToken();
-            if (!fcmToken) {
-              fcmToken = await getFCMToken();
-            }
-            if (fcmToken && normalizedUser.id) {
-              await saveFCMToken(normalizedUser.id, fcmToken);
-            }
-          } catch (fcmError) {
-            console.error('FCM 토큰 처리 중 오류:', fcmError);
-            // FCM 토큰 오류는 로그인 프로세스를 중단시키지 않음
+
+        // 로그인 처리 (중복 방지 플래그 설정)
+        if (!isLoginProcessed) {
+          login(normalizedUser);
+          localStorage.setItem('userInfo', JSON.stringify(normalizedUser));
+
+          const params = new URLSearchParams(location.search);
+          const redirectUrl = params.get('redirect') || '/';
+
+          if (!shouldShowAdditionalInfoModal) {
+            alert('로그인 성공'); // 한 번만 호출
+            navigate(redirectUrl);
+          } else {
+            navigate('/', { state: { redirectUrl, showFilterModal: true } });
           }
-        }, 1000);
 
-        if (!shouldShowAdditionalInfoModal) {
-          alert('로그인 성공');
+          setIsLoginProcessed(true); // 로그인 처리 완료 표시
         }
-
-        navigate('/', { state: { showFilterModal: true } });
       } catch (error) {
         console.error('사용자 정보 가져오기 실패:', error);
         setError('로그인 처리 중 오류가 발생했습니다.');
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false); // 마운트 상태 확인 후 로딩 해제
       }
     }
-    fetchUserInfo();
-  }, [login, navigate]);
 
-  // 최근 생성된 계정인지 확인하는 함수 (예: 1분 이내)
+    fetchUserInfoAndHandleFCM();
+
+    // 클린업
+    return () => {
+      isMounted = false; // 컴포넌트 언마운트 시 마운트 상태 변경
+    };
+  }, [login, navigate, location.search]); 
+
   const isRecentlyCreated = (createdAtStr: string): boolean => {
     const createdAt = new Date(createdAtStr);
     const now = new Date();
     const diffInMinutes = (now.getTime() - createdAt.getTime()) / (1000 * 60);
-    return diffInMinutes < 1; // 1분 이내에 생성된 계정
+    return diffInMinutes < 1;
   };
+
   if (loading) {
     return <div className="mt-[80px] text-center">로그인 중입니다...</div>;
   }
+
   if (error) {
     return (
       <div className="mt-[80px] text-center">
@@ -135,5 +160,6 @@ export default function OauthSuccess() {
       </div>
     );
   }
+
   return <div className="mt-[80px] text-center">로그인 처리 중입니다...</div>;
 }
