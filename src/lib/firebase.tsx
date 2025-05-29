@@ -297,3 +297,24 @@ export async function getMemberNotifications(
     return [];
   }
 }
+
+// 알림 타입 정보 조회 함수
+export async function getNotificationTypes() {
+  try {
+    const apiUrl = 'http://localhost:8080';
+    const response = await fetch(`${apiUrl}/api/notifications/types`, {
+      credentials: 'include',
+    });
+
+    if (response.ok) {
+      const types = await response.json();
+      return types;
+    } else {
+      console.error('알림 타입 조회 실패:', await response.text());
+      return [];
+    }
+  } catch (error) {
+    console.error('알림 타입 조회 중 오류:', error);
+    return [];
+  }
+}
