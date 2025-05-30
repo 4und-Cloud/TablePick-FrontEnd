@@ -35,80 +35,72 @@ export default function PostList() {
   ));
 
   useEffect(() => {
-    const urlPage = parseInt(searchParams.get("page") || "1");
-    const safeUrlPage = isNaN(urlPage) || urlPage < 1 ? 1 : urlPage;
-    const zeroBasedPage = safeUrlPage - 1; // URL은 1-based, 훅은 0-based
+  const urlPage = parseInt(searchParams.get("page") || "1");
+  const safeUrlPage = isNaN(urlPage) || urlPage < 1 ? 1 : urlPage;
+  const zeroBasedPage = safeUrlPage - 1;
 
-    if (zeroBasedPage !== currentPage) {
-      setPage(zeroBasedPage);
-    }
-  }, [searchParams, currentPage, setPage]);
+  // URL에서 가져온 페이지와 다를 경우만 설정
+  setPage(zeroBasedPage);
+  // 의존성 배열에서 currentPage 제거
+}, [searchParams, setPage]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-        const restaurantId = searchParams.get("restaurantId");
+// 2. currentPage가 바뀔 때 API 요청
+useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
+      const restaurantId = searchParams.get("restaurantId");
 
-        let reqUrl: string;
+      let reqUrl: string;
 
-        if (restaurantId) {
-          reqUrl = `${apiUrl}/api/boards/restaurant/${restaurantId}`;
-        } else {
-          reqUrl = `${apiUrl}/api/boards/list?page=${currentPage}&size=6`; // 0-based page
-        }
-
-        const res = await axios.get(reqUrl, {
-          withCredentials: true,
-          headers: {
-            Accept: "application/json",
-          },
-        });
-
-        if (restaurantId) {
-          const postData = res.data;
-          const postsToSet = Array.isArray(postData) ? postData : postData ? [postData] : [];
-          const convertedData: CardItemProps[] = postsToSet.map((item: PostData, i: number) => ({
-            id: item.id || i + 1,
-            description: item.content || "내용 없음",
-            restaurantName: item.restaurantName || "정보 없음",
-            restaurantAddress: item.restaurantAddress || "정보 없음",
-            restaurantCategoryName: item.restaurantCategoryName || "정보 없음",
-            memberNickname: item.memberNickname || "정보 없음",
-            memberProfileImage: item.memberProfileImage || defaultProfile,
-            image: item.imageUrl,
-          }));
-          setPostList(convertedData);
-          setTotalPagesFromAPI(1); // restaurantId로 조회 시 페이지네이션 없음
-        } else {
-          const posts: PostData[] = res.data.boardList || [];
-          const totalPagesFromBackend = res.data.totalPages || 1; // 백엔드에서 1-based totalPages 반환 가정
-          setTotalPagesFromAPI(totalPagesFromBackend);
-
-          const convertedData: CardItemProps[] = posts.map((item: PostData, i: number) => ({
-            id: item.id || i + 1,
-            description: item.content || "내용 없음",
-            restaurantName: item.restaurantName || "정보 없음",
-            restaurantAddress: item.restaurantAddress || "정보 없음",
-            restaurantCategoryName: item.restaurantCategoryName || "정보 없음",
-            memberNickname: item.memberNickname || "정보 없음",
-            memberProfileImage: item.memberProfileImage || defaultProfile,
-            image: item.imageUrl,
-          }));
-          setPostList(convertedData);
-        }
-      } catch (error) {
-        console.error("게시글 리스트 불러오기 실패:", error);
-        setPostList([]);
-        setTotalPagesFromAPI(1);
-      } finally {
-        setLoading(false);
+      if (restaurantId) {
+        reqUrl = `${apiUrl}/api/boards/restaurant/${restaurantId}`;
+      } else {
+        reqUrl = `${apiUrl}/api/boards/list?page=${currentPage}&size=6`;
       }
-    };
 
-    fetchData();
-  }, [currentPage, searchParams]);
+      const res = await axios.get(reqUrl, {
+        withCredentials: true,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      const postsToSet = restaurantId
+        ? Array.isArray(res.data)
+          ? res.data
+          : res.data
+          ? [res.data]
+          : []
+        : res.data.boardList || [];
+
+      const totalPages = restaurantId ? 1 : res.data.totalPages || 1;
+
+      const convertedData: CardItemProps[] = postsToSet.map((item: PostData, i: number) => ({
+        id: item.id || i + 1,
+        description: item.content || "내용 없음",
+        restaurantName: item.restaurantName || "정보 없음",
+        restaurantAddress: item.restaurantAddress || "정보 없음",
+        restaurantCategoryName: item.restaurantCategoryName || "정보 없음",
+        memberNickname: item.memberNickname || "정보 없음",
+        memberProfileImage: item.memberProfileImage || defaultProfile,
+        image: item.imageUrl,
+      }));
+
+      setPostList(convertedData);
+      setTotalPagesFromAPI(totalPages);
+    } catch (error) {
+      console.error("게시글 리스트 불러오기 실패:", error);
+      setPostList([]);
+      setTotalPagesFromAPI(1);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [currentPage, searchParams.get("restaurantId")]);
 
   const updateUrlPage = (newPage: number) => {
     const newSearchParams = new URLSearchParams(searchParams);
@@ -140,7 +132,6 @@ export default function PostList() {
               onLastPage={goToLastPage}
               onPageChange={(pageNumberFromPagination) => {
                 updateUrlPage(pageNumberFromPagination); // 1-based 페이지로 URL 업데이트
-                setPage(pageNumberFromPagination - 1); // 0-based로 훅에 설정
               }}
             />
           </>
