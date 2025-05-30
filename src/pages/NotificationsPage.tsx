@@ -3,7 +3,7 @@ import useAuth from '../hooks/useAuth';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
-import { getMemberNotifications, getNotificationTypes } from '../lib/firebase';
+import { getMemberNotifications } from '../lib/firebase';
 
 /**
  * 알림 데이터 인터페이스
@@ -31,38 +31,48 @@ interface Notification {
   reservationId?: number;
 }
 
-interface NotificationType {
-  id: number;
-  type: string;
-  title: string;
-  description: string;
-}
+// 알림 타입 정의
+const NOTIFICATION_TYPES = {
+  RESERVATION_1DAY_BEFORE: {
+    title: '예약 1일 전 알림',
+    bgColor: 'bg-blue-100',
+    textColor: 'text-blue-800',
+  },
+  RESERVATION_3HOURS_BEFORE: {
+    title: '예약 3시간 전 알림',
+    bgColor: 'bg-orange-100',
+    textColor: 'text-orange-800',
+  },
+  RESERVATION_1HOUR_BEFORE: {
+    title: '예약 1시간 전 알림',
+    bgColor: 'bg-red-100',
+    textColor: 'text-red-800',
+  },
+  RESERVATION_COMPLETED: {
+    title: '예약 완료 알림',
+    bgColor: 'bg-green-100',
+    textColor: 'text-green-800',
+  },
+  REGISTER_COMPLETED: {
+    title: '회원가입 완료',
+    bgColor: 'bg-purple-100',
+    textColor: 'text-purple-800',
+  },
+  RESERVATION_3HOURS_AFTER: {
+    title: '예약 3시간 후 알림',
+    bgColor: 'bg-indigo-100',
+    textColor: 'text-indigo-800',
+  },
+} as const;
 
 export default function NotificationsPage() {
   const { user, isAuthenticated } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [notificationTypes, setNotificationTypes] = useState<
-    NotificationType[]
-  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<string>('');
   const [selectedRestaurant, setSelectedRestaurant] = useState<string>('all');
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // 알림 타입 정보 가져오기
-    async function fetchNotificationTypes() {
-      try {
-        const types = await getNotificationTypes();
-        setNotificationTypes(types);
-      } catch (err) {
-        console.error('알림 타입 조회 오류:', err);
-      }
-    }
-
-    fetchNotificationTypes();
-  }, []);
 
   useEffect(() => {
     setDebugInfo(
@@ -125,7 +135,8 @@ export default function NotificationsPage() {
 
   // 알림 타입에 따른 아이콘 및 색상 설정
   const getNotificationStyle = (type: string) => {
-    const notificationType = notificationTypes.find((nt) => nt.type === type);
+    const notificationType =
+      NOTIFICATION_TYPES[type as keyof typeof NOTIFICATION_TYPES];
 
     // 기본 스타일 설정
     const baseStyle = {
@@ -135,38 +146,14 @@ export default function NotificationsPage() {
       label: notificationType?.title || '일반 알림',
     };
 
-    // 타입별 스타일 매핑
-    const typeStyles: Record<string, { bgColor: string; textColor: string }> = {
-      RESERVATION_1DAY_BEFORE: {
-        bgColor: 'bg-blue-100',
-        textColor: 'text-blue-800',
-      },
-      RESERVATION_3HOURS_BEFORE: {
-        bgColor: 'bg-orange-100',
-        textColor: 'text-orange-800',
-      },
-      RESERVATION_1HOUR_BEFORE: {
-        bgColor: 'bg-red-100',
-        textColor: 'text-red-800',
-      },
-      RESERVATION_COMPLETED: {
-        bgColor: 'bg-green-100',
-        textColor: 'text-green-800',
-      },
-      REGISTER_COMPLETED: {
-        bgColor: 'bg-purple-100',
-        textColor: 'text-purple-800',
-      },
-      RESERVATION_3HOURS_AFTER: {
-        bgColor: 'bg-indigo-100',
-        textColor: 'text-indigo-800',
-      },
-    };
-
-    return {
-      ...baseStyle,
-      ...(typeStyles[type] || {}),
-    };
+    return notificationType
+      ? {
+          ...baseStyle,
+          bgColor: notificationType.bgColor,
+          textColor: notificationType.textColor,
+          label: notificationType.title,
+        }
+      : baseStyle;
   };
 
   // 날짜 포맷팅 함수
