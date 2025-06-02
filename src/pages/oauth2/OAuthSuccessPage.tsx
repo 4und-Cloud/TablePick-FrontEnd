@@ -8,6 +8,7 @@ import {
   saveFCMToken,
 } from '../../lib/firebase';
 import defaultProfile from '@/assets/images/user.png';
+import api from '../../lib/api';
 
 export default function OauthSuccess() {
   const { login } = useAuth();
@@ -26,14 +27,8 @@ export default function OauthSuccess() {
         setLoading(true);
 
         // FCM 토큰 처리와 사용자 정보 요청을 병렬로 실행
-        const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
         const [userResponse, fcmToken] = await Promise.all([
-          axios.get(`${apiUrl}/api/members`, {
-            headers: {
-              Accept: 'application/json',
-            },
-            withCredentials: true,
-          }),
+          api.get(`/api/members`),
           (async () => {
             try {
               let token = getSavedFCMToken();

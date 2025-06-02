@@ -9,6 +9,7 @@ import useModal from '../../hooks/useModal';
 import useAuth from '../../hooks/useAuth';
 import { useTagContext } from '../../store/TagContext';
 import 'react-calendar/dist/Calendar.css';
+import api from '../../lib/api';
 
 interface AddinfoModalProps {
   isOpen: boolean;
@@ -81,7 +82,6 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
 
   const handleApply = async () => {
     try {
-      const apiUrl = 'http://localhost:8080';
       const updatedData = {
         gender:
           gender === 'male' ? 'MALE' : gender === 'female' ? 'FEMALE' : '',
@@ -90,13 +90,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
         memberTags: selectedTagIds,
       };
 
-      await axios.post(`${apiUrl}/api/members`, updatedData, {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true,
-      });
+      await api.post(`/api/members`, updatedData);
 
       if (!user) { // user가 null일 경우 대비
           console.error('사용자 정보가 없어 추가 정보를 저장할 수 없습니다.');

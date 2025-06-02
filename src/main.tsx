@@ -5,11 +5,11 @@ import { BrowserRouter } from 'react-router-dom'
 import { TagProvider } from './store/TagContext'
 
 createRoot(document.getElementById('root')!).render(
+    <BrowserRouter>
         <AuthProvider>
             <TagProvider>
-                <BrowserRouter>
                     <App />
-                </BrowserRouter>
             </TagProvider>
         </AuthProvider>
+    </BrowserRouter>
 )

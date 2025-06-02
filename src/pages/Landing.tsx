@@ -170,11 +170,7 @@ export default function Landing() {
   //게시글 데이터 가져오기
   const fetchPosts = useCallback(async () => {
     try {
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-      const res = await axios.get(`${apiUrl}/api/boards/main`, {
-        headers: { Accept: 'application/json' },
-        withCredentials: true,
-      });
+      const res = await axios.get(`/api/boards/main`);
 
       const postsData = res.data;
       if (Array.isArray(postsData)) {
@@ -191,11 +187,7 @@ export default function Landing() {
   // 레스토랑 데이터 가져오기
   const fetchRestaurants = useCallback(async () => {
     try {
-      const apiUrl = 'http://localhost:8080';
-      const res = await axios.get(`${apiUrl}/api/restaurants/all`, {
-        headers: { Accept: 'application/json' },
-        withCredentials: true,
-      });
+      const res = await axios.get(`/api/restaurants/all`);
 
       const restaurantsData = res.data.content;
       if (Array.isArray(restaurantsData)) {

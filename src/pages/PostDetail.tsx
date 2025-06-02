@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useModal from '../hooks/useModal';
 import defaultPost from '@/assets/images/restaurant.png';
+import api from '../lib/api';
 
 type PostData = {
   id: number;
@@ -25,10 +26,9 @@ export default function PostDetail() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-        const res = await fetch(`${apiUrl}/api/boards/${id}`);
-        const json = await res.json();
-        setData(json);
+        const res = await api.get(`/api/boards/${id}`);
+        const data = await res.data;
+        setData(data);
       } catch (error) {
         console.log('게시글 데이터 불러오기 실패 ');
       }

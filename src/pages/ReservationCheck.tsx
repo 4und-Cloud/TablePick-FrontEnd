@@ -4,6 +4,7 @@ import place from '@/assets/images/place.png';
 import List from "../components/List";
 import RoundedBtn from "../components/Button/RoundedBtn";
 import { PostWriteModal } from "../components/Modal/PostWriteModal";
+import api from "../lib/api";
 
 interface ReservationData {
   id: number;
@@ -35,21 +36,9 @@ export default function ReservationCheck() {
 
   const fetchReservationCheck = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-      const res = await fetch(`${apiUrl}/api/members/reservations`, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      });
+      const res = await api.get(`/api/members/reservations`);
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('응답 실패 :', errorText);
-        throw new Error('예약 정보 불러오기 실패');
-      }
-
-      const data: ReservationData[] = await res.json();
+      const data: ReservationData[] = await res.data;
 
       const formattedReservations: CardItemProps[] = data.map(reservation => ({
         id: reservation.id,
@@ -92,8 +81,12 @@ export default function ReservationCheck() {
 
       setReservations(formattedReservations);
 
-    } catch (error) {
+    } catch (error :any) {
       console.error('데이터 불러오기 실패:', error);
+      if (error.response?.status !== 401) {
+        const message = error.response?.data?.message || '예약 정보를 불러오지 못했습니다.';
+        alert(message);
+      }
     }
   };
 
@@ -111,31 +104,7 @@ export default function ReservationCheck() {
     }
 
     try {
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-      const res = await fetch(`${apiUrl}/api/reservations/${reservationId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('예약 취소 실패 응답:', errorText);
-        try {
-            const errorJson = JSON.parse(errorText);
-            if (errorJson.message) {
-                alert(`예약 취소 실패: ${errorJson.message}`);
-            } else {
-                alert(`예약 취소 실패: ${res.statusText}`);
-            }
-        } catch (e) {
-            alert(`예약 취소 실패: ${res.statusText}`);
-        }
-        throw new Error(`예약 취소 실패: ${res.status} ${res.statusText}`);
-      }
-
+      await api.delete(`/api/reservations/${reservationId}`);
       alert('예약이 성공적으로 취소되었습니다.');
       fetchReservationCheck();
     } catch (error) {

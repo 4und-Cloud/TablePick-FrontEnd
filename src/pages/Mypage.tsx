@@ -4,6 +4,7 @@ import useModal from "../hooks/useModal";
 import useAuth from "../hooks/useAuth";
 import defaultProfile from '@/assets/images/user.png';
 import { useTagContext } from "../store/TagContext";
+import api from "../lib/api";
 
 type Gender = '' | 'male' | 'female';
 
@@ -119,7 +120,6 @@ export default function Mypage() {
 
 	const handleSave = async () => {
 		try {
-			const apiUrl = 'http://localhost:8080';
 			const requestBody = {
       nickname: formData.nickname,
       gender: formData.gender?.toUpperCase() || '',
@@ -128,31 +128,13 @@ export default function Mypage() {
       profileImage: formData.profileImage || defaultProfile,
       memberTagsId : formData.memberTags
 			};
-			const res = await fetch(`${apiUrl}/api/members`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept' : 'application/json'
-				},
-				credentials : 'include',
-				body: JSON.stringify(requestBody),
-			});
+      const res = await api.patch(`/api/members`, requestBody);
 
-			if (!res.ok) {
-				const errorData = await res.text();
-				console.log('error res : ', errorData);
-				throw new Error('유저 정보 저장 실패');
-      }
-      let resData = null;
-      const text = await res.text();
-			if (text) {
-				const data = JSON.parse(text);
-				localStorage.setItem('userInfo', JSON.stringify({
+      localStorage.setItem('userInfo', JSON.stringify({
 				...formData,
-				memberTags: data.memberTags?.map((tag: any) => tag.id) || formData.memberTags || [],
+				memberTags: res.data.memberTags?.map((tag: any) => tag.id) || formData.memberTags || [],
 			}));
-      } 
-      
+
       const updatedUser: MypageUserInfo = {
         ...user,
         id: user.id,

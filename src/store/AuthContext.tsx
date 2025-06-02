@@ -1,4 +1,7 @@
 import { createContext, type ReactNode, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../lib/api';
+import defaultProfile from '@/assets/images/user.png';
 
 type Gender = '' | 'male' | 'female';
 export interface UserInfo {
@@ -29,6 +32,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 export default function AuthProvider({ children }: AuthProviderProps) {
+  const navigate = useNavigate();
   // 로그인 여부 관리
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loginSuccess, setLoginSuccess] = useState<boolean>(false);
@@ -36,7 +40,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserInfo>({
     id: 0,
     nickname: '',
-    profileImage: '',
+    profileImage: defaultProfile,
     email: '',
     gender: '',
     birthdate: '',
@@ -45,6 +49,41 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     createAt: '',
     isNewUser: false
   });
+
+   // logout => 해결
+  const logout = async () => {
+    try {
+      await api.post('/api/members/logout');
+    } catch (error: any) {
+      if (error.response?.status !== 401) {
+        console.error('로그아웃 오류 : ', error);
+      }
+    }
+    try {
+      if (user?.id) {
+        await api.patch(`/api/notifications/fcm-token/remove?memberId=${user.id}`);
+      }
+    } catch (error : any) {
+      if (error.response?.status !== 401) {
+        console.error('FCM 토큰 삭제 오류', error);
+      }
+    }
+    setIsAuthenticated(false);
+    setUser({
+      id: 0,
+      nickname: '',
+      profileImage: defaultProfile,
+      email: '',
+      gender: '',
+      phoneNumber: '',
+      memberTags: [],
+      createAt: '',
+      isNewUser: false,
+    });
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('fcm_token');
+  };
+
   useEffect(() => {
     // 로컬 스토리지에서 사용자 정보 가져오기
     const savedUser = localStorage.getItem('userInfo');
@@ -63,47 +102,32 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         console.error('AuthContext - 사용자 정보 파싱 오류:', error);
       }
     }
+    
   }, []);
+
+  useEffect(() => {
+    const handleLogout = async () => {
+      try {
+          await logout();
+          navigate('/');
+      } catch (error) {
+        console.error('로그아웃 오류 : ', error);
+        navigate('/');
+      } 
+    };
+    window.addEventListener('auth:logout', handleLogout);
+    return () => {
+      window.removeEventListener('auth:logout', handleLogout);
+    };
+  }, [navigate, logout]);
+
   // login
   const login = (userData: UserInfo) => {
     setIsAuthenticated(true);
     setUser(userData);
     localStorage.setItem('userInfo', JSON.stringify(userData));
   };
-  // logout => 해결
-  const logout = async () => {
-    try {
-      const apiUrl = 'http://localhost:8080';
-      const res = await fetch(`${apiUrl}/api/members/logout`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-        },
-        credentials: 'include', // 세션 쿠키 포함
-      });
-      if (!res.ok) {
-        throw new Error('로그아웃 요청 실패');
-      }
-    } catch (error) {
-      console.log('로그아웃 api 호출 중 에러: ', error);
-    }
-    // 클라이언트 상태 초기화
-    setIsAuthenticated(false);
-    setUser({
-      id: 0,
-      nickname: '',
-      profileImage: '',
-      email: '',
-      gender: '',
-      phoneNumber: '',
-      memberTags: [],
-      createAt: '',
-      isNewUser: false
-    });
-    // 로컬 스토리지 초기화
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('fcm_token');
-  };
+ 
   return (
     <AuthContext.Provider
       value={{

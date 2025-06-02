@@ -6,6 +6,7 @@ import useModal from '../../hooks/useModal';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import SearchModal from '../Modal/SearchModal';
+import api from '../../lib/api';
 
 export default function AuthHeader() {
   const navigate = useNavigate();
@@ -22,17 +23,8 @@ export default function AuthHeader() {
     try {
       //FCM 토큰 삭제 API 호출
       if (user?.id) {
-        const apiUrl = 'http://localhost:8080';
-        await fetch(
-          `${apiUrl}/api/notifications/fcm-token/remove?memberId=${user.id}`,
-          {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-          }
-        );
+        await api.patch(
+          `/api/notifications/fcm-token/remove?memberId=${user.id}`);
       }
       logout();
     } catch (error) {

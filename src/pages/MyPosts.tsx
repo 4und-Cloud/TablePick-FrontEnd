@@ -1,6 +1,7 @@
 import { CardItemProps } from "../components/CardItem";
 import List from "../components/List";
 import { useEffect, useState } from "react";
+import api from "../lib/api";
 
 interface Mypost{
   id: number;
@@ -24,20 +25,7 @@ export default function MyPosts() {
   const handleDeletePost = async (id: number) => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
       try {
-        const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-        const res = await fetch(`${apiUrl}/api/boards/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include',
-        });
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.log('게시글 삭제 실패 응답 :', res.status, errorText);
-          throw new Error('게시글 삭제 실패');
-        }
+        const res = await api.delete(`/api/boards/${id}`);
         fetchMypost();
       } catch (error) {
         console.error('삭제 중 오류 발생', error);
@@ -48,20 +36,9 @@ export default function MyPosts() {
 
   const fetchMypost = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-      const res = await fetch(`${apiUrl}/api/members/boards`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
+      const res = await api.get(`/api/members/boards`);
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('응답 실패 :', errorText);
-        throw new Error('내 게시글 정보 불러오기');
-      }
-      const data: Mypost[] = await res.json();
+      const data: Mypost[] = await res.data;
 
       const formattedMypost: CardItemProps[] = data.map(post => ({
         id: post.id,
@@ -72,7 +49,7 @@ export default function MyPosts() {
       }));
       setPost(formattedMypost);
     } catch (error) {
-      console.log(error)
+      //console.log(error)
     }
   };
 
