@@ -1,14 +1,14 @@
-import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet"
-import type {LatLngExpression} from "leaflet"
-import "leaflet/dist/leaflet.css"
-import useModal from "../hooks/useModal"
-import ReservationModal from "../components/Modal/ReservationModal"
-import {useEffect, useState} from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import useAuth from "../hooks/useAuth"
-import LoginModal from "../components/Modal/LoginModal"
-import api from "../lib/api"
-import { NotificationTypes } from "../types/notification"
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import type { LatLngExpression } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import useModal from "../hooks/useModal";
+import ReservationModal from "../components/Modal/ReservationModal";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import LoginModal from "../components/Modal/LoginModal";
+import type { NotificationTypes } from '../types/notification'
+import api from "../lib/api";
 
 type RestaurantData = {
   id: number;
@@ -76,18 +76,18 @@ export default function RestaurantDetail() {
     }
   };
 
-  const sendReservationNotification = async () => {
+  const sendReservationNotification = async (data: { id: number; name: string } | null) => {
     if (!data) return;
 
     try {
-      api.post(`/api/notifications`, {
-        notificationType: 'RESERVATION_COMPLETED' as NotificationTypes,
+      await api.post('/api/notifications', {
+        NotificationTypes: 'RESERVATION_COMPLETED' as NotificationTypes,
         title: '식당 예약 완료',
         message: `${data.name} 예약이 성공적으로 완료되었습니다.`,
         restaurantId: data.id,
       });
     } catch (error) {
-      console.error('알림 전송 실패:', error);
+      console.error('알림 전송 실패: ', error);
     }
   };
 
@@ -96,7 +96,7 @@ export default function RestaurantDetail() {
       openLoginModal();
     } else {
       openReservationModal();
-    }
+    };
   };
 
   if (!data) return <div className="mt-20 text-center">로딩 중...</div>;
