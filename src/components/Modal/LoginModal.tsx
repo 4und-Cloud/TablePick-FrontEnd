@@ -5,6 +5,7 @@ import {
   saveFCMToken,
 } from '../../lib/firebase';
 import { useState } from 'react';
+import api from '../../lib/api';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -58,8 +59,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         { once: true }
       );
 
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-      window.location.href = `${apiUrl}/oauth2/authorization/${provider}?redirect=${redirectUrl}`;
+      window.location.href = `${api.defaults.baseURL}/oauth2/authorization/${provider}?redirect=${redirectUrl}`;
     } catch (error) {
       console.error('로그인 처리 중 오류:', error);
       setIsLoggingIn(false);

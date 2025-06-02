@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import defaultProfile from "@/assets/images/user.png";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import api from "../lib/api";
 
 interface PostData {
   id: number;
@@ -13,7 +14,7 @@ interface PostData {
   restaurantName: string;
   restaurantAddress: string;
   restaurantCategoryName: string;
-  memberNickname: string;
+  memberNickname: string; 
   memberProfileImage: string;
   imageUrl: string;
 }
@@ -49,23 +50,17 @@ useEffect(() => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
       const restaurantId = searchParams.get("restaurantId");
 
       let reqUrl: string;
 
       if (restaurantId) {
-        reqUrl = `${apiUrl}/api/boards/restaurant/${restaurantId}`;
+        reqUrl = `/api/boards/restaurant/${restaurantId}`;
       } else {
-        reqUrl = `${apiUrl}/api/boards/list?page=${currentPage}&size=6`;
+        reqUrl = `/api/boards/list?page=${currentPage}&size=6`;
       }
 
-      const res = await axios.get(reqUrl, {
-        withCredentials: true,
-        headers: {
-          Accept: "application/json",
-        },
-      });
+      const res = await api.get(reqUrl);
 
       const postsToSet = restaurantId
         ? Array.isArray(res.data)

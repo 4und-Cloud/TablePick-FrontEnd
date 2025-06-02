@@ -4,6 +4,7 @@ import RoundedBtn from "../Button/RoundedBtn";
 import FilterModal from "./FilterModal";
 import useModal from "../../hooks/useModal";
 import { useTagContext } from "../../store/TagContext";
+import api from "../../lib/api";
 
 interface PostWriteModalProps {
   closeModal: () => void;
@@ -74,7 +75,6 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
       return;
     }
 
-    const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
     const formData = new FormData();
 
     formData.append('reservationId', reservationId.toString());
@@ -90,34 +90,18 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
     });
 
     try {
-      const res = await fetch(`${apiUrl}/api/boards`, {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
+      await api.post('/api/boards', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('게시글 작성 실패 응답:', errorText);
-        try {
-            const errorJson = JSON.parse(errorText);
-            if (errorJson.message) {
-                alert(`게시글 작성 실패: ${errorJson.message}`);
-            } else {
-                alert(`게시글 작성 실패: ${res.statusText}`);
-            }
-        } catch (e) {
-            alert(`게시글 작성 실패: ${res.statusText}`);
-        }
-        throw new Error(`게시글 작성 실패: ${res.status} ${res.statusText}`);
-      }
-
-      const data = await res.json();
       alert('게시글이 성공적으로 작성되었습니다!');
       closeModal();
-    } catch (error) {
+    } catch (error: any) {
       console.error('게시글 작성 중 오류 발생:', error);
-      alert('게시글 작성에 실패했습니다.');
+      // 401 에러는 인터셉터에서 처리하므로, 여기서는 일반적인 에러 메시지만 표시
+      const message = error.response?.data?.message || '게시글 작성에 실패했습니다.';
+      alert(message);
     }
   };
 

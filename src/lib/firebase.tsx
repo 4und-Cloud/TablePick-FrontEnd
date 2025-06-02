@@ -5,6 +5,7 @@ import {
   onMessage,
   type Messaging,
 } from 'firebase/messaging';
+import api from './api';
 
 // Firebase 설정 정보
 const firebaseConfig = {
@@ -121,23 +122,10 @@ export async function saveFCMToken(
 
   try {
     // 환경 변수로 대체 가능 (예: process.env.REACT_APP_API_URL)
-    const apiUrl = 'http://localhost:8080';
-    const response = await fetch(
-      `${apiUrl}/api/notifications/fcm-token?memberId=${userId}`,
-      {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
-        credentials: 'include',
-      }
-    );
-
-    if (response.ok) {
-      console.log('FCM 토큰 서버 저장 성공');
-      return true;
-    }
-    console.error('FCM 토큰 저장 실패:', await response.text());
-    return false;
+    await api.patch(
+      `/api/notifications/fcm-token?memberId=${userId}`, { token });
+    console.log('FCM 토큰 서버 저장 성공');
+    return true;
   } catch (error) {
     console.error('FCM 토큰 저장 오류:', error);
     return false;
@@ -151,22 +139,10 @@ export async function deleteFCMToken(
   try {
     localStorage.removeItem('fcm_token');
     // 환경 변수로 대체 가능
-    const apiUrl = 'http://localhost:8080';
-    const response = await fetch(
-      `${apiUrl}/api/notifications/fcm-token?memberId=${userId}`,
-      {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      }
-    );
-
-    if (response.ok) {
-      console.log('FCM 토큰 삭제 성공');
-      return true;
-    }
-    console.error('FCM 토큰 삭제 실패:', await response.text());
-    return false;
+    await api.delete(
+      `/api/notifications/fcm-token?memberId=${userId}`);
+    console.log('FCM 토큰 삭제 성공');
+    return true;
   } catch (error) {
     console.error('FCM 토큰 삭제 오류:', error);
     return false;
@@ -205,17 +181,12 @@ export async function getMemberNotifications(
 ): Promise<any[]> {
   try {
     // 환경 변수로 대체 가능
-    const apiUrl = 'http://localhost:8080';
     const url = status
-      ? `${apiUrl}/api/notifications/member/${memberId}?status=${status}`
-      : `${apiUrl}/api/notifications/member/${memberId}`;
+      ? `/api/notifications/member/${memberId}?status=${status}`
+      : `/api/notifications/member/${memberId}`;
 
-    const response = await fetch(url, { credentials: 'include' });
-    if (response.ok) {
-      return await response.json();
-    }
-    console.error('알림 목록 조회 실패:', await response.text());
-    return [];
+    const response = await api.get(url);
+    return response.data;
   } catch (error) {
     console.error('알림 목록 조회 오류:', error);
     return [];
@@ -226,19 +197,9 @@ export async function getMemberNotifications(
 export async function getNotificationTypes(): Promise<any[]> {
   try {
     // 환경 변수로 대체 가능
-    const apiUrl = 'http://localhost:8080';
-    const response = await fetch(
-      `${apiUrl}/api/notifications/notification-types`,
-      {
-        credentials: 'include',
-      }
-    );
-
-    if (response.ok) {
-      return await response.json();
-    }
-    console.error('알림 타입 조회 실패:', await response.text());
-    return [];
+    const response = await api.get(
+      `/api/notifications/notification-types`);
+    return response.data;
   } catch (error) {
     console.error('알림 타입 조회 오류:', error);
     return [];

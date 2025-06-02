@@ -8,6 +8,7 @@ import axios from "axios";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useTagContext } from "../store/TagContext";
 import { debounce } from 'lodash';
+import api from "../lib/api";
 
 interface RestaurantData {
   id: number;
@@ -55,7 +56,6 @@ export default function RestaurantList() {
     debounce(async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
         const currentKeyword = searchParams.get("keyword") || "";
         const currentTagIds = searchParams.get("tagIds")
           ? searchParams.get("tagIds")?.split(",").map(Number).filter((id) => !isNaN(id)) || []
@@ -69,7 +69,7 @@ export default function RestaurantList() {
 
         if (currentKeyword || currentTagIds.length > 0) {
           // 검색 조건이 있을 경우 /search 호출
-          url = `${apiUrl}/api/restaurants/search`;
+          url = `/api/restaurants/search`;
           if (currentKeyword) {
             queryParams.push(`keyword=${encodeURIComponent(currentKeyword)}`);
           }
@@ -78,17 +78,12 @@ export default function RestaurantList() {
           }
         } else {
           // 검색 조건이 없으면 /list 호출
-          url = `${apiUrl}/api/restaurants/list`;
+          url = `/api/restaurants/list`;
         }
 
         url += `?${queryParams.join("&")}`;
 
-        const res = await axios.get(url, {
-          withCredentials: true,
-          headers: {
-            Accept: "application/json",
-          },
-        });
+        const res = await api.get(url);
 
         const restaurants: RestaurantData[] = res.data.restaurants || [];
         const totalPagesFromBackend = res.data.totalPages || 1;

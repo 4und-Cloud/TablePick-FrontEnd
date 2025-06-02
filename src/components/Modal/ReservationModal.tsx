@@ -4,6 +4,7 @@ import Calendar, {type CalendarProps} from "react-calendar"
 import {useEffect, useState} from "react"
 import useAuth from "../../hooks/useAuth"
 import "react-calendar/dist/Calendar.css"
+import api from "../../lib/api"
 
 interface ReservationModalProps {
   closeModal: () => void;
@@ -49,22 +50,10 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
     setIsLoadingTimes(true);
     try {
       const formatedDate = date.toISOString().split('T')[0];
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
 
-      const res = await fetch(`${apiUrl}/api/reservations/available-times?restaurantId=${restaurantId}&date=${formatedDate}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
+      const res = await api.get(`/api/reservations/available-times?restaurantId=${restaurantId}&date=${formatedDate}`);
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || '에약 가능 시간 정보 불러오기 실패 ');
-      }
-
-      const data = await res.json();
-      const times = Array.isArray(data) ? data : (data.availableTimes || []);
+      const times = Array.isArray(res.data) ? res.data : (res.data.availableTimes || []);
 
       setAvailableTimes(times
         .map((time : string) => time.substring(0, 5)));
@@ -115,43 +104,15 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
         partySize: selectedPeople,
       };
 
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
 
       // 예약 API 호출
       // const response = await fetch("http://localhost:8080/api/reservations", {
-      const response = await fetch(`${apiUrl}/api/reservations`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reservationData),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("예약 처리 중 오류가 발생했습니다.");
-      };
-
-      let result;
-      const resText = await response.text();
-
-      if (resText) {
-        try {
-          result = JSON.parse(resText);
-        } catch (e) {
-          console.error('서버 응답 JSON 아님', resText);
-          throw new Error('예약 성공 응답 형식 올바르지 않음');
-        }
-      } else {
-        result = { id: 'unknown', status: 'SUCCESS' };
-      }
+      const response = await api.post(`/api/reservations`, reservationData);
+      const result = response.data.id ? response.data : { id: 'unknown', status: 'SUCCESS' };
 
       // 예약 성공 후 알림 스케줄링 API 호출
       // await fetch(`http://localhost:8080/api/notifications/schedule/reservation/${result.id}`, {
-      await fetch(`${apiUrl}/api/notifications/schedule/reservation/${restaurantId}`, {
-        method: "POST",
-        credentials: "include",
-      });
+      await api.post(`/api/notifications/schedule/reservation/${restaurantId}`);
 
       // 성공 콜백 호출
       if (onSuccess) {

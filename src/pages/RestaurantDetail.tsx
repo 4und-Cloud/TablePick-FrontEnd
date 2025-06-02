@@ -1,13 +1,14 @@
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import type { LatLngExpression } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import useModal from '../hooks/useModal';
-import ReservationModal from '../components/Modal/ReservationModal';
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
-import LoginModal from '../components/Modal/LoginModal';
-import type { NotificationTypes } from '../types/notification';
+import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet"
+import type {LatLngExpression} from "leaflet"
+import "leaflet/dist/leaflet.css"
+import useModal from "../hooks/useModal"
+import ReservationModal from "../components/Modal/ReservationModal"
+import {useEffect, useState} from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import useAuth from "../hooks/useAuth"
+import LoginModal from "../components/Modal/LoginModal"
+import api from "../lib/api"
+import { NotificationTypes } from "../types/notification"
 
 type RestaurantData = {
   id: number;
@@ -51,10 +52,9 @@ export default function RestaurantDetail() {
   useEffect(() => {
     const fetchRestaurant = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-        const res = await fetch(`${apiUrl}/api/restaurants/${id}`);
-        const json = await res.json();
-        setData(json);
+        const res = await api.get(`/api/restaurants/${id}`);
+        const data = await res.data;
+        setData(data);
       } catch (err) {
         console.error('식당 데이터를 불러오는데 실패했습니다.', err);
       }
@@ -68,14 +68,8 @@ export default function RestaurantDetail() {
 
   const fetchReviewPosts = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-      const res = await fetch(`${apiUrl}/api/boards/restaurant/${id}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
-      const json: RestaurantReviewPost[] = await res.json();
+      const res = await api.get(`/api/boards/restaurant/${id}`);
+      const json: RestaurantReviewPost[] = await res.data;
       setReviewPosts(json);
     } catch (error) {
       console.error('식당 게시글 불러오기 실패');
@@ -86,19 +80,11 @@ export default function RestaurantDetail() {
     if (!data) return;
 
     try {
-      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
-      await fetch(`${apiUrl}/api/notifications`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          notificationType: 'RESERVATION_COMPLETED' as NotificationTypes,
-          title: '식당 예약 완료',
-          message: `${data.name} 예약이 성공적으로 완료되었습니다.`,
-          restaurantId: data.id,
-        }),
+      api.post(`/api/notifications`, {
+        notificationType: 'RESERVATION_COMPLETED' as NotificationTypes,
+        title: '식당 예약 완료',
+        message: `${data.name} 예약이 성공적으로 완료되었습니다.`,
+        restaurantId: data.id,
       });
     } catch (error) {
       console.error('알림 전송 실패:', error);
