@@ -46,10 +46,8 @@ export default function RestaurantList() {
     const safeUrlPage = isNaN(urlPage) || urlPage < 1 ? 1 : urlPage;
     const zeroBasedPage = safeUrlPage - 1; // URL은 1-based, 훅은 0-based
 
-    if (zeroBasedPage !== currentPage) {
-      setPage(zeroBasedPage);
-    }
-  }, [searchParams, currentPage, setPage]);
+    setPage(zeroBasedPage);
+  }, [searchParams, setPage]);
 
   // 데이터 가져오기 (debounce 적용)
   const fetchData = useCallback(
@@ -165,7 +163,6 @@ export default function RestaurantList() {
               onLastPage={goToLastPage}
               onPageChange={(pageNumberFromPagination) => {
                 updateUrlPage(pageNumberFromPagination); // 1-based로 URL 업데이트
-                setPage(pageNumberFromPagination - 1); // 0-based로 훅 설정
               }}
             />
           </>
