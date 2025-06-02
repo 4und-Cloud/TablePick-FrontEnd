@@ -8,13 +8,13 @@ import {
 
 // Firebase 설정 정보
 const firebaseConfig = {
-  apiKey: 'AIzaSyA7Qw41MPAqVcpetusZjgMfEPYXis4q3RQ',
-  authDomain: 'project-tablepick.firebaseapp.com',
-  projectId: 'project-tablepick',
-  storageBucket: 'project-tablepick.firebasestorage.app',
-  messagingSenderId: '806487490296',
-  appId: '1:806487490296:web:96a37b5c5e12464066850d',
-  measurementId: 'G-7VLJ4SH0RF',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Firebase 초기화
@@ -87,8 +87,7 @@ export async function getFCMToken(): Promise<string | null> {
 
     // 새 토큰 요청
     const token = await getToken(messaging, {
-      vapidKey:
-        'BJU5QrpqOX0cekAcEVGx8NKmAobnUKzEfRqQGKgNvSG61sdBht3KkQPCcB2wDfbkT5NvrYIE5ktp6wBsZOrrPTw',
+      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
     });
 
     if (token) {
@@ -120,8 +119,7 @@ export async function saveFCMToken(
   }
 
   try {
-    // 환경 변수로 대체 가능 (예: process.env.REACT_APP_API_URL)
-    const apiUrl = 'http://localhost:8080';
+    const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
     const response = await fetch(
       `${apiUrl}/api/notifications/fcm-token?memberId=${userId}`,
       {
@@ -150,8 +148,7 @@ export async function deleteFCMToken(
 ): Promise<boolean> {
   try {
     localStorage.removeItem('fcm_token');
-    // 환경 변수로 대체 가능
-    const apiUrl = 'http://localhost:8080';
+    const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
     const response = await fetch(
       `${apiUrl}/api/notifications/fcm-token?memberId=${userId}`,
       {
@@ -204,8 +201,7 @@ export async function getMemberNotifications(
   status?: string
 ): Promise<any[]> {
   try {
-    // 환경 변수로 대체 가능
-    const apiUrl = 'http://localhost:8080';
+    const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
     const url = status
       ? `${apiUrl}/api/notifications/member/${memberId}?status=${status}`
       : `${apiUrl}/api/notifications/member/${memberId}`;
@@ -225,8 +221,7 @@ export async function getMemberNotifications(
 // 알림 타입 조회
 export async function getNotificationTypes(): Promise<any[]> {
   try {
-    // 환경 변수로 대체 가능
-    const apiUrl = 'http://localhost:8080';
+    const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
     const response = await fetch(
       `${apiUrl}/api/notifications/notification-types`,
       {
