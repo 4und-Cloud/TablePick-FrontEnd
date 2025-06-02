@@ -21,7 +21,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
   const { tags } = useTagContext();
 
   const [date, setDate] = useState<Date | null>(null);
-  const [calOpen, setCalOpen] = useState(false);
+  //const [calOpen, setCalOpen] = useState(false);
   const [gender, setGender] = useState<'male' | 'female' | undefined>();
   const [phone, setPhone] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
@@ -54,14 +54,14 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
     }
   }, [isOpen, user]);
 
-  const toggleCalendar = () => setCalOpen((prev) => !prev);
+  //const toggleCalendar = () => setCalOpen((prev) => !prev);
 
-  const handleDateChange = (value: Value) => {
-    if (value instanceof Date) {
-      setDate(value);
-      setCalOpen(false);
-    }
-  };
+  // const handleDateChange = (value: Value) => {
+  //   if (value instanceof Date) {
+  //     setDate(value);
+  //     setCalOpen(false);
+  //   }
+  // };
 
   const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGender(event.target.value as 'male' | 'female');
@@ -174,20 +174,22 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
 
           {/* 생년월일 */}
           <div>
-            <p className="font-semibold text-lg mb-2">생년월일</p>
+            <label htmlFor='birth' className="font-semibold text-lg mb-2">생년월일</label>
             <div className="relative">
               <input
-                type="text"
+                type="date"
+                id='birth'
+                name='birthdate'
                 value={date ? date.toISOString().slice(0, 10) : ''}
-                readOnly
-                onClick={toggleCalendar}
+                onChange={(e) => setDate(new Date(e.target.value))}
+                //onClick={toggleCalendar}
                 className="w-full border p-2 rounded"
               />
-              {calOpen && (
+              {/* {calOpen && (
                 <div className="absolute z-10 mt-2">
                   <Calendar onChange={handleDateChange} value={date} />
                 </div>
-              )}
+              )} */}
             </div>
           </div>
 

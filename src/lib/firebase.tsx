@@ -94,7 +94,7 @@ export async function getFCMToken(): Promise<string | null> {
 
     if (token) {
       localStorage.setItem('fcm_token', token);
-      console.log('새 FCM 토큰 발급:', `${token.substring(0, 10)}...`);
+      console.log('새 FCM 토큰 발급:', `${token.substring(0,10)}...`);
       return token;
     }
     console.error('FCM 토큰 발급 실패');
