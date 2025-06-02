@@ -1,12 +1,13 @@
-import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet"
-import type {LatLngExpression} from "leaflet"
-import "leaflet/dist/leaflet.css"
-import useModal from "../hooks/useModal"
-import ReservationModal from "../components/Modal/ReservationModal"
-import {useEffect, useState} from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import useAuth from "../hooks/useAuth"
-import LoginModal from "../components/Modal/LoginModal"
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import type { LatLngExpression } from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import useModal from '../hooks/useModal';
+import ReservationModal from '../components/Modal/ReservationModal';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import LoginModal from '../components/Modal/LoginModal';
+import type { NotificationTypes } from '../types/notification';
 
 type RestaurantData = {
   id: number;
@@ -23,20 +24,27 @@ type RestaurantData = {
   }[];
   restaurantTags: string[];
   menus: { name: string; price: number }[];
-}
+};
 
 type RestaurantReviewPost = {
   boardId: number;
   imageUrl: string;
-}
-
+};
 
 export default function RestaurantDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [data, setData] = useState<RestaurantData | null>(null);
-  const { isOpen: isReservationOpen, openModal: openReservationModal, closeModal: closeReservationModal } = useModal({ initialState: false });
-  const { isOpen: isLoginOpen, openModal: openLoginModal, closeModal: closeLoginModal } = useModal({ initialState: false });
+  const {
+    isOpen: isReservationOpen,
+    openModal: openReservationModal,
+    closeModal: closeReservationModal,
+  } = useModal({ initialState: false });
+  const {
+    isOpen: isLoginOpen,
+    openModal: openLoginModal,
+    closeModal: closeLoginModal,
+  } = useModal({ initialState: false });
   const [reviewPosts, setReviewPosts] = useState<RestaurantReviewPost[]>([]);
   const { isAuthenticated } = useAuth();
 
@@ -48,7 +56,7 @@ export default function RestaurantDetail() {
         const json = await res.json();
         setData(json);
       } catch (err) {
-        console.error("식당 데이터를 불러오는데 실패했습니다.", err);
+        console.error('식당 데이터를 불러오는데 실패했습니다.', err);
       }
     };
 
@@ -63,14 +71,37 @@ export default function RestaurantDetail() {
       const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
       const res = await fetch(`${apiUrl}/api/boards/restaurant/${id}`, {
         headers: {
-          'Content-Type' : 'application/json'
+          'Content-Type': 'application/json',
         },
-        credentials:'include'
+        credentials: 'include',
       });
       const json: RestaurantReviewPost[] = await res.json();
       setReviewPosts(json);
     } catch (error) {
       console.error('식당 게시글 불러오기 실패');
+    }
+  };
+
+  const sendReservationNotification = async () => {
+    if (!data) return;
+
+    try {
+      const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
+      await fetch(`${apiUrl}/api/notifications`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          notificationType: 'RESERVATION_COMPLETED' as NotificationTypes,
+          title: '식당 예약 완료',
+          message: `${data.name} 예약이 성공적으로 완료되었습니다.`,
+          restaurantId: data.id,
+        }),
+      });
+    } catch (error) {
+      console.error('알림 전송 실패:', error);
     }
   };
 
@@ -80,7 +111,7 @@ export default function RestaurantDetail() {
     } else {
       openReservationModal();
     }
-  }
+  };
 
   if (!data) return <div className="mt-20 text-center">로딩 중...</div>;
 
@@ -110,14 +141,21 @@ export default function RestaurantDetail() {
         {/* 정보 */}
         <div className="space-y-4 w-1/3 ml-2 items-center flex flex-col justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800">{data.name}</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">
+              {data.name}
+            </h2>
             <p className="text-sm text-gray-600">{data.address}</p>
-            <p className="text-sm text-gray-600">전화번호: {data.restaurantPhoneNumber}</p>
-            <p className="text-sm text-gray-600">카테고리: {data.restaurantCategory.name}</p>
+            <p className="text-sm text-gray-600">
+              전화번호: {data.restaurantPhoneNumber}
+            </p>
+            <p className="text-sm text-gray-600">
+              카테고리: {data.restaurantCategory.name}
+            </p>
             <p className="text-sm text-gray-600">
               {data.restaurantTags && Array.isArray(data.restaurantTags) // restaurantTags가 존재하고 배열인지 확인
-                ? data.restaurantTags.slice(0, 5).join(", ")
-                : '태그 정보 없음'} {/* 태그가 없을 경우 대체 텍스트 */}
+                ? data.restaurantTags.slice(0, 5).join(', ')
+                : '태그 정보 없음'}{' '}
+              {/* 태그가 없을 경우 대체 텍스트 */}
             </p>
           </div>
 
@@ -132,7 +170,11 @@ export default function RestaurantDetail() {
 
       {/* 지도 */}
       <div className="bg-gray-200 w-full h-96 rounded-lg mb-6 z-0">
-        <MapContainer center={restaurantLocation} zoom={18} style={{ width: "100%", height: "100%" }}>
+        <MapContainer
+          center={restaurantLocation}
+          zoom={18}
+          style={{ width: '100%', height: '100%' }}
+        >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <Marker position={restaurantLocation}>
             <Popup>{data.name} 위치입니다.</Popup>
@@ -141,7 +183,9 @@ export default function RestaurantDetail() {
       </div>
 
       {/* 주소 */}
-      <div className="bg-gray-200 p-4 rounded-lg text-gray-800 mb-6">{data.address}</div>
+      <div className="bg-gray-200 p-4 rounded-lg text-gray-800 mb-6">
+        {data.address}
+      </div>
 
       {/* 메뉴 + 리뷰 */}
       <div className="flex items-center justify-center flex-row gap-6">
@@ -158,10 +202,17 @@ export default function RestaurantDetail() {
         {/* 방문자 평가 (임시) */}
         <div className="w-full mb-6">
           <div className="flex flex-row items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">방문자 평가</h3>
-            <button className="text-lg font-semibold text-main mb-4" onClick={() => navigate(`/posts?restaurantId=${id}`)}>게시글 보러가기</button>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              방문자 평가
+            </h3>
+            <button
+              className="text-lg font-semibold text-main mb-4"
+              onClick={() => navigate(`/posts?restaurantId=${id}`)}
+            >
+              게시글 보러가기
+            </button>
           </div>
-                    
+
           <div className="flex gap-4 justify-between">
             {reviewPosts.slice(0, 3).map((post) => (
               <div
@@ -175,15 +226,16 @@ export default function RestaurantDetail() {
                 />
               </div>
             ))}
-              
           </div>
         </div>
       </div>
 
       {/* 예약 모달 */}
       {isReservationOpen && (
-        <ReservationModal closeModal={closeReservationModal}
-          restaurantId={Number(id)} />
+        <ReservationModal
+          closeModal={closeReservationModal}
+          restaurantId={Number(id)}
+        />
       )}
       {isLoginOpen && (
         <LoginModal isOpen={isLoginOpen} onClose={closeLoginModal} />
@@ -191,4 +243,3 @@ export default function RestaurantDetail() {
     </div>
   );
 }
-
