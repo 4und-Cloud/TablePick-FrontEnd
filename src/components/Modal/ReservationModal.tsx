@@ -34,6 +34,7 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
 
   const handleDateChange: CalendarProps["onChange"] = (value) => {
     if (value instanceof Date) {
+      console.log('선택 날짜 확인 :', setSelectedDate(value));
       setSelectedDate(value)
     } else if (Array.isArray(value) && value[0] instanceof Date) {
       setSelectedDate(value[0])
@@ -134,7 +135,7 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
   return (
     <Modal
       width="400px"
-      height="600px"
+      height="630px"
       close={
         <button onClick={closeModal} className="text-main font-bold text-xl inset-0 z-50">
           X

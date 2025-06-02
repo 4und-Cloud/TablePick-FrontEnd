@@ -29,7 +29,7 @@ export default function SearchModal({ isOpen, onClose, currentKeyword = '', curr
   };
 
   const handleItemRemove = (tagId: number) => {
-    setSelectedItems((prev) => prev.filter((id) => id !== id));
+    setSelectedItems((prev) => prev.filter((id) => id !== tagId));
   };
 
   const handleSubmit = () => {
@@ -114,7 +114,7 @@ export default function SearchModal({ isOpen, onClose, currentKeyword = '', curr
         </div>
 
         <div>
-          <p className="text-md font-semibold text-gray-700">카테고리</p>
+          <p className="text-md font-semibold text-gray-700">카테고리 (최대 3개 선택 가능)</p>
           <div className="flex flex-wrap gap-2 mt-2">
             {availableTags.map((tag: Tag) => (
               <button
