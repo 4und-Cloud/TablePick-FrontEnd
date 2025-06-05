@@ -35,7 +35,6 @@ export default function FilterModal({
   return (
     <Modal
       onClose={onClose}
-      type={'카테고리선택'}
       close={
         <button
     onClick={(e) => {

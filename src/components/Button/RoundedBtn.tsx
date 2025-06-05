@@ -25,7 +25,6 @@ export default function RoundedBtn({
     hoverBorderColor = 'hover:border-white',
     hoverTextColor = 'hover:text-white',
     onClick,
-    disabled,
 } : RoundedBtnProps) {
     return (
         <button onClick={onClick} 

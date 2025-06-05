@@ -3,7 +3,6 @@ import RoundedBtn from "../Button/RoundedBtn"
 import Calendar, {type CalendarProps} from "react-calendar"
 import {useEffect, useState} from "react"
 import useAuth from "../../hooks/useAuth"
-import "react-calendar/dist/Calendar.css"
 import api from "../../lib/api"
 
 interface ReservationModalProps {
@@ -13,7 +12,7 @@ interface ReservationModalProps {
 }
 
 export default function ReservationModal({closeModal, onSuccess, restaurantId}: ReservationModalProps) {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [selectedPeople, setSelectedPeople] = useState<number>(1);
   // 시간의 초기값을 빈 문자열로 지정
   const [selectedTime, setSelectedTime] = useState<string>("");
@@ -40,6 +39,13 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
       setSelectedDate(value[0])
     }
   }
+
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = (`0${date.getMonth() + 1}`).slice(-2);
+    const day = (`0${date.getDate()}`).slice(-2);
+    return `${year}-${month}-${day}`;
+  };
 
   const fetchAvailableTimes = async (date: Date | null, restaurantId: number) => {
     // 날짜 | 식당 id 없으면 api 호출 X
@@ -100,7 +106,7 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
       const reservationData = {
         //memberId: user.id,
         restaurantId: restaurantId,
-        reservationDate: selectedDate.toISOString().split("T")[0],
+        reservationDate: formatDate(selectedDate),
         reservationTime: selectedTime,
         partySize: selectedPeople,
       };
@@ -109,11 +115,11 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
       // 예약 API 호출
       // const response = await fetch("http://localhost:8080/api/reservations", {
       const response = await api.post(`/api/reservations`, reservationData);
-      const result = response.data.id ? response.data : { id: 'unknown', status: 'SUCCESS' };
+      const result = response.data;
 
       // 예약 성공 후 알림 스케줄링 API 호출
       // await fetch(`http://localhost:8080/api/notifications/schedule/reservation/${result.id}`, {
-      await api.post(`/api/notifications/schedule/reservation/${restaurantId}`);
+      await api.post(`/api/notifications/schedule/reservation/${result.id}`);
 
       // 성공 콜백 호출
       if (onSuccess) {
@@ -162,6 +168,10 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
           value={selectedDate}
           selectRange={false}
           minDate={new Date()} // 오늘 이후 날짜만 선택 가능
+          maxDate={new Date(new Date().setDate(new Date().getDate() + 6))}
+          // tileDisabled={({ date, view }) =>
+          //   view === 'month' && (date < new Date() || date > new Date(new Date().setDate(new Date().getDate() + 6)))
+          // }
         />
       </div>
 

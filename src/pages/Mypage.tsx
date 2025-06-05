@@ -1,3 +1,7 @@
+
+
+
+
 import { useState, useEffect } from "react";
 import { useUserExtraInfo } from "../store/UserInfoContext"
 import go5rae from '@/assets/images/profile_img.jpg';
@@ -30,12 +34,26 @@ const normalizeGender = (gender?: string): Gender => {
   return normalized === 'MALE' ? 'male' : normalized === 'FEMALE' ? 'female' : '';
 };
 
+const isValidPhoneNumber = (phone: string): boolean => {
+  const phoneRegex = /^01[0-1|6-9]-\d{4}-\d{4}$/;
+  return phoneRegex.test(phone);
+};
+
+const formatPhoneNumber = (value: string): string => {
+  const numbers = value.replace(/\D/g, '');
+  if (numbers.length <= 3) return numbers;
+  if (numbers.length <= 7)
+    return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+  return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+};
+
 export default function Mypage() {
 	const { tags } = useTagContext();
   const {user, login} = useAuth();
   const {isOpen, openModal, closeModal} = useModal({initialState: false});
 	const [selectedTags, setSelectedTags] = useState<number[]>([]);
-	const [initialFormData, setInitialFormData] = useState<MypageUserInfo | null>(null);
+  const [initialFormData, setInitialFormData] = useState<MypageUserInfo | null>(null);
+  const [isPhoneValid, setIsPhoneValid] = useState(true);
 
   const [formData, setFormData] = useState<MypageUserInfo>({
     id: 0, // 기본값 설정
@@ -59,6 +77,7 @@ export default function Mypage() {
   
   useEffect(() => {
     if (user) { // user 객체가 null이 아닐 때만 실행
+      const formattedPhone = user.phoneNumber ? formatPhoneNumber(user.phoneNumber) : '';
       const newFormData: MypageUserInfo = {
         id: user.id,
         profileImage: user.profileImage || defaultProfile,
@@ -66,7 +85,7 @@ export default function Mypage() {
         email: user.email,
         gender: normalizeGender(user.gender),
         birthdate: user.birthdate || '',
-        phoneNumber: user.phoneNumber || '',
+        phoneNumber: formattedPhone,
         memberTags: user.memberTags || [],
         createAt: user.createAt || '',
         isNewUser: user.isNewUser || false,
@@ -74,6 +93,7 @@ export default function Mypage() {
       setFormData(newFormData);
       setInitialFormData(newFormData);
       setSelectedTags(newFormData.memberTags || []);
+      setIsPhoneValid(formattedPhone ? isValidPhoneNumber(formattedPhone) : true);
     }
   }, [user, setFormData, setInitialFormData, setSelectedTags]);
 
@@ -106,10 +126,19 @@ export default function Mypage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    if (name === 'phoneNumber') {
+      const formatted = formatPhoneNumber(value);
+      setFormData(prevState => ({
       ...prevState,
-      [name]: value
-    }));
+      [name]: formatted,
+      }));
+      setIsPhoneValid(isValidPhoneNumber(formatted) || formatted.length < 12);
+    } else {
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
 	};
 	
 	const handleCancel = () => {
@@ -120,7 +149,11 @@ export default function Mypage() {
 		alert('수정이 취소되었습니다');
 	};
 
-	const handleSave = async () => {
+  const handleSave = async () => {
+    if (!isValidPhoneNumber(formData.phoneNumber || '')) {
+      alert('전화번호는 010-XXXX-XXXX 형식이어야 합니다.');
+      return;
+    }
 		try {
 			const requestBody = {
       nickname: formData.nickname,
@@ -128,7 +161,7 @@ export default function Mypage() {
       birthdate: formData.birthdate,
       phoneNumber: formData.phoneNumber,
       profileImage: formData.profileImage || defaultProfile,
-      memberTagsId : formData.memberTags
+      memberTags : formData.memberTags
 			};
       const res = await api.patch(`/api/members`, requestBody);
 
@@ -282,17 +315,21 @@ export default function Mypage() {
             />
           </div>
 
-                <div className="mb-4">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">전화번호</label>
-                    <input
-                        type="tel"
-                        id="phone"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                        className="mt-2 p-2 w-full border border-gray-300 rounded"
-                    />
-                </div>
+          <div className="mb-4">
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">전화번호</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              className={`mt-2 p-2 w-full border rounded ${isPhoneValid ? 'border-gray-300' : 'border-red-500'}`}
+              placeholder="010-1234-5678"
+            />
+            {!isPhoneValid && formData.phoneNumber && formData.phoneNumber.length >= 12 && (
+              <p className="text-red-500 text-sm mt-1">유효한 전화번호 형식이 아닙니다. (010-XXXX-XXXX)</p>
+            )}
+          </div>  
 
                 
 

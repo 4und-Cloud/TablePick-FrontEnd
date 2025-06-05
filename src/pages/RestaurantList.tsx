@@ -1,14 +1,14 @@
 import type { CardItemProps } from "../components/CardItem";
-import place from "@/assets/images/place.png";
 import List from "../components/List";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useTagContext } from "../store/TagContext";
 import { debounce } from 'lodash';
 import api from "../lib/api";
+import defaultImg from '@/assets/images/logo.png';
+
 
 interface RestaurantData {
   id: number;
@@ -89,10 +89,11 @@ export default function RestaurantList() {
 
         const convertedData: CardItemProps[] = restaurants.map((item: RestaurantData, i: number) => ({
           id: item.id || i + 1,
-          image: item.restaurantImage || place,
+          image: item.restaurantImage || defaultImg,
           restaurantName: item.name || `식당 ${i + 1}`,
           description: item.address || "주소 없음",
           tags: item.restaurantTags || [],
+          linkTo: `/restaurants/${item.id}`
         }));
 
         setRestaurantList(convertedData);
@@ -153,7 +154,7 @@ export default function RestaurantList() {
             {restaurantList.length === 0 && (
               <p className="text-center my-10 text-gray-500">검색 결과가 없습니다.</p>
             )}
-            <List linkTo="restaurants" items={restaurantList} />
+            <List items={restaurantList} />
             <Pagination
               currentPage={currentPage + 1} // 0-based -> 1-based로 UI 표시
               totalPages={totalPages}

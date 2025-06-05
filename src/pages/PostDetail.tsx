@@ -1,7 +1,6 @@
 import location from '@/assets/images/location.png';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import useModal from '../hooks/useModal';
 import defaultPost from '@/assets/images/restaurant.png';
 import api from '../lib/api';
 
@@ -21,7 +20,6 @@ type PostData = {
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
   const [data, setData ] = useState<PostData | null>(null);
-  //const { isOpen, openModal, closeModal } = useModal({ initialState: false });
   
   useEffect(() => {
     const fetchPost = async () => {

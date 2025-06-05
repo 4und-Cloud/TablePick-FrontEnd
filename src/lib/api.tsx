@@ -1,5 +1,4 @@
 import axios from "axios";
-import { AuthContext } from "../store/AuthContext";
 
 
 const api = axios.create({
