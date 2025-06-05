@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Modal from './Modal';
 import RoundedBtn from '../Button/RoundedBtn';
-import Calendar from 'react-calendar';
-import { Value } from 'react-calendar/src/shared/types.js';
 import FilterModal from './FilterModal';
 import useModal from '../../hooks/useModal';
 import useAuth from '../../hooks/useAuth';
 import { useTagContext } from '../../store/TagContext';
-import 'react-calendar/dist/Calendar.css';
 import api from '../../lib/api';
 
 interface AddinfoModalProps {
@@ -21,10 +17,16 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
   const { tags } = useTagContext();
 
   const [date, setDate] = useState<Date | null>(null);
-  //const [calOpen, setCalOpen] = useState(false);
   const [gender, setGender] = useState<'male' | 'female' | undefined>();
   const [phone, setPhone] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+
+  const [isPhoneValid, setIsPhoneValid] = useState(true);
+
+  const isValidPhoneNumber = (phone: string): boolean => {
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
+    return phoneRegex.test(phone);
+  }
 
   const {
     isOpen: isFilterModalOpen,
@@ -45,7 +47,9 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
             : undefined
       );
       setDate(user.birthdate ? new Date(user.birthdate) : null);
-      setPhone(user.phoneNumber || '');
+      const formattedPhone = user.phoneNumber ? formatPhoneNumber(user.phoneNumber) : '';
+      setPhone(formattedPhone);
+      setIsPhoneValid(formattedPhone ? isValidPhoneNumber(formattedPhone) : true);
       if (Array.isArray(user.memberTags)) {
         setSelectedTagIds(user.memberTags.map((id: string | number) => Number(id)));
       } else {
@@ -53,15 +57,6 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
       }
     }
   }, [isOpen, user]);
-
-  //const toggleCalendar = () => setCalOpen((prev) => !prev);
-
-  // const handleDateChange = (value: Value) => {
-  //   if (value instanceof Date) {
-  //     setDate(value);
-  //     setCalOpen(false);
-  //   }
-  // };
 
   const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGender(event.target.value as 'male' | 'female');
@@ -76,11 +71,17 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
   };
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhoneNumber(event.target.value);
+    const input = event.target.value.replace(/\D/g, '');
+    const formatted = formatPhoneNumber(input);
     setPhone(formatted);
+    setIsPhoneValid(isValidPhoneNumber(formatted) || formatted.length < 12);
   };
 
   const handleApply = async () => {
+    if (!gender || !date || phone.trim() === '' || selectedTagIds.length === 0 || !isValidPhoneNumber(phone)) {
+      alert('모든 폼을 다 채워주세요! 전화번호는 010-1234-5678 형식이어야 합니다.');
+      return;
+    };
     try {
       const updatedData = {
         gender:
@@ -108,6 +109,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
       };
 
       login(updatedUserInfo);
+      console.log('save localstorage : ', updatedUserInfo);
       localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
       onClose();
     } catch (error) {
@@ -182,14 +184,8 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
                 name='birthdate'
                 value={date ? date.toISOString().slice(0, 10) : ''}
                 onChange={(e) => setDate(new Date(e.target.value))}
-                //onClick={toggleCalendar}
                 className="w-full border p-2 rounded"
               />
-              {/* {calOpen && (
-                <div className="absolute z-10 mt-2">
-                  <Calendar onChange={handleDateChange} value={date} />
-                </div>
-              )} */}
             </div>
           </div>
 
@@ -203,6 +199,9 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
               className="w-full border p-2 rounded"
               placeholder="010-1234-5678"
             />
+            {!isPhoneValid && phone.length >= 12 && (
+              <p className='text-red-500 text-sm mt-1'>유효한 전화번호 형식이 아닙니다. (010-1234-5678)</p>
+            )}
           </div>
 
           {/* 태그 선택 */}

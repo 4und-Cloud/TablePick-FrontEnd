@@ -9,6 +9,7 @@ import useAuth from "../hooks/useAuth";
 import LoginModal from "../components/Modal/LoginModal";
 import type { NotificationTypes } from '../types/notification'
 import api from "../lib/api";
+import defaultImg from '@/assets/images/logo.png'
 
 type RestaurantData = {
   id: number;
@@ -66,6 +67,7 @@ export default function RestaurantDetail() {
     }
   }, [id]);
 
+
   const fetchReviewPosts = async () => {
     try {
       const res = await api.get(`/api/boards/restaurant/${id}`);
@@ -76,7 +78,7 @@ export default function RestaurantDetail() {
     }
   };
 
-  const sendReservationNotification = async (data: { id: number; name: string } | null) => {
+  async (data: { id: number; name: string } | null) => {
     if (!data) return;
 
     try {
@@ -99,7 +101,9 @@ export default function RestaurantDetail() {
     };
   };
 
-  if (!data) return <div className="mt-20 text-center">로딩 중...</div>;
+  if (!data) {
+    return <div className="p-5 text-center text-gray-500">식당 정보를 불러오는 중이거나 존재하지 않습니다...</div>;
+  }
 
   const restaurantLocation: LatLngExpression = [37.51, 127.03]; // 예시 좌표
 
@@ -115,7 +119,7 @@ export default function RestaurantDetail() {
               className="w-[calc(33.333%-1rem)] aspect-square bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden"
             >
               <img
-                src={data.restaurantImage.imageUrl}
+                src={data.restaurantImage.imageUrl || defaultImg}
                 alt={`식당 이미지 ${i + 1}`}
                 className="object-cover w-full h-full rounded-lg"
                 referrerPolicy="no-referrer"

@@ -23,7 +23,10 @@ export default function SearchModal({ isOpen, onClose, currentKeyword = '', curr
 
   const handleItemClick = (tagId: number) => {
     if (selectedItems.includes(tagId)) return;
-    if (selectedItems.length >= 3) return; 
+    if (selectedItems.length >= 3) {
+      alert('태그는 최대 3개 까지만 선택 가능합니다!');
+      return;
+    } 
 
     setSelectedItems((prev) => [...prev, tagId]);
   };
@@ -57,6 +60,12 @@ export default function SearchModal({ isOpen, onClose, currentKeyword = '', curr
     }
   };
 
+  const handleClose = () => {
+    setInputText('');
+    setSelectedItems([]);
+    onClose();
+  };
+
 
   return (
     <Modal
@@ -64,7 +73,7 @@ export default function SearchModal({ isOpen, onClose, currentKeyword = '', curr
       height="500px"
       onClose={onClose}
       close={
-        <button onClick={onClose} className="text-main font-bold text-xl inset-0 z-50">
+        <button onClick={handleClose} className="text-main font-bold text-xl inset-0 z-50">
           X
         </button>
       }

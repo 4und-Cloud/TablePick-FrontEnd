@@ -25,7 +25,7 @@ export default function MyPosts() {
   const handleDeletePost = async (id: number) => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
       try {
-        const res = await api.delete(`/api/boards/${id}`);
+        await api.delete(`/api/boards/${id}`);
         fetchMypost();
       } catch (error) {
         console.error('삭제 중 오류 발생', error);
@@ -57,7 +57,7 @@ export default function MyPosts() {
       <div className="m-4">
         <div>
           {post.length > 0 ? (
-            <List linkTo="posts" onDelete={handleDeletePost} items={post} />
+            <List onDelete={handleDeletePost} items={post} />
           ) : (
             <p className="text-center text-gray-500 mt-10">게시글 내역이 없습니다.</p>
           )}

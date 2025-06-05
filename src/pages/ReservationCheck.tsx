@@ -40,44 +40,48 @@ export default function ReservationCheck() {
 
       const data: ReservationData[] = await res.data;
 
-      const formattedReservations: CardItemProps[] = data.map(reservation => ({
-        id: reservation.id,
-        image: reservation.restaurantImage,
-        restaurantName: reservation.restaurantName,
-        description: reservation.restaurantAddress,
-        reservationInfo: `${reservation.reservationDate} (${new Date(reservation.reservationDate).toLocaleDateString('ko-KR', { weekday: 'short' })}) ${reservation.partySize}명 ${reservation.reservationTime}`,
-        button: (
-          <div className="flex flex-row gap-2 w-full justify-between"> 
-            <RoundedBtn
-              text='게시글 작성하러 가기'
-              width="w-[170px]"
-              bgColor="bg-main"
-              height="h-[30px]"
-              textColor="text-white"
-              hoverBorderColor="hover:border-accent"
-              hoverColor="hover:bg-white"
-              hoverTextColor="hover:text-main"
-              onClick={() => {
-                setSelectedReservationId(reservation.id);
-                setSelectedReservationData(reservation);
-              }}
-            />
-
-            <RoundedBtn
-              text='예약 취소'
-              width="w-[170px]" 
-              bgColor="bg-red-500"
-              height="h-[30px]"
-              textColor="text-white"
-              hoverBorderColor="hover:border-red-700"
-              hoverColor="hover:bg-white"
-              hoverTextColor="hover:text-red-500"
-              onClick={() => handleCancelReservation(reservation.id)}
-            />
-          </div>
-        ),
-        buttonPosition: 'bottom'
-      }));
+      const formattedReservations: CardItemProps[] = data.map(reservation => {
+        const item: CardItemProps = {
+          id: reservation.id,
+          image: reservation.restaurantImage || place, // 기본 이미지
+          restaurantName: reservation.restaurantName,
+          description: reservation.restaurantAddress,
+          reservationInfo: `${reservation.reservationDate} (${new Date(reservation.reservationDate).toLocaleDateString('ko-KR', { weekday: 'short' })}) ${reservation.partySize}명 ${reservation.reservationTime}`,
+          linkTo: `/restaurants/${reservation.restaurantId}`,
+          button: (
+            <div className="flex flex-row gap-2 w-full justify-between">
+              <RoundedBtn
+                text='게시글 작성하러 가기'
+                width="w-[170px]"
+                bgColor="bg-main"
+                height="h-[30px]"
+                textColor="text-white"
+                hoverBorderColor="hover:border-accent"
+                hoverColor="hover:bg-white"
+                hoverTextColor="hover:text-main"
+                onClick={() => {
+                  setSelectedReservationId(reservation.id);
+                  setSelectedReservationData(reservation);
+                }}
+              />
+              <RoundedBtn
+                text='예약 취소'
+                width="w-[170px]"
+                bgColor="bg-red-500"
+                height="h-[30px]"
+                textColor="text-white"
+                hoverBorderColor="hover:border-red-700"
+                hoverColor="hover:bg-white"
+                hoverTextColor="hover:text-red-500"
+                onClick={() => handleCancelReservation(reservation.id)}
+              />
+            </div>
+          ),
+          buttonPosition: 'bottom' as const, // 리터럴 타입 명시
+        };
+        console.log("ReservationCheck - CardItem:", item); // 디버깅 로그
+        return item;
+      });
 
       setReservations(formattedReservations);
 
@@ -117,7 +121,7 @@ export default function ReservationCheck() {
     <div className="m-4">
       <div>
         {reservations.length > 0 ? (
-          <List items={reservations} />
+          <List items={reservations}/>
         ) : (
           <p className="text-center text-gray-500 mt-10">예약 내역이 없습니다.</p>
         )}

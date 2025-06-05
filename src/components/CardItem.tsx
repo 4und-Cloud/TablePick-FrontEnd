@@ -35,9 +35,11 @@ export default function CardItem({
   }: CardItemProps) {
     const navigate = useNavigate();
 
-    const handleClick = () => {
-      if (!id || !linkTo) return;
-      navigate(`/${linkTo}/${id}`);
+  const handleClick = () => {
+    console.log('navigate to : ', linkTo);
+    if (linkTo) {
+        navigate(linkTo);
+      }
     };
   
   const handleDeleteClick = (event: React.MouseEvent) => {

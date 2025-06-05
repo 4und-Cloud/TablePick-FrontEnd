@@ -7,6 +7,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import SearchModal from '../Modal/SearchModal';
 import api from '../../lib/api';
+import defaultProfile from '@/assets/images/user.png';
 
 export default function AuthHeader() {
   const navigate = useNavigate();
@@ -116,7 +117,7 @@ export default function AuthHeader() {
             <>
               <div>
                 <img
-                  src={user.profileImage}
+                  src={user.profileImage || defaultProfile}
                   alt="프로필"
                   className="w-10 h-10 rounded-full object-cover"
                 />

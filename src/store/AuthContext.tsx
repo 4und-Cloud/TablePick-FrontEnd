@@ -2,8 +2,6 @@ import { createContext, type ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import defaultProfile from '@/assets/images/user.png';
-
-type Gender = '' | 'male' | 'female';
 export interface UserInfo {
   id: number;
   email: string;
@@ -82,6 +80,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     });
     localStorage.removeItem('userInfo');
     localStorage.removeItem('fcm_token');
+    navigate('/');
   };
 
   useEffect(() => {
@@ -125,7 +124,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const login = (userData: UserInfo) => {
     setIsAuthenticated(true);
     setUser(userData);
-    localStorage.setItem('userInfo', JSON.stringify(userData));
   };
  
   return (

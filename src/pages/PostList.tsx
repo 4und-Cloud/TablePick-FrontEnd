@@ -4,7 +4,6 @@ import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
 import { useEffect, useState } from "react";
 import defaultProfile from "@/assets/images/user.png";
-import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../lib/api";
 
@@ -81,6 +80,7 @@ useEffect(() => {
         memberNickname: item.memberNickname || "정보 없음",
         memberProfileImage: item.memberProfileImage || defaultProfile,
         image: item.imageUrl,
+        linkTo: `/posts/${item.id}`
       }));
 
       setPostList(convertedData);
@@ -117,7 +117,7 @@ useEffect(() => {
             {postList.length === 0 && (
               <p className="text-center my-10 text-gray-500">게시글이 없습니다.</p>
             )}
-            <List linkTo="posts" items={postList} />
+            <List  items={postList} />
             <Pagination
               currentPage={currentPage + 1} // 0-based -> 1-based로 변환하여 UI에 표시
               totalPages={totalPagesFromAPI}
