@@ -78,7 +78,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </button>
           {/* 왼쪽 영역 */}
           <div className="w-1/2 flex items-center justify-center ">
-            <img src={pic} alt="로그인 이미지" />
+            <img width={400} height={600} src={pic} alt="로그인 이미지" />
           </div>
           <div className="absolute bg-black bg-opacity-10 left-1/2 w-px h-full transform -translate-x-1/2"></div>
           {/* 오른쪽 영역 */}

@@ -118,7 +118,7 @@ export default function SearchModal({ isOpen, onClose, currentKeyword = '', curr
             className="flex-grow min-w-[120px] outline-none text-base"
           />
           <button type="button" onClick={handleSubmit}>
-            <img src={search} alt="검색" className="w-6 h-6" />
+            <img width={24} height={24} src={search} alt="검색" className="w-6 h-6" />
           </button>
         </div>
 

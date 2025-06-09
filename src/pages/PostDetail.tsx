@@ -43,7 +43,7 @@ export default function PostDetail() {
       {/* 상단 정보 (위치 + 작성일자) */}
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center">
-          <img src={location} className="w-[16px] h-[16px]" alt="Location Icon" />
+          <img width={16} height={16} src={location} className="w-[16px] h-[16px]" alt="Location Icon" />
           <p className="ml-2">{data?.restaurantName}</p>
         </div>
         <div>

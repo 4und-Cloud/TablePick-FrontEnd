@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { Suspense, lazy } from 'react';
 import loc from '@/assets/images/location.png';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
-import AddinfoModal from '../components/Modal/AddInfoModal';
+const AddinfoModal = lazy(() => import('../components/Modal/AddInfoModal'));
 import content from '@/assets/images/content.png';
 import useAuth from '../hooks/useAuth';
 
@@ -67,6 +68,8 @@ function RestaurantCard({
           {/* 주소 */}
           <div className="flex items-start text-medium text-gray-600 mt-1 gap-1">
             <img
+              width={24}
+              height={24}
               src={loc}
               alt="location icon"
               className="w-4 h-4 mr-1"
@@ -127,6 +130,8 @@ function PostCard({ item, onClick }: { item: PostItem; onClick?: () => void }) {
           {/* 내용 */}
           <div className="flex items-start text-medium text-gray-600 mt-1 gap-1">
             <img
+              width={24}
+              height={24}
               src={content}
               alt="location icon"
               className="w-4 h-4 mr-1"
@@ -170,9 +175,9 @@ export default function Landing() {
   //게시글 데이터 가져오기
   const fetchPosts = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/boards/main`);
+      const res = await axios.get(`/api/boards/list?page=0&size=4`);
 
-      const postsData = res.data;
+      const postsData = res.data.boardList;
       if (Array.isArray(postsData)) {
         setPosts(postsData);
       } else {
@@ -234,7 +239,9 @@ export default function Landing() {
     <>
       {/* 유저 정보 입력 모달 */}
       {isAddInfoModalOpen && (
-        <AddinfoModal isOpen={isAddInfoModalOpen} onClose={handleCloseAddInfoModal} />
+        <Suspense fallback={<div>로딩중...</div>}>
+          <AddinfoModal isOpen={isAddInfoModalOpen} onClose={handleCloseAddInfoModal} />
+        </Suspense>
       )}
       
 
