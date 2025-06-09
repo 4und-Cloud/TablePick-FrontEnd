@@ -6,7 +6,7 @@ export default function usePagination(totalPagesFromBackend: number) {
   const [currentPage, setCurrentPage] = useState(0); // 0-based로 초기화
 
   useEffect(() => {
-    const lastPageIndex = totalPagesFromBackend > 0 ? totalPagesFromBackend - 1 : 0;
+    const lastPageIndex = Math.max(totalPagesFromBackend - 1, 0);
 
     if (currentPage < 0) {
       setCurrentPage(0);

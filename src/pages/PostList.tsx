@@ -1,11 +1,13 @@
 import { CardItemProps } from "../components/CardItem";
-import List from "../components/List";
+//import List from "../components/List";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import defaultProfile from "@/assets/images/user.png";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../lib/api";
+
+const LazyList = React.lazy(() => import('../components/List'));
 
 interface PostData {
   id: number;
@@ -116,8 +118,11 @@ useEffect(() => {
           <>
             {postList.length === 0 && (
               <p className="text-center my-10 text-gray-500">게시글이 없습니다.</p>
-            )}
-            <List  items={postList} />
+              )}
+              <Suspense fallback>
+                <LazyList  items={postList} />
+              </Suspense>
+           
             <Pagination
               currentPage={currentPage + 1} // 0-based -> 1-based로 변환하여 UI에 표시
               totalPages={totalPagesFromAPI}

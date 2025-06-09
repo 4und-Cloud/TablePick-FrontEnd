@@ -1,3 +1,6 @@
+
+import React from "react";
+
 export interface paginationProps {
     currentPage: number; // 현재 페이지
     totalPages: number; // 총 페이지
@@ -8,15 +11,7 @@ export interface paginationProps {
     onLastPage: () => void; // 마지막 페이지 이동
 }
 
-export default function Pagination({
-                                       currentPage,
-                                       totalPages,
-                                       onPrevPage,
-                                       onNextPage,
-                                       onPageChange,
-                                       onFirstPage,
-                                       onLastPage
-                                   }: paginationProps) {
+function Pagination( { currentPage, totalPages, onPrevPage, onNextPage, onPageChange, onFirstPage, onLastPage }: paginationProps ) {
     // 페이지 계산 함수
     const getPageNumbers = () => {
         const maxBtn = 5;
@@ -68,5 +63,7 @@ export default function Pagination({
             <button className="bg-main text-white rounded-md px-3 py-1 disabled:opacity-40"
                     onClick={onLastPage}>&gt;&gt;</button>
         </div>
-    );
+      );
 }
+    
+export default React.memo(Pagination);

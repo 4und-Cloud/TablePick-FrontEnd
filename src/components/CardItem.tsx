@@ -1,7 +1,9 @@
 import location from '@/assets/images/location.png'
-import {useNavigate} from 'react-router-dom';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export interface CardItemProps {
+
+export interface CardItemProps{
     id: number;
     linkTo? : string;
     image? :string; // 이미지
@@ -11,14 +13,16 @@ export interface CardItemProps {
     reservationInfo? : React.ReactNode; // 예약 관련 정보
     button? : React.ReactNode; // 버튼
     buttonPosition? : 'bottom'; // 버튼 위치
-    containerStyle? : string; // 카드 전체 wrapper 커스텀
+    con
+    
+  tainerStyle?: string; // 카드 전체 wrapper 커스텀
     imageStyle? : string; // 이미지 커스텀
     restaurantNameStyle?: string; // 식당명 커스텀
   onClick?: () => void;
   onDelete?: (id: number) => void;
 }
 
-export default function CardItem({
+const CardItem = ({
     id,
     linkTo,
     image,
@@ -32,7 +36,7 @@ export default function CardItem({
     button,
   buttonPosition,
     onDelete,
-  }: CardItemProps) {
+  }: CardItemProps) => {
     const navigate = useNavigate();
 
   const handleClick = () => {
@@ -114,4 +118,7 @@ export default function CardItem({
         </div>
       </div>
     );
-}
+  }
+
+
+export default React.memo(CardItem);
