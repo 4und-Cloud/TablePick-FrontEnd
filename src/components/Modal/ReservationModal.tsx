@@ -104,22 +104,29 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
 
       // 예약 정보 생성
       const reservationData = {
-        //memberId: user.id,
         restaurantId: restaurantId,
         reservationDate: formatDate(selectedDate),
         reservationTime: selectedTime,
         partySize: selectedPeople,
       };
 
+      console.log('Sending reservation data:', reservationData);
 
       // 예약 API 호출
       // const response = await fetch("http://localhost:8080/api/reservations", {
       const response = await api.post(`/api/reservations`, reservationData);
       const result = response.data;
 
+      const reservationId = result.reservationId || result.id;
+    if (!reservationId) {
+      throw new Error('Reservation ID is missing in response');
+    }
+
+      console.log('Reservation response:', result);
+
       // 예약 성공 후 알림 스케줄링 API 호출
       // await fetch(`http://localhost:8080/api/notifications/schedule/reservation/${result.id}`, {
-      await api.post(`/api/notifications/schedule/reservation/${result.id}`);
+      await api.post(`/api/notifications/schedule/reservation/${reservationId}`);
 
       // 성공 콜백 호출
       if (onSuccess) {
@@ -130,14 +137,23 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
         );
         closeModal();
       }
-    } catch (error) {
-      console.error("예약 처리 중 오류:", error);
-      alert("예약 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    } catch (error: any) {
+    console.error('예약 처리 중 오류:', {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      response: error.response?.data, // 서버 응답 데이터
+    });
+    alert(
+      `예약 처리 중 오류: ${
+        error.response?.data?.message || error.message || '알 수 없는 오류'
+      }`
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
   };
-
+  
   return (
     <Modal
       width="400px"

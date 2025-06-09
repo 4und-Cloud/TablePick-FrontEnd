@@ -134,7 +134,7 @@ export default function RestaurantList() {
   });
 
   return (
-    <div>
+    <div className="mx-[300px]">
       <div className="flex justify-between mx-6 my-2 flex-row">
         <div className="flex overflow-x-auto items-center justify-center">
           {displayedTagElements}
