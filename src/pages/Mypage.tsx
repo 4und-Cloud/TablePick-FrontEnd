@@ -196,6 +196,8 @@ export default function Mypage() {
           {/* 프로필 이미지 */}
           <div className="flex-shrink-0">
             <img
+              width={32}
+              height={32}
               src={formData.profileImage || defaultProfile}
               alt="Profile"
               className="w-32 h-32 rounded-full"

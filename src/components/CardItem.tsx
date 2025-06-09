@@ -56,7 +56,10 @@ export default function CardItem({
           <img
             src={image}
             alt={restaurantName}
+            height={200}
+            width={180}
             className={`w-full h-[200px] rounded-md object-cover mb-2 ${imageStyle}`}
+            loading='lazy'
           />
         )}
   
@@ -64,7 +67,7 @@ export default function CardItem({
           <div className="flex flex-col overflow-hidden w-full">
             <div className="flex flex-col justify-between w-full">
               <div className='flex flex-row items-center gap-2'>
-                <img src={location} className='w-[16px] h-[16px]' />
+                <img src={location} width={16} height={16} />
                 <span className={`text-lg font-bold w-full ${restaurantNameStyle}`}>
                   {restaurantName}
                 </span>

@@ -18,7 +18,7 @@ export default function UnAuthHeader() {
         <div className="container gap-32 flex h-16  items-center justify-around">
           {/* logo */}
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="Logo" className="h-10" />
+            <img src={logo} height={40} width={120} alt="Logo" className="h-10" />
           </Link>
 
           {/* 네비게이션 */}
@@ -50,7 +50,7 @@ export default function UnAuthHeader() {
               type="button"
               className="text-muted-foreground hover:text-foreground"
             >
-              <img src={search} alt="Search" className="w-[32px] h-[32px]" />
+              <img src={search} alt="Search" width={32} height={32} className="w-[32px] h-[32px]" />
             </button>
             <RoundedBtn
               onClick={openModal}

@@ -8,7 +8,7 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
         <AuthProvider>
             <TagProvider>
-                    <App />
+                <App />
             </TagProvider>
         </AuthProvider>
     </BrowserRouter>

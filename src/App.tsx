@@ -4,7 +4,7 @@ import AuthHeader from './components/Header/AuthHeader'
 import UnAuthHeader from './components/Header/UnAuthHeader'
 import useAuth from './hooks/useAuth'
 
-function App() {
+export default function App() {
   const { isAuthenticated } = useAuth();
   return (
     <div className="relative w-full min-h-screen flex justify-center bg-white">
@@ -17,11 +17,10 @@ function App() {
 
         {/* 헤더 하단 보더 */}
         {/* <div className="w-full h-px bg-main" /> */}
-
-        <PageRouter />
+          <PageRouter />
+        
       </div>
     </div>
   )
 }
 
-export default App;
