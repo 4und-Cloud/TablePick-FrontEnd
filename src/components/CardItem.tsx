@@ -1,5 +1,7 @@
 import location from '@/assets/images/location.png'
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 
 export interface CardItemProps{
     id: number;
@@ -18,7 +20,7 @@ export interface CardItemProps{
   onDelete?: (id: number) => void;
 }
 
-export default function CardItem({
+const CardItem = ({
     id,
     linkTo,
     image,
@@ -32,7 +34,7 @@ export default function CardItem({
     button,
   buttonPosition,
     onDelete,
-  }: CardItemProps) {
+  }: CardItemProps) => {
     const navigate = useNavigate();
 
   const handleClick = () => {
@@ -115,3 +117,6 @@ export default function CardItem({
       </div>
     );
   }
+
+
+export default React.memo(CardItem);
