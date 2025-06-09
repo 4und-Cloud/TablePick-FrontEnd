@@ -10,7 +10,7 @@ interface RoundedBtnProps{
     hoverColor? : string; // hover 시 배경 색
     hoverBorderColor? : string; // hover 시 border 색
     hoverTextColor? : string; // hover 시 텍스트 색
-    onClick?: () => void;
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
     disabled?: () => void;
 }
 
@@ -27,7 +27,12 @@ export default function RoundedBtn({
     onClick,
 } : RoundedBtnProps) {
     return (
-        <button onClick={onClick} 
+        <button onClick={(event) => {
+        event.stopPropagation(); // 이벤트 전파 차단
+        if (onClick) {
+          onClick(event); // onClick이 정의된 경우에만 호출
+        }
+      }}
             
             className={clsx(
                 'shadow-xl rounded-[16px] border-[2px]', 
