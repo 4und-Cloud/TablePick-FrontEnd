@@ -1,5 +1,5 @@
-import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
+import api from "@/lib/api";
 
 export interface Category {
     id: number;
@@ -18,7 +18,7 @@ export const CategoryProvider = ({children} : {children: React.ReactNode}) => {
 
     const fetchCategory = async() => {
         try{
-            const {data} = await axios.get('http://localhost:8080/api/category', {
+            const {data} = await api.get('http://localhost:8080/api/category', {
                 headers: {
                     Accept: 'Application/json'
                 },

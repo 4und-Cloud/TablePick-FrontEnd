@@ -77,7 +77,7 @@ export default function OauthSuccess() {
           ? isRecentlyCreated(userData.createAt)
           : false;
 
-        const hasCompletedAdditionalnfo = localStorage.getItem(
+        const hasCompletedAdditionalnfo = sessionStorage.getItem(
           `hasCompletedAdditionalInfo_${userData.id}`
         );
 
@@ -100,7 +100,7 @@ export default function OauthSuccess() {
         // 로그인 처리 (중복 방지 플래그 설정)
         if (!isLoginProcessed) {
           login(normalizedUser);
-          localStorage.setItem('userInfo', JSON.stringify(normalizedUser));
+          sessionStorage.setItem('userInfo', JSON.stringify(normalizedUser));
 
           const params = new URLSearchParams(location.search);
           const redirectUrl = params.get('redirect') || '/';

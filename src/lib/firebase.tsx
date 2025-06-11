@@ -5,7 +5,6 @@ import {
   onMessage,
   type Messaging,
 } from 'firebase/messaging';
-import api from './api';
 
 // Firebase 설정 정보
 const firebaseConfig = {
@@ -80,7 +79,7 @@ export async function getFCMToken(): Promise<string | null> {
     }
 
     // 기존 토큰 확인
-    const savedToken = localStorage.getItem('fcm_token');
+    const savedToken = sessionStorage.getItem('fcm_token');
     if (savedToken) {
       console.log('저장된 FCM 토큰 사용:', savedToken);
       return savedToken;
@@ -93,8 +92,8 @@ export async function getFCMToken(): Promise<string | null> {
     });
 
     if (token) {
-      localStorage.setItem('fcm_token', token);
-      console.log('새 FCM 토큰 발급:', `${token.substring(0,10)}...`);
+      sessionStorage.setItem('fcm_token', token);
+      console.log('새 FCM 토큰 발급:', `${token.substring(0, 10)}...`);
       return token;
     }
     console.error('FCM 토큰 발급 실패');
@@ -107,7 +106,7 @@ export async function getFCMToken(): Promise<string | null> {
 
 // 저장된 FCM 토큰 가져오기
 export function getSavedFCMToken(): string | null {
-  return localStorage.getItem('fcm_token');
+  return sessionStorage.getItem('fcm_token');
 }
 
 // FCM 토큰 서버 저장
@@ -122,10 +121,23 @@ export async function saveFCMToken(
 
   try {
     // 환경 변수로 대체 가능 (예: process.env.REACT_APP_API_URL)
-    await api.patch(
-      `/api/notifications/fcm-token?memberId=${userId}`, { token });
-    console.log('FCM 토큰 서버 저장 성공');
-    return true;
+    const apiUrl = 'http://localhost:8080';
+    const response = await fetch(
+      `${apiUrl}/api/notifications/fcm-token?memberId=${userId}`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+        credentials: 'include',
+      }
+    );
+
+    if (response.ok) {
+      console.log('FCM 토큰 서버 저장 성공');
+      return true;
+    }
+    console.error('FCM 토큰 저장 실패:', await response.text());
+    return false;
   } catch (error) {
     console.error('FCM 토큰 저장 오류:', error);
     return false;
@@ -137,12 +149,24 @@ export async function deleteFCMToken(
   userId: number | string
 ): Promise<boolean> {
   try {
-    localStorage.removeItem('fcm_token');
+    sessionStorage.removeItem('fcm_token');
     // 환경 변수로 대체 가능
-    await api.delete(
-      `/api/notifications/fcm-token?memberId=${userId}`);
-    console.log('FCM 토큰 삭제 성공');
-    return true;
+    const apiUrl = 'http://localhost:8080';
+    const response = await fetch(
+      `${apiUrl}/api/notifications/fcm-token?memberId=${userId}`,
+      {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      }
+    );
+
+    if (response.ok) {
+      console.log('FCM 토큰 삭제 성공');
+      return true;
+    }
+    console.error('FCM 토큰 삭제 실패:', await response.text());
+    return false;
   } catch (error) {
     console.error('FCM 토큰 삭제 오류:', error);
     return false;
@@ -181,12 +205,17 @@ export async function getMemberNotifications(
 ): Promise<any[]> {
   try {
     // 환경 변수로 대체 가능
+    const apiUrl = 'http://localhost:8080';
     const url = status
-      ? `/api/notifications/member/${memberId}?status=${status}`
-      : `/api/notifications/member/${memberId}`;
+      ? `${apiUrl}/api/notifications/member/${memberId}?status=${status}`
+      : `${apiUrl}/api/notifications/member/${memberId}`;
 
-    const response = await api.get(url);
-    return response.data;
+    const response = await fetch(url, { credentials: 'include' });
+    if (response.ok) {
+      return await response.json();
+    }
+    console.error('알림 목록 조회 실패:', await response.text());
+    return [];
   } catch (error) {
     console.error('알림 목록 조회 오류:', error);
     return [];
@@ -197,9 +226,19 @@ export async function getMemberNotifications(
 export async function getNotificationTypes(): Promise<any[]> {
   try {
     // 환경 변수로 대체 가능
-    const response = await api.get(
-      `/api/notifications/notification-types`);
-    return response.data;
+    const apiUrl = 'http://localhost:8080';
+    const response = await fetch(
+      `${apiUrl}/api/notifications/notification-types`,
+      {
+        credentials: 'include',
+      }
+    );
+
+    if (response.ok) {
+      return await response.json();
+    }
+    console.error('알림 타입 조회 실패:', await response.text());
+    return [];
   } catch (error) {
     console.error('알림 타입 조회 오류:', error);
     return [];

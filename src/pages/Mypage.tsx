@@ -159,7 +159,7 @@ export default function Mypage() {
 			};
       const res = await api.patch(`/api/members`, requestBody);
 
-      localStorage.setItem('userInfo', JSON.stringify({
+      sessionStorage.setItem('userInfo', JSON.stringify({
 				...formData,
 				memberTags: res.data.memberTags?.map((tag: any) => tag.id) || formData.memberTags || [],
 			}));
