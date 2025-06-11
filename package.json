@@ -11,6 +11,7 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.80.6",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
     "compression": "^1.8.0",
@@ -26,7 +27,6 @@
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.5.3",
     "twin.macro": "^3.4.1",
-    "vite-plugin-babel-macros": "^1.0.6",
     "vite-plugin-svgo": "^2.0.0"
   },
   "devDependencies": {
