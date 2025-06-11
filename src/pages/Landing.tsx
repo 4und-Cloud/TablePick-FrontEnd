@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Suspense, lazy } from 'react';
 import loc from '@/assets/images/location.png';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -6,6 +5,7 @@ import { useEffect, useState, useCallback } from 'react';
 const AddinfoModal = lazy(() => import('../components/Modal/AddInfoModal'));
 import content from '@/assets/images/content.png';
 import useAuth from '../hooks/useAuth';
+import api from '@/lib/api';
 
 // 레스토랑 데이터 인터페이스
 interface RestaurantItem {
@@ -175,7 +175,7 @@ export default function Landing() {
   //게시글 데이터 가져오기
   const fetchPosts = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/boards/list?page=0&size=4`);
+      const res = await api.get(`/api/boards/list?page=0&size=4`);
 
       const postsData = res.data.boardList;
       if (Array.isArray(postsData)) {
@@ -192,7 +192,7 @@ export default function Landing() {
   // 레스토랑 데이터 가져오기
   const fetchRestaurants = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/restaurants/all`);
+      const res = await api.get(`/api/restaurants/all`);
 
       const restaurantsData = res.data.content
       if (Array.isArray(restaurantsData)) {

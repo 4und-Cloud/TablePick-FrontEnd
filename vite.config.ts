@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import macrosPlugin from 'vite-plugin-babel-macros';
 import path from 'path';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -8,7 +7,6 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   plugins: [
     react(),
-    macrosPlugin(),
     ViteImageOptimizer({
       jpeg: { quality: 75 }, // 품질 더 낮춰 크기 감소
       png: { quality: 70 },
