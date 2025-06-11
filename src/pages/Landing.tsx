@@ -229,7 +229,7 @@ export default function Landing() {
     setIsAddInfoModalOpen(false);
     window.location.href = redirectUrl;
     if (user?.id) {
-      localStorage.setItem(`hasCompletedAdditionalInfo_${user.id}`, 'true');
+      sessionStorage.setItem(`hasCompletedAdditionalInfo_${user.id}`, 'true');
       const updatedUser = { ...user, isNewUser: false };
       login(updatedUser);
     }

@@ -109,8 +109,8 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
       };
 
       login(updatedUserInfo);
-      console.log('save localstorage : ', updatedUserInfo);
-      localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
+    
+      sessionStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
       onClose();
     } catch (error) {
       console.error('정보 저장 실패:', error);

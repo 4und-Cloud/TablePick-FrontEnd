@@ -78,14 +78,14 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       createAt: '',
       isNewUser: false,
     });
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('fcm_token');
+    sessionStorage.removeItem('userInfo');
+    sessionStorage.removeItem('fcm_token');
     navigate('/');
   };
 
   useEffect(() => {
     // 로컬 스토리지에서 사용자 정보 가져오기
-    const savedUser = localStorage.getItem('userInfo');
+    const savedUser = sessionStorage.getItem('userInfo');
 
     if (savedUser) {
       try {

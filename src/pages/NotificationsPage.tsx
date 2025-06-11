@@ -81,7 +81,7 @@ export default function NotificationsPage() {
 
     async function fetchNotifications() {
       // 로컬 스토리지에서 사용자 정보 직접 확인 (디버깅용)
-      const localUser = localStorage.getItem('infoUser');
+      const localUser = sessionStorage.getItem('infoUser');
 
       let userId = user?.id;
 
@@ -120,7 +120,7 @@ export default function NotificationsPage() {
       fetchNotifications();
     } else {
       // 로컬 스토리지에서 사용자 정보 확인
-      const localUser = localStorage.getItem('infoUser');
+      const localUser = sessionStorage.getItem('infoUser');
       if (localUser) {
         console.log(
           '로컬 스토리지에 사용자 정보가 있지만 인증 상태가 false입니다.'

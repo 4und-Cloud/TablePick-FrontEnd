@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import axios from "axios";
 import {createContext, useContext, useEffect, useState} from "react";
+=======
+import {createContext, useContext, useEffect, useState } from "react";
+import api from "@/lib/api";
+>>>>>>> e37c848 (창 닫았을 때 로그아웃 처리 수정)
 
 // 태그 타입 
 export interface Tag {
@@ -22,9 +27,15 @@ export const TagProvider = ({children}: { children: React.ReactNode }) => {
     const [tags, setTags] = useState<Tag[]>([]);
 
     // 태그 데이터 불러오기
+<<<<<<< HEAD
     const fetchTags = async () => {
         try {
             const {data} = await axios.get('http://localhost:8080/api/tags', {
+=======
+    const fetchTags = async() => {
+        try{
+            const {data} = await api.get('http://localhost:8080/api/tags',{
+>>>>>>> e37c848 (창 닫았을 때 로그아웃 처리 수정)
                 headers: {
                     Accept: 'Application/json'
                 },
