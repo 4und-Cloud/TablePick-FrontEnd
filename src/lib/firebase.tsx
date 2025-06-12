@@ -17,6 +17,8 @@ const firebaseConfig = {
   measurementId: 'G-7VLJ4SH0RF',
 };
 
+const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
+
 // Firebase 초기화
 let messaging: Messaging | null = null;
 
@@ -120,8 +122,6 @@ export async function saveFCMToken(
   }
 
   try {
-    // 환경 변수로 대체 가능 (예: process.env.REACT_APP_API_URL)
-    const apiUrl = 'http://localhost:8080';
     const response = await fetch(
       `${apiUrl}/api/notifications/fcm-token?memberId=${userId}`,
       {
@@ -150,8 +150,6 @@ export async function deleteFCMToken(
 ): Promise<boolean> {
   try {
     sessionStorage.removeItem('fcm_token');
-    // 환경 변수로 대체 가능
-    const apiUrl = 'http://localhost:8080';
     const response = await fetch(
       `${apiUrl}/api/notifications/fcm-token?memberId=${userId}`,
       {
@@ -204,8 +202,7 @@ export async function getMemberNotifications(
   status?: string
 ): Promise<any[]> {
   try {
-    // 환경 변수로 대체 가능
-    const apiUrl = 'http://localhost:8080';
+    
     const url = status
       ? `${apiUrl}/api/notifications/member/${memberId}?status=${status}`
       : `${apiUrl}/api/notifications/member/${memberId}`;
@@ -225,8 +222,6 @@ export async function getMemberNotifications(
 // 알림 타입 조회
 export async function getNotificationTypes(): Promise<any[]> {
   try {
-    // 환경 변수로 대체 가능
-    const apiUrl = 'http://localhost:8080';
     const response = await fetch(
       `${apiUrl}/api/notifications/notification-types`,
       {
