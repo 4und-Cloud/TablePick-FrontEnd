@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
+import useAuth from '@/features/auth/hook/useAuth'
 import {
   getFCMToken,
   getSavedFCMToken,
   saveFCMToken,
-} from '../../lib/firebase';
-import defaultProfile from '@/assets/images/user.png';
-import api from '../../lib/api';
+} from '../../features/notification/lib/firebase';
+import defaultProfile from '@/@shared/images/user.png';
+import api from '../../@shared/api/api';
 
 export default function OauthSuccess() {
   const { login } = useAuth();

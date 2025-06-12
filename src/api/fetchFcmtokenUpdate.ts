@@ -1,0 +1,7 @@
+import api from "@/@shared/api/api";
+
+export const fetchFcmtokenUpdate = async (memberId: number, token: string) => {
+    const response = await api.patch(`/api/notifications/fcm-token?memberId=${memberId}`, {memberId, token});
+    return { status: response.status, data: response.data };
+
+}
