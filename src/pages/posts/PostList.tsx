@@ -1,23 +1,13 @@
-import { CardItemProps } from "@/@shared/components/CardItem";
+import { CardItemProps } from "@/@shared/types/cardItemsType";
 import Pagination from "@/@shared/components/Pagination";
 import usePagination from "@/@shared/hook/usePagination";
 import React, { useEffect, useState, Suspense } from "react";
 import defaultProfile from "@/@shared/images/user.png";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import api from "@/@shared/api/api";
+import { fetchPosts, convertedPostListData } from "@/entities/post/api/fetchPosts";
+import { FetchPostsParams } from "@/entities/post/types/postType";
 
 const LazyList = React.lazy(() => import('@/@shared/components/List'));
-
-interface PostData {
-  id: number;
-  content: string;
-  restaurantName: string;
-  restaurantAddress: string;
-  restaurantCategoryName: string;
-  memberNickname: string; 
-  memberProfileImage: string;
-  imageUrl: string;
-}
 
 export default function PostList() {
   const [postList, setPostList] = useState<CardItemProps[]>([]);
@@ -47,56 +37,34 @@ export default function PostList() {
 
 // 2. currentPage가 바뀔 때 API 요청
 useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const restaurantId = searchParams.get("restaurantId");
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const restaurantIdParam = searchParams.get('restaurantId');
+        const restaurantId = restaurantIdParam ? Number(restaurantIdParam) : null;
+        const params: FetchPostsParams = {
+          restaurantId,
+          page: currentPage,
+          size: 6,
+        };
 
-      let reqUrl: string;
+        const { data: posts, totalPages } = await fetchPosts(params);
+        const convertedData = convertedPostListData (posts, defaultProfile);
 
-      if (restaurantId) {
-        reqUrl = `/api/boards/restaurant/${restaurantId}`;
-      } else {
-        reqUrl = `/api/boards/list?page=${currentPage}&size=6`;
+        setPostList(convertedData);
+        setTotalPagesFromAPI(totalPages);
+      } catch (error: any) {
+        console.error('게시글 리스트 불러오기 실패:', error);
+        setPostList([]);
+        setTotalPagesFromAPI(1);
+        alert('게시글을 불러오지 못했습니다. 다시 시도해주세요.');
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const res = await api.get(reqUrl);
-
-      const postsToSet = restaurantId
-        ? Array.isArray(res.data)
-          ? res.data
-          : res.data
-          ? [res.data]
-          : []
-        : res.data.boardList || [];
-
-      const totalPages = restaurantId ? 1 : res.data.totalPages || 1;
-
-      const convertedData: CardItemProps[] = postsToSet.map((item: PostData, i: number) => ({
-        id: item.id || i + 1,
-        description: item.content || "내용 없음",
-        restaurantName: item.restaurantName || "정보 없음",
-        restaurantAddress: item.restaurantAddress || "정보 없음",
-        restaurantCategoryName: item.restaurantCategoryName || "정보 없음",
-        memberNickname: item.memberNickname || "정보 없음",
-        memberProfileImage: item.memberProfileImage || defaultProfile,
-        image: item.imageUrl,
-        linkTo: `/posts/${item.id}`
-      }));
-
-      setPostList(convertedData);
-      setTotalPagesFromAPI(totalPages);
-    } catch (error) {
-      console.error("게시글 리스트 불러오기 실패:", error);
-      setPostList([]);
-      setTotalPagesFromAPI(1);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, [currentPage, searchParams.get("restaurantId")]);
+    fetchData();
+  }, [currentPage, searchParams.get('restaurantId')]);
 
   const updateUrlPage = (newPage: number) => {
     const newSearchParams = new URLSearchParams(searchParams);

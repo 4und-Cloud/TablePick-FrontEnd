@@ -1,8 +1,6 @@
 import {createContext, useContext, useEffect, useState } from "react";
-import { fetchTag, TagProps } from "@/api/fetchTag";
-
-// 태그 타입 
-
+import { fetchTag } from "@/entities/tag/api/fetchTag";
+import { TagProps } from "@/entities/tag/types/tagType";
 
 // Context에 저장할 데이터 타입
 interface TagContextType {

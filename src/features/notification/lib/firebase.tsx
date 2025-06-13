@@ -6,10 +6,10 @@ import {
   type Messaging,
   isSupported,
 } from 'firebase/messaging';
-import { fetchFcmtokenUpdate } from '@/api/fetchFcmtokenUpdate';
-import { fetchFcmtokenRemove } from '@/api/fetchFcmtokenRemove';
-import { fetchMemberNotification } from '@/api/fetchMemberNotification';
-import { fetchNotificationTypes } from '@/api/fetchNotificationTypes';
+import { fetchFcmtokenUpdate } from '@/features/auth/api/fetchFcmtoken';
+import { fetchFcmtokenRemove } from '@/features/auth/api/fetchFcmtoken';
+import { fetchMemberNotification } from '../api/fetchNotification';
+import { fetchNotificationTypes } from '../api/fetchNotification';
 
 // Firebase 설정 정보
 const firebaseConfig = {

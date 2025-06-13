@@ -18,7 +18,7 @@ export default function FilterModal({
   onClick,
 }: FilterModalProps) {
   if (!isOpen) return false
-  const { tags } = useTagContext();
+  const { tagsItem } = useTagContext();
 
   const handleToggleTag = (tagId: number) => {
     if (selectedTags.includes(tagId)) {
@@ -71,7 +71,7 @@ export default function FilterModal({
           <div className="mb-4 p-2 border border-gray-200 rounded-md">
             <div className="flex flex-wrap gap-2">
               {selectedTags.map((id) => {
-                const tag = tags.find((t) => t.id === id);
+                const tag = tagsItem.find((t) => t.id === id);
                 return (
                   tag && (
                     <div
@@ -95,7 +95,7 @@ export default function FilterModal({
 
         {/* 태그 리스트 */}
         <div className="space-y-2">
-          {tags.map((tag) => (
+          {tagsItem.map((tag) => (
             <label
               key={tag.id}
               className="flex items-center gap-2 cursor-pointer"

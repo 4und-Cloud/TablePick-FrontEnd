@@ -5,38 +5,17 @@ import { useEffect, useState, useCallback } from 'react';
 const AddinfoModal = lazy(() => import('./components/AddInfoModal'));
 import content from '@/@shared/images/content.png';
 import useAuth from '@/features/auth/hook/useAuth'
-import api from '@/@shared/api/api';
-import { fetchPosts, Post } from '@/api/fetchPosts';
-
-// 레스토랑 데이터 인터페이스
-interface RestaurantItem {
-  id: number;
-  name: string;
-  address: string;
-  categoryName: string;
-  restaurantTags: string[];
-  imageUrl: string;
-}
-
-// 게시글 데이터 인터페이스
-// interface PostItem {
-//   id: number;
-//   restaurantName: string;
-//   restaurantAddress: string;
-//   content: string;
-//   restaurantCategoryName: string;
-//   memberNickname: string;
-//   memberProfileImage: string;
-//   //tagNames: string[];
-//   imageUrl: string;
-// }
+import { fetchPosts } from '@/entities/post/api/fetchPosts';
+import { Post } from '@/entities/post/types/postType';
+import { fetchRestaurantsLanding } from '@/entities/restaurants/api/fetchRestaurants';
+import { RestaurantLandingData } from '@/entities/restaurants/types/restaurantType';
 
 // 레스토랑 카드 컴포넌트
 function RestaurantCard({
   item,
   onClick,
 }: {
-  item: RestaurantItem;
+  item: RestaurantLandingData;
   onClick?: () => void;
 }) {
   return (
@@ -164,7 +143,7 @@ function PostCard({ item, onClick }: { item: Post; onClick?: () => void }) {
 export default function Landing() {
   // 상태 정의
   const [posts, setPosts] = useState<Post[]>([]); // 게시글 목록
-  const [restaurants, setRestaurants] = useState<RestaurantItem[]>([]); // 레스토랑 목록
+  const [restaurants, setRestaurants] = useState<RestaurantLandingData[]>([]); // 레스토랑 목록
   const { user, isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -187,14 +166,8 @@ export default function Landing() {
   // 레스토랑 데이터 가져오기
   const loadRestaurants = useCallback(async () => {
     try {
-      const res = await api.get(`/api/restaurants/all`);
-
-      const restaurantsData = res.data.content;
-      if (Array.isArray(restaurantsData)) {
-        setRestaurants(restaurantsData);
-      } else {
-        setRestaurants([]);
-      }
+      const restaurantsData = await fetchRestaurantsLanding();
+      setRestaurants(restaurantsData);
     } catch (error) {
       console.error('레스토랑 데이터 가져오기 실패:', error);
       setRestaurants([]);

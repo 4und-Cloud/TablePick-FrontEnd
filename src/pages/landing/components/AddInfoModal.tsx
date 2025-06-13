@@ -5,7 +5,8 @@ import FilterModal from '../../../@shared/components/Modal/FilterModal';
 import useModal from '../../../@shared/hook/useModal';
 import useAuth from '@/features/auth/hook/useAuth'
 import { useTagContext } from '../../../app/provider/TagContext';
-import api from '../../../@shared/api/api';
+import { fetchAddMemberInfo } from '@/features/member/api/fetchMember';
+import { AddMemberInfoProps } from '@/features/member/types/memberType';
 
 interface AddinfoModalProps {
   isOpen: boolean;
@@ -14,7 +15,7 @@ interface AddinfoModalProps {
 
 export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
   const { user, login } = useAuth();
-  const { tags } = useTagContext();
+  const { tagsItem } = useTagContext();
 
   const [date, setDate] = useState<Date | null>(null);
   const [gender, setGender] = useState<'male' | 'female' | undefined>();
@@ -83,7 +84,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
       return;
     };
     try {
-      const updatedData = {
+      const updatedData: AddMemberInfoProps = {
         gender:
           gender === 'male' ? 'MALE' : gender === 'female' ? 'FEMALE' : '',
         birthdate: date ? date.toISOString().slice(0, 10) : '',
@@ -91,7 +92,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
         memberTags: selectedTagIds,
       };
 
-      await api.post(`/api/members`, updatedData);
+      await fetchAddMemberInfo(updatedData);
 
       if (!user) { // user가 null일 경우 대비
           console.error('사용자 정보가 없어 추가 정보를 저장할 수 없습니다.');
@@ -216,7 +217,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
 
             <div className="mt-2 flex flex-wrap gap-2">
               {selectedTagIds.map((id) => {
-                const tag = tags.find((tag) => tag.id === id);
+                const tag = tagsItem?.find((tag) => tag.id === id);
                 return tag ? (
                   <span
                     key={id}

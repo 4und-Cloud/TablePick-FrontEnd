@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { fetchCategory, CategoryProps } from "@/api/fetchCategory";
+import { fetchCategory } from "@/entities/category/api/fetchCategory";
+import { CategoryProps } from "@/entities/category/types/categoryType";
 
 interface CategoryContextType {
     categoryItem: CategoryProps[];
