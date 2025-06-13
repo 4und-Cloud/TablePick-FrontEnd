@@ -1,8 +1,8 @@
 import { createContext, type ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import defaultProfile from '@/@shared/images/user.png';
-import { fetchLogout } from '@/api/fetchLogout';
-import { fetchFcmtokenRemove } from '@/api/fetchFcmtokenRemove';
+import { fetchLogout } from '@/features/member/api/fetchMember';
+import { fetchFcmtokenRemove } from '@/features/auth/api/fetchFcmtoken';
 export interface UserInfo {
   id: number;
   email: string;

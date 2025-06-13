@@ -1,22 +1,11 @@
 import { useEffect, useState } from "react";
-import { CardItemProps } from "@/@shared/components/CardItem";
+import { CardItemProps } from "@/@shared/types/cardItemsType";
 import logo from '@/@shared/images/logo.png';
 import List from "@/@shared/components/List";
 import RoundedBtn from "@/@shared/components/Button/RoundedBtn";
 import { PostWriteModal } from "@/pages/reservation/components/PostWriteModal";
-import api from "@/@shared/api/api";
-
-interface ReservationData {
-  id: number;
-  partySize: number;
-  reservationDate: string;
-  reservationTime: string;
-  reservationStatus: string;
-  restaurantId: number;
-  restaurantName: string;
-  restaurantAddress: string;
-  restaurantImage: string;
-}
+import { fetchMemberReservation, fetchReservationDelete } from '@/features/reservation/api/fetchReservation';
+import { ReservationData } from "@/features/reservation/types/reservationType";
 
 export default function ReservationCheck() {
   const [reservations, setReservations] = useState<CardItemProps[]>([]);
@@ -36,11 +25,9 @@ export default function ReservationCheck() {
 
   const fetchReservationCheck = async () => {
     try {
-      const res = await api.get(`/api/members/reservations`);
+      const response = await fetchMemberReservation();
 
-      const data: ReservationData[] = await res.data;
-
-      const formattedReservations: CardItemProps[] = data.map(reservation => {
+      const formattedReservations: CardItemProps[] = response.map(reservation => {
         const item: CardItemProps = {
           id: reservation.id,
           image: reservation.restaurantImage || logo, // 기본 이미지
@@ -108,7 +95,7 @@ export default function ReservationCheck() {
     }
 
     try {
-      await api.delete(`/api/reservations/${reservationId}`);
+      fetchReservationDelete(reservationId);
       alert('예약이 성공적으로 취소되었습니다.');
       fetchReservationCheck();
     } catch (error) {

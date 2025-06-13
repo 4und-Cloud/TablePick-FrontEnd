@@ -7,9 +7,10 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useAuth from '@/features/auth/hook/useAuth'
 import LoginModal from "@/@shared/components/Modal/LoginModal";
-import type { NotificationTypes } from '@/features/notification/types/notification'
-import api from "@/@shared/api/api";
 import defaultImg from '@/@shared/images/logo.png'
+import { fetchRestaurantDetail } from "@/entities/restaurants/api/fetchRestaurants";
+import { fetchRestaurantPost } from "@/entities/post/api/fetchPosts";
+import { fetchSendNotification } from "@/features/notification/api/fetchNotification";
 
 type RestaurantData = {
   id: number;
@@ -51,28 +52,28 @@ export default function RestaurantDetail() {
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    const fetchRestaurant = async () => {
+    const loadRestaurant = async () => {
       try {
-        const res = await api.get(`/api/restaurants/${id}`);
-        const data = await res.data;
-        setData(data);
+        if (!id) return;
+        const restaurantData = await fetchRestaurantDetail(id!);
+        setData(restaurantData);
       } catch (err) {
         console.error('식당 데이터를 불러오는데 실패했습니다.', err);
       }
     };
 
     if (id) {
-      fetchRestaurant();
-      fetchReviewPosts();
+      loadRestaurant();
+      loadReviewPosts();
     }
   }, [id]);
 
 
-  const fetchReviewPosts = async () => {
+  const loadReviewPosts = async () => {
     try {
-      const res = await api.get(`/api/boards/restaurant/${id}`);
-      const json: RestaurantReviewPost[] = await res.data;
-      setReviewPosts(json);
+      if (!id) return;
+      const response = await fetchRestaurantPost(id);
+      setReviewPosts(response);
     } catch (error) {
       console.error('식당 게시글 불러오기 실패');
     }
@@ -82,12 +83,7 @@ export default function RestaurantDetail() {
     if (!data) return;
 
     try {
-      await api.post('/api/notifications', {
-        NotificationTypes: 'RESERVATION_COMPLETED' as NotificationTypes,
-        title: '식당 예약 완료',
-        message: `${data.name} 예약이 성공적으로 완료되었습니다.`,
-        restaurantId: data.id,
-      });
+      await fetchSendNotification(data.id, data.name);
     } catch (error) {
       console.error('알림 전송 실패: ', error);
     }

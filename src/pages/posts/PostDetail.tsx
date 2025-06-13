@@ -2,7 +2,7 @@ import location from '@/@shared/images/location.png';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import defaultPost from '@/@shared/images/restaurant.png';
-import api from '@/@shared/api/api';
+import { fetchPostDetail } from '@/entities/post/api/fetchPosts';
 
 type PostData = {
   id: number;
@@ -24,9 +24,8 @@ export default function PostDetail() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await api.get(`/api/boards/${id}`);
-        const data = await res.data;
-        setData(data);
+        const response = await fetchPostDetail(id!);
+        setData(response);
       } catch (error) {
         console.log('게시글 데이터 불러오기 실패 ');
       }
