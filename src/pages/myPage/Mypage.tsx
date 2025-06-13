@@ -19,8 +19,8 @@ import useModal from "../../@shared/hook/useModal";
 import useAuth from '@/features/auth/hook/useAuth'
 import defaultProfile from '@/@shared/images/user.png';
 import { useTagContext } from "../../app/provider/TagContext";
-import api from "../../@shared/api/api";
->>>>>>> 54d2742 (폴더 구조 수정 및 api 로직 분리):src/pages/myPage/Mypage.tsx
+import { fetchUpdatedMemberInfo } from "@/features/member/api/fetchMember";
+import { MemberFormData } from "@/features/member/types/memberType";
 
 type Gender = '' | 'male' | 'female';
 
@@ -164,31 +164,40 @@ export default function Mypage() {
       alert('전화번호는 010-XXXX-XXXX 형식이어야 합니다.');
       return;
     }
+  const convertedGender = formData.gender
+    ? formData.gender.toUpperCase() as 'MALE' | 'FEMALE'
+    : '';
+
+    const memberFormData: MemberFormData = {
+    nickname: formData.nickname,
+    gender: convertedGender,
+    birthdate: formData.birthdate || '', // 기본값으로 빈 문자열
+    phoneNumber: formData.phoneNumber || '', // 기본값으로 빈 문자열
+    profileImage: formData.profileImage || defaultProfile,
+    memberTags: formData.memberTags || [], // 기본값으로 빈 배열
+  };
+
 		try {
-			const requestBody = {
-      nickname: formData.nickname,
-      gender: formData.gender?.toUpperCase() || '',
-      birthdate: formData.birthdate,
-      phoneNumber: formData.phoneNumber,
-      profileImage: formData.profileImage || defaultProfile,
-      memberTags : formData.memberTags
-			};
-      const res = await api.patch(`/api/members`, requestBody);
+      const updatedData = await fetchUpdatedMemberInfo(memberFormData);
+      
+      const updatedMemberTags = updatedData?.data?.memberTags
+      ? updatedData.data.memberTags.map((tag: any) => tag.id)
+      : formData.memberTags || [];
 
       sessionStorage.setItem('userInfo', JSON.stringify({
 				...formData,
-				memberTags: res.data.memberTags?.map((tag: any) => tag.id) || formData.memberTags || [],
+				memberTags: updatedMemberTags
 			}));
 
       const updatedUser: MypageUserInfo = {
         ...user,
         id: user.id,
         nickname: formData.nickname,
-        gender: formData.gender ? formData.gender.toUpperCase() : undefined,
+        gender: convertedGender,
         birthdate: formData.birthdate,
         phoneNumber: formData.phoneNumber,
         profileImage: formData.profileImage || defaultProfile,
-        memberTags: formData.memberTags,
+        memberTags: updatedMemberTags,
         createAt: user.createAt,
         isNewUser: user.isNewUser,
       };

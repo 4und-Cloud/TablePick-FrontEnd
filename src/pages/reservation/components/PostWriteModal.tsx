@@ -13,8 +13,7 @@ import RoundedBtn from "../../../@shared/components/Button/RoundedBtn";
 import FilterModal from "../../../@shared/components/Modal/FilterModal";
 import useModal from "../../../@shared/hook/useModal";
 import { useTagContext } from "../../../app/provider/TagContext";
-import api from "../../../@shared/api/api";
->>>>>>> 54d2742 (폴더 구조 수정 및 api 로직 분리):src/pages/reservation/components/PostWriteModal.tsx
+import { fetchCreatePost } from "@/entities/post/api/fetchPosts";
 
 interface PostWriteModalProps {
   closeModal: () => void;
@@ -100,11 +99,7 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
     });
 
     try {
-      await api.post('/api/boards', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await fetchCreatePost(formData);
       alert('게시글이 성공적으로 작성되었습니다!');
       closeModal();
     } catch (error: any) {
@@ -198,7 +193,7 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
           <div className="flex flex-wrap gap-1.5 mt-1.5">
             {selectedTags.map((tagId) => {
               
-              const { tags: allAvailableTags } = useTagContext(); // Assuming TagContext is available
+              const { tagsItem: allAvailableTags } = useTagContext(); // Assuming TagContext is available
               const currentTag = allAvailableTags.find(t => t.id === tagId);
               return (
                 <span

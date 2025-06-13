@@ -1,5 +1,3 @@
-import api from "@/@shared/api/api"; 
-
 export interface RestaurantLandingData {
   id: number;
   name: string;
@@ -7,7 +5,7 @@ export interface RestaurantLandingData {
   categoryName: string;
   restaurantTags: string[];
   imageUrl: string;
-}
+};
 
 export interface RestaurantListData {
   id: number;
@@ -26,24 +24,4 @@ export interface RestaurantListData {
     holiday: boolean;
   }>;
   restaurantTags: string[];
-}
-
-interface FetchRestaurantsLandingResponse {
-  data: RestaurantLandingData[];
-}
-
-interface FetchRestaurantsListResponse {
-  data: RestaurantListData[];
-  totalPages: number;
-}
-
-export const fetchRestauratsLanding = async (): Promise<FetchRestaurantsLandingResponse[]> => {
-  const response = await api.get(`/api/restaurants/all`);
-  return response.data;
-}
-
-
-
-
-
-
+};

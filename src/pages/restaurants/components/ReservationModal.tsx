@@ -3,7 +3,8 @@ import RoundedBtn from "../../../@shared/components/Button/RoundedBtn"
 import Calendar, {type CalendarProps} from "react-calendar"
 import {useEffect, useState} from "react"
 import useAuth from '@/features/auth/hook/useAuth'
-import api from "../../../@shared/api/api"
+import { fetchReservation, fetchAvailableReservationTimes } from '@/features/reservation/api/fetchReservation';
+import { fetchNotificationScheduleReservation } from '@/features/notification/api/fetchNotification';
 
 interface ReservationModalProps {
   closeModal: () => void;
@@ -47,7 +48,7 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
     return `${year}-${month}-${day}`;
   };
 
-  const fetchAvailableTimes = async (date: Date | null, restaurantId: number) => {
+  const loadAvailableTimes = async (date: Date | null, restaurantId: number) => {
     // 날짜 | 식당 id 없으면 api 호출 X
     if (!date || !restaurantId) {
       setAvailableTimes([]); // 시간 목록 초기화
@@ -56,16 +57,10 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
     }
     setIsLoadingTimes(true);
     try {
-      const formatedDate = date.toISOString().split('T')[0];
+      const times = await fetchAvailableReservationTimes(date, restaurantId);
 
-      const res = await api.get(`/api/reservations/available-times?restaurantId=${restaurantId}&date=${formatedDate}`);
-
-      const times = Array.isArray(res.data) ? res.data : (res.data.availableTimes || []);
-
-      setAvailableTimes(times
-        .map((time : string) => time.substring(0, 5)));
-
-      setSelectedTime(times.length > 0 && typeof times[0] === 'string' && times[0] !== null ? (times[0] as string).substring(0, 5) : '');
+      setAvailableTimes(times);
+      setSelectedTime(times.length > 0 ? times[0] : '');
     } catch (error) {
       console.error('예약 가능 시간 로드 오류 :', error);
       setAvailableTimes([]);
@@ -78,7 +73,7 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
 
   useEffect(() => {
     if (selectedDate && restaurantId) {
-      fetchAvailableTimes(selectedDate, restaurantId);
+      loadAvailableTimes(selectedDate, restaurantId);
     }
   }, [selectedDate, restaurantId]);
 
@@ -104,7 +99,7 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
 
       // 예약 정보 생성
       const reservationData = {
-        restaurantId: restaurantId,
+        restaurantId,
         reservationDate: formatDate(selectedDate),
         reservationTime: selectedTime,
         partySize: selectedPeople,
@@ -113,20 +108,12 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
       console.log('Sending reservation data:', reservationData);
 
       // 예약 API 호출
-      // const response = await fetch("http://localhost:8080/api/reservations", {
-      const response = await api.post(`/api/reservations`, reservationData);
-      const result = response.data;
-
-      const reservationId = result.reservationId || result.id;
-    if (!reservationId) {
-      throw new Error('Reservation ID is missing in response');
-    }
+      const result = await fetchReservation(reservationData);
 
       console.log('Reservation response:', result);
 
       // 예약 성공 후 알림 스케줄링 API 호출
-      // await fetch(`http://localhost:8080/api/notifications/schedule/reservation/${result.id}`, {
-      await api.post(`/api/notifications/schedule/reservation/${reservationId}`);
+      await fetchNotificationScheduleReservation(result.reservationId);
 
       // 성공 콜백 호출
       if (onSuccess) {

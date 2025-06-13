@@ -1,9 +1,5 @@
 import api from "@/@shared/api/api";
-
-export interface CategoryProps {
-    id: number;
-    name: string;
-}
+import { CategoryProps } from "../types/categoryType";
 
 export const fetchCategory = async (): Promise<CategoryProps[]> => {
     const { data } = await api.get('/api/category');

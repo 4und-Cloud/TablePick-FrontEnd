@@ -3,15 +3,8 @@ import axios from "axios";
 import {createContext, useContext, useEffect, useState} from "react";
 =======
 import {createContext, useContext, useEffect, useState } from "react";
-<<<<<<< HEAD:src/store/TagContext.tsx
-import api from "@/lib/api";
->>>>>>> e37c848 (창 닫았을 때 로그아웃 처리 수정)
-=======
-import { fetchTag, TagProps } from "@/api/fetchTag";
->>>>>>> 54d2742 (폴더 구조 수정 및 api 로직 분리):src/app/provider/TagContext.tsx
-
-// 태그 타입 
-
+import { fetchTag } from "@/entities/tag/api/fetchTag";
+import { TagProps } from "@/entities/tag/types/tagType";
 
 // Context에 저장할 데이터 타입
 interface TagContextType {

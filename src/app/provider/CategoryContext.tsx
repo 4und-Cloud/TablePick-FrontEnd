@@ -3,17 +3,8 @@ import axios from "axios";
 import {createContext, useContext, useEffect, useState} from "react";
 =======
 import { createContext, useContext, useEffect, useState } from "react";
-<<<<<<< HEAD:src/store/CategoryContext.tsx
-import api from "@/lib/api";
->>>>>>> e37c848 (창 닫았을 때 로그아웃 처리 수정)
-
-export interface Category {
-    id: number;
-    name: string;
-}
-=======
-import { fetchCategory, CategoryProps } from "@/api/fetchCategory";
->>>>>>> 54d2742 (폴더 구조 수정 및 api 로직 분리):src/app/provider/CategoryContext.tsx
+import { fetchCategory } from "@/entities/category/api/fetchCategory";
+import { CategoryProps } from "@/entities/category/types/categoryType";
 
 interface CategoryContextType {
     categoryItem: CategoryProps[];

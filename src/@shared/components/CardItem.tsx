@@ -1,26 +1,7 @@
 import location from '@/@shared/images/location.png'
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
-
-export interface CardItemProps{
-    id: number;
-    linkTo? : string;
-    image? :string; // 이미지
-    restaurantName?: string; // 식당명
-    description : string; // 주소, 게시글 내용
-    tags? : string[]; // 태그
-    reservationInfo? : React.ReactNode; // 예약 관련 정보
-    button? : React.ReactNode; // 버튼
-    buttonPosition? : 'bottom'; // 버튼 위치
-    con
-    
-  tainerStyle?: string; // 카드 전체 wrapper 커스텀
-    imageStyle? : string; // 이미지 커스텀
-    restaurantNameStyle?: string; // 식당명 커스텀
-  onClick?: () => void;
-  onDelete?: (id: number) => void;
-}
+import { CardItemProps } from "@/@shared/types/cardItemsType";
 
 const CardItem = ({
     id,

@@ -7,7 +7,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '@/features/auth/hook/useAuth';
 import SearchModal from '@/features/search/components/SearchModal';
 import defaultProfile from '@/@shared/images/user.png';
-import { fetchFcmtokenRemove } from '@/api/fetchFcmtokenRemove';
+import { fetchFcmtokenRemove } from '@/features/auth/api/fetchFcmtoken'
 
 export default function AuthHeader() {
   const navigate = useNavigate();

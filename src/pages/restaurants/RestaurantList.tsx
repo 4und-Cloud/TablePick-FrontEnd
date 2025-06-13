@@ -1,4 +1,4 @@
-import type { CardItemProps } from "@/@shared/components/CardItem";
+import { CardItemProps } from "@/@shared/types/cardItemsType";
 import List from "@/@shared/components/List";
 import Pagination from "@/@shared/components/Pagination";
 import usePagination from "@/@shared/hook/usePagination";
@@ -6,8 +6,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useTagContext } from "@/app/provider/TagContext";
 import { debounce } from 'lodash';
-import api from "@/@shared/api/api";
 import defaultImg from '@/@shared/images/logo.png';
+import { fetchRestaurantsList } from "@/entities/restaurants/api/fetchRestaurants";
 
 
 interface RestaurantData {
@@ -35,7 +35,7 @@ export default function RestaurantList() {
   const [totalPages, setTotalPages] = useState(1);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { tags: allAvailableTags } = useTagContext();
+  const { tagsItem: allAvailableTags } = useTagContext();
 
   const { currentPage, setPage, goToNextPage, goToPrevPage, goToFirstPage, goToLastPage } =
     usePagination(totalPages);
@@ -59,33 +59,7 @@ export default function RestaurantList() {
           ? searchParams.get("tagIds")?.split(",").map(Number).filter((id) => !isNaN(id)) || []
           : [];
 
-        // 검색 조건에 따라 API 엔드포인트 선택
-        let url: string;
-        const queryParams: string[] = [];
-        queryParams.push(`page=${currentPage}`);
-        queryParams.push(`size=6`);
-
-        if (currentKeyword || currentTagIds.length > 0) {
-          // 검색 조건이 있을 경우 /search 호출
-          url = `/api/restaurants/search`;
-          if (currentKeyword) {
-            queryParams.push(`keyword=${encodeURIComponent(currentKeyword)}`);
-          }
-          if (currentTagIds.length > 0) {
-            queryParams.push(`tagIds=${currentTagIds.join(",")}`);
-          }
-        } else {
-          // 검색 조건이 없으면 /list 호출
-          url = `/api/restaurants/list`;
-        }
-
-        url += `?${queryParams.join("&")}`;
-
-        const res = await api.get(url);
-
-        const restaurants: RestaurantData[] = res.data.restaurants || [];
-        const totalPagesFromBackend = res.data.totalPages || 1;
-        setTotalPages(totalPagesFromBackend);
+        const { restaurants, totalPages } = await fetchRestaurantsList(currentPage, currentKeyword, currentTagIds);
 
         const convertedData: CardItemProps[] = restaurants.map((item: RestaurantData, i: number) => ({
           id: item.id || i + 1,
@@ -97,6 +71,7 @@ export default function RestaurantList() {
         }));
 
         setRestaurantList(convertedData);
+        setTotalPages(totalPages);
       } catch (error) {
         console.error("식당 리스트 불러오기 실패:", error);
         setRestaurantList([]);
