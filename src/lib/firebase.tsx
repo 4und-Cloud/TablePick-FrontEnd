@@ -21,7 +21,9 @@ const firebaseConfig = {
 // Firebase 초기화
 let messaging: Messaging | null = null;
 
-if (typeof window !== 'undefined') {
+const initializeFirebase = async () => {
+  if (typeof window === 'undefined') return;
+
   try {
     const app = initializeApp(firebaseConfig);
     
