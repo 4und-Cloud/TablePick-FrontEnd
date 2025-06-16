@@ -27,13 +27,6 @@ const initializeFirebase = async () => {
   try {
     const app = initializeApp(firebaseConfig);
     
-    // FCM 지원 여부 확인
-    const supported = await isSupported();
-    if (!supported) {
-      console.error('이 브라우저는 Firebase Cloud Messaging을 지원하지 않습니다.');
-      return;
-    }
-
     // 서비스 워커 등록
     if ('serviceWorker' in navigator) {
       try {
@@ -42,6 +35,13 @@ const initializeFirebase = async () => {
         });
         console.log('서비스 워커 등록 성공:', registration.scope);
         
+        // FCM 지원 여부 확인
+        const supported = await isSupported();
+        if (!supported) {
+          console.error('이 브라우저는 Firebase Cloud Messaging을 지원하지 않습니다.');
+          return null;
+        }
+
         // 서비스 워커 등록 후에 messaging 초기화
         messaging = getMessaging(app);
         return messaging;
