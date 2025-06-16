@@ -11,7 +11,7 @@ export const fetchSendNotification = async (
         message: `${name} 예약이 성공적으로 완료되었습니다.`,
         restaurantId: id
     };
-        const response = await api.post('/api/notifications', payload);
+        const response = await api.post('/api/notifications/test', payload);
         return response.data;
 }
 

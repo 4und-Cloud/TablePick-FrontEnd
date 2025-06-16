@@ -41,7 +41,7 @@ export const fetchRestaurantsList = async (
   };
 };
 
-export const fetchRestaurantDetail = async (id: string) => {
+export const fetchRestaurantDetail = async (id: string | number) => {
     const response = await api.get(`/api/restaurants/${id}`);
     return response.data;
 }
