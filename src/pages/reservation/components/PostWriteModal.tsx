@@ -3,7 +3,7 @@ import Modal from "../../../@shared/components/Modal/Modal";
 import RoundedBtn from "../../../@shared/components/Button/RoundedBtn";
 import FilterModal from "../../../@shared/components/Modal/FilterModal";
 import useModal from "../../../@shared/hook/useModal";
-import { useTagContext } from "../../../app/provider/TagContext";
+import { useTagQuery } from "@/entities/tag/hook/useTagQuery";
 import { fetchCreatePost } from "@/entities/post/api/fetchPosts";
 
 interface PostWriteModalProps {
@@ -162,8 +162,11 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
           <div className="flex flex-wrap gap-1.5 mt-1.5">
             {selectedTags.map((tagId) => {
               
-              const { tagsItem: allAvailableTags } = useTagContext(); // Assuming TagContext is available
-              const currentTag = allAvailableTags.find(t => t.id === tagId);
+              const { data: tagsItem, isLoading, isError } = useTagQuery();
+              if (isLoading) return <p>로딩 중...</p>;
+              if (isError) return <p>태그 데이터를 불러오는 중 오류가 발생했습니다.</p>;
+              if (!tagsItem) return null;
+              const currentTag = tagsItem.find(t => t.id === tagId);
               return (
                 <span
                   key={tagId}
