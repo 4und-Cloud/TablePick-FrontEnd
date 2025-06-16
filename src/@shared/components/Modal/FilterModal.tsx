@@ -1,4 +1,4 @@
-import { useTagContext } from "../../../app/provider/TagContext";
+import { useTagQuery } from "@/entities/tag/hook/useTagQuery";
 import Modal from "./Modal";
 import RoundedBtn from "../Button/RoundedBtn";
 
@@ -18,7 +18,11 @@ export default function FilterModal({
   onClick,
 }: FilterModalProps) {
   if (!isOpen) return false
-  const { tagsItem } = useTagContext();
+  const { data: tagsItem, isLoading, isError } = useTagQuery();
+
+  if (isLoading) return <p>로딩 중...</p>
+  if (isError) return <p>태그 데이터 불러오는 중 오류 발생</p>
+  if (!tagsItem) return null;
 
   const handleToggleTag = (tagId: number) => {
     if (selectedTags.includes(tagId)) {

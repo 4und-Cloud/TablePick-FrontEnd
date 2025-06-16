@@ -61,7 +61,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
     try {
       if (user?.id) {
-        await fetchFcmtokenRemove(user.id);
+        await fetchFcmtokenRemove({memberId : user.id});
       }
     } catch (error : any) {
       if (error.response?.status !== 401) {

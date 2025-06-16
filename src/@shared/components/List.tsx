@@ -1,4 +1,5 @@
-import CardItem, {CardItemProps} from '@/@shared/components/CardItem';
+import CardItem from '@/@shared/components/CardItem';
+import { CardItemProps } from '../types/cardItemsType';
 
 interface CardListProps{
     items: CardItemProps[];

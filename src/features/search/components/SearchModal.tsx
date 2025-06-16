@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useTagContext } from "../../../app/provider/TagContext";
-import type { Tag } from "../../../app/provider/TagContext";
+import { useTagQuery } from "@/entities/tag/hook/useTagQuery";
+import { TagProps } from "@/entities/tag/types/tagType";
 import search from '@/@shared/images/magnifying-glass.png'
 import RoundedBtn from "../../../@shared/components/Button/RoundedBtn";
 import Modal from "../../../@shared/components/Modal/Modal";
@@ -14,12 +14,16 @@ interface SearchModalProps {
 }
 
 export default function SearchModal({ isOpen, onClose, currentKeyword = '', currentTagIds = [] }: SearchModalProps) {
-  const { tags: availableTags } = useTagContext();
+  const { data: tagsItems, isLoading, isError } = useTagQuery();
   const [inputText, setInputText] = useState(currentKeyword);
   const [selectedItems, setSelectedItems] = useState<number[]>(currentTagIds);
   const navigate = useNavigate();
 
   if (!isOpen) return null;
+
+  if (isLoading) return <p>로딩 중...</p>;
+  if (isError) return <p>태그 데이터를 불러오는 중 오류가 발생했습니다.</p>;
+  if (!tagsItems) return null;
 
   const handleItemClick = (tagId: number) => {
     if (selectedItems.includes(tagId)) return;
@@ -98,7 +102,7 @@ export default function SearchModal({ isOpen, onClose, currentKeyword = '', curr
 
         <div className="flex flex-wrap items-center border border-main rounded-full px-4 py-2 gap-2">
           {selectedItems.map((id) => {
-            const tag = availableTags.find(t => t.id === id); 
+            const tag = tagsItems.find(t => t.id === id); 
             return tag ? ( 
               <div
                 key={tag.id} 
@@ -125,7 +129,7 @@ export default function SearchModal({ isOpen, onClose, currentKeyword = '', curr
         <div>
           <p className="text-md font-semibold text-gray-700">카테고리 (최대 3개 선택 가능)</p>
           <div className="flex flex-wrap gap-2 mt-2">
-            {availableTags.map((tag: Tag) => (
+            {tagsItems.map((tag: TagProps) => (
               <button
                 key={tag.id}
                 

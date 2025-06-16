@@ -7,13 +7,14 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '@/features/auth/hook/useAuth';
 import SearchModal from '@/features/search/components/SearchModal';
 import defaultProfile from '@/@shared/images/user.png';
-import { fetchFcmtokenRemove } from '@/features/auth/api/fetchFcmtoken'
+import { useFcmTokenRemoveMutation } from '@/features/auth/hook/mutations/useFcmtokenRemoveMutation';
 
 export default function AuthHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
   const { isAuthenticated, user, logout } = useAuth();
+  const { mutateAsync: removeFcmtoken } = useFcmTokenRemoveMutation();
   const searchModal = useModal({ initialState: false });
 
   const handleNavigateToAlarms = () => {
@@ -21,15 +22,16 @@ export default function AuthHeader() {
   };
 
   const handleLogout = async () => {
+    if (!user?.id || !isAuthenticated) {
+      logout();
+      return;
+    }
     try {
-      //FCM 토큰 삭제 API 호출
-      if (user?.id) {
-        await fetchFcmtokenRemove(user.id);
-      }
+      await removeFcmtoken({ memberId: user.id });
       logout();
     } catch (error) {
-      console.log('FCM 토큰 삭제 중 오류 : ', error);
-      logout();
+      console.error('FCM 토큰 삭제 오류:', error);
+      logout(); // 오류 발생 시에도 로그아웃 진행
     }
   };
 
