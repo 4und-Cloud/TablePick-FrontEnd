@@ -4,6 +4,7 @@ import {
   getToken,
   onMessage,
   type Messaging,
+  isSupported,
 } from 'firebase/messaging';
 
 // Firebase 설정 정보
@@ -22,26 +23,46 @@ const apiUrl = import.meta.env.VITE_TABLE_PICK_API_URL;
 // Firebase 초기화
 let messaging: Messaging | null = null;
 
-if (typeof window !== 'undefined') {
+const initializeFirebase = async () => {
+  if (typeof window === 'undefined') return;
+
   try {
     const app = initializeApp(firebaseConfig);
-    messaging = getMessaging(app);
+    
+    // FCM 지원 여부 확인
+    const supported = await isSupported();
+    if (!supported) {
+      console.error('이 브라우저는 Firebase Cloud Messaging을 지원하지 않습니다.');
+      return;
+    }
 
     // 서비스 워커 등록
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker
-        .register('/firebase-messaging-sw.js')
-        .then((registration) => {
-          console.log('서비스 워커 등록 성공:', registration.scope);
-        })
-        .catch((error) => {
-          console.error('서비스 워커 등록 실패:', error);
+    if ('serviceWorker' in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+          scope: '/',
         });
+        console.log('서비스 워커 등록 성공:', registration.scope);
+        
+        // 서비스 워커 등록 후에 messaging 초기화
+        messaging = getMessaging(app);
+        return messaging;
+      } catch (error) {
+        console.error('서비스 워커 등록 실패:', error);
+        return null;
+      }
+    } else {
+      console.error('이 브라우저는 서비스 워커를 지원하지 않습니다.');
+      return null;
     }
   } catch (error) {
     console.error('Firebase 초기화 오류:', error);
+    return null;
   }
-}
+};
+
+// Firebase 초기화 실행
+initializeFirebase();
 
 // 알림 권한 요청
 export async function requestNotificationPermission(): Promise<boolean> {
@@ -50,15 +71,20 @@ export async function requestNotificationPermission(): Promise<boolean> {
     return false;
   }
 
-  const permission = await Notification.requestPermission();
-  if (permission === 'granted') {
-    console.log('알림 권한 허용됨');
-    return true;
-  } else if (permission === 'denied') {
-    console.error('알림 권한 거부됨. 브라우저 설정에서 변경 필요.');
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      console.log('알림 권한 허용됨');
+      return true;
+    } else if (permission === 'denied') {
+      console.error('알림 권한 거부됨. 브라우저 설정에서 변경 필요.');
+      return false;
+    }
+    return false;
+  } catch (error) {
+    console.error('알림 권한 요청 중 오류:', error);
     return false;
   }
-  return false;
 }
 
 // FCM 토큰 가져오기
@@ -72,11 +98,6 @@ export async function getFCMToken(): Promise<string | null> {
     const permissionGranted = await requestNotificationPermission();
     if (!permissionGranted) {
       console.error('알림 권한 없음');
-      return null;
-    }
-
-    if (!navigator.serviceWorker) {
-      console.error('브라우저가 서비스 워커를 지원하지 않음');
       return null;
     }
 
