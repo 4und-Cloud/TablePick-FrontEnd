@@ -5,19 +5,22 @@ import {useEffect, useState} from "react"
 import useAuth from '@/features/auth/hook/useAuth'
 import { fetchReservation, fetchAvailableReservationTimes } from '@/features/reservation/api/fetchReservation';
 import { fetchNotificationScheduleReservation } from '@/features/notification/api/fetchNotification';
+import 'react-calendar/dist/Calendar.css';
 
 interface ReservationModalProps {
   closeModal: () => void;
   onSuccess?: () => void;
   restaurantId: number;
-}
+};
+
+type SelectDate = Date;
 
 export default function ReservationModal({closeModal, onSuccess, restaurantId}: ReservationModalProps) {
   const { isAuthenticated } = useAuth();
   const [selectedPeople, setSelectedPeople] = useState<number>(1);
   // 시간의 초기값을 빈 문자열로 지정
   const [selectedTime, setSelectedTime] = useState<string>("");
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [selectedDate, setSelectedDate] = useState<SelectDate>(new Date());
   const [isSubmitting, setIsSubmitting] = useState(false);
   // 이용 가능한 시간에 대한 상태 관리
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
@@ -33,12 +36,9 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
   }
 
   const handleDateChange: CalendarProps["onChange"] = (value) => {
-    if (value instanceof Date) {
-      setSelectedDate(value)
-    } else if (Array.isArray(value) && value[0] instanceof Date) {
-      setSelectedDate(value[0])
-    }
-  }
+  const newDate = value as Date;
+    setSelectedDate(newDate);
+};
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
@@ -70,11 +70,16 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
     }
   }
 
-  useEffect(() => {
-    if (selectedDate && restaurantId) {
-      loadAvailableTimes(selectedDate, restaurantId);
-    }
-  }, [selectedDate, restaurantId]);
+useEffect(() => {
+  setAvailableTimes([]);
+  setSelectedTime('');
+  if (selectedDate && restaurantId) {
+    loadAvailableTimes(selectedDate, restaurantId);
+  }
+}, [selectedDate, restaurantId]);
+
+  console.log('현재 availableTimes 상태:', availableTimes); // 이 로그를 추가하세요!
+console.log('현재 selectedDate 상태:', selectedDate); // 날짜도 같이 확인
 
   const handleReservation = async () => {
     if (!isAuthenticated) {
@@ -94,7 +99,9 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
     }
 
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
+
+      const formattedDate = selectedDate.toLocaleDateString();
 
       // 예약 정보 생성
       const reservationData = {
@@ -115,7 +122,7 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
         onSuccess();
       } else {
         alert(
-          `✅ 예약 완료:\n\n📅 날짜: ${selectedDate.toLocaleDateString()}\n⏰ 시간: ${selectedTime}\n👤 인원: ${selectedPeople}명`,
+          `✅ 예약 완료:\n\n📅 날짜: ${formattedDate}\n⏰ 시간: ${selectedTime}\n👤 인원: ${selectedPeople}명`,
         );
         closeModal();
       }
@@ -164,12 +171,13 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
         <Calendar
           onChange={handleDateChange}
           value={selectedDate}
+          view='month'
           selectRange={false}
           minDate={new Date()} // 오늘 이후 날짜만 선택 가능
           maxDate={new Date(new Date().setDate(new Date().getDate() + 6))}
-          // tileDisabled={({ date, view }) =>
-          //   view === 'month' && (date < new Date() || date > new Date(new Date().setDate(new Date().getDate() + 6)))
-          // }
+          prev2Label={null}
+          next2Label={null}
+          showNeighboringMonth= {false}
         />
       </div>
 

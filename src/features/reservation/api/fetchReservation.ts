@@ -28,14 +28,17 @@ export const fetchAvailableReservationTimes = async (
 ): Promise<string[]> => {
   if (!date || !restaurantId) return [];
 
-  const formattedDate = date.toISOString().split("T")[0];
+  const formattedDate = date.toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' }).replace(/\//g, '-');
   const url = `/api/reservations/available-times?restaurantId=${restaurantId}&date=${formattedDate}`;
+  console.log('api 호출 : ',url);
 
   const res = await api.get(url);
+  console.log('데이터 확인 : ', res.data);
 
   const times = Array.isArray(res.data)
     ? res.data
     : res.data.availableTimes || [];
+  console.log('처리 시간 : ', times);
 
   // 'HH:mm:ss' → 'HH:mm' 변환
   return times.map((time: string) => time.substring(0, 5));
