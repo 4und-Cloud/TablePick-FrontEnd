@@ -1,13 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import useAuth from '../../hooks/useAuth';
+=======
+import useAuth from '@/features/auth/hook/useAuth'
+>>>>>>> origin/main
 import {
   getFCMToken,
   getSavedFCMToken,
   saveFCMToken,
+<<<<<<< HEAD
 } from '../../lib/firebase';
 import defaultProfile from '@/assets/images/user.png';
 import api from '../../lib/api';
+=======
+} from '../../features/notification/lib/firebase';
+import defaultProfile from '@/@shared/images/user.png';
+import api from '../../@shared/api/api';
+import { useFcmtokenUpdate } from '@/features/auth/hook/mutations/useFcmtokenUpdate';
+>>>>>>> origin/main
 
 export default function OauthSuccess() {
   const { login } = useAuth();
@@ -15,6 +26,11 @@ export default function OauthSuccess() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoginProcessed, setIsLoginProcessed] = useState(false); // 로그인 처리 플래그
+<<<<<<< HEAD
+=======
+
+  const { mutateAsync: updateFcmtoken } = useFcmtokenUpdate();
+>>>>>>> origin/main
 
   useEffect(() => {
     let isMounted = true; // 마운트 상태 체크
@@ -51,7 +67,11 @@ export default function OauthSuccess() {
         // FCM 토큰 서버 저장 (에러 무시)
         if (fcmToken && userData.id) {
           try {
+<<<<<<< HEAD
             await saveFCMToken(userData.id, fcmToken);
+=======
+            await saveFCMToken(userData.id, fcmToken, updateFcmtoken);
+>>>>>>> origin/main
           } catch (fcmError) {
             console.error('FCM 토큰 서버 저장 실패:', fcmError);
           }

@@ -7,12 +7,14 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*" : ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
     "types" : ["vite/client"],
     "lib": ["ES2022", "DOM", "DOM.Iterable", "ESNext"],
     "outDir": "./dist" ,
     "jsx": "react-jsx"
   },
-  "include": [ "src/vite-env.d.ts","types"]
+  "include": [ "src/**/*.ts", "src/**/*.tsx", "src/@shared/types/**/*.d.ts"]
 }

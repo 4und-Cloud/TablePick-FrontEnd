@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "staging": "vite --host --mode staging",
-    "build": "tsc -b && vite build --mode production",
+    "build": "vite build --mode production",
     "preview": "vite preview",
     "test": "jest --verbose",
     "coverage": "jest --coverage"
@@ -25,6 +25,8 @@
     "react": "^19.0.0",
     "react-calendar": "^5.1.0",
     "react-dom": "^19.0.0",
+    "react-intersection-observer": "^9.16.0",
+    "react-kakao-maps": "^0.0.13",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.5.3",
     "twin.macro": "^3.4.1",

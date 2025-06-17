@@ -7,13 +7,11 @@
     "lib": ["ESNext"],
     "module": "ESNext",
     "skipLibCheck": true,
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
     "jsx": "react-jsx",
-    "emitDeclarationOnly": true,
 
     /* Linting */
     "strict": true,
@@ -22,5 +20,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts","src/@shared/types/**/*.d.ts"]
 }

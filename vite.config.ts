@@ -3,12 +3,13 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import { VitePWA } from 'vite-plugin-pwa';
+import { createHtmlPlugin } from 'vite-plugin-html';
 
 export default defineConfig({
   plugins: [
     react(),
     ViteImageOptimizer({
-      jpeg: { quality: 75 }, // 품질 더 낮춰 크기 감소
+      jpeg: { quality: 75 },
       png: { quality: 70 },
       webp: { quality: 75 },
     }),
@@ -18,6 +19,14 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,webp,png,jpg}'],
       },
     }),
+    createHtmlPlugin({
+      minify: true,
+      inject: {
+        data: {
+          KAKAO_JS_KEY: process.env.VITE_KAKAO_JS_KEY,
+        },
+      },
+    }),
   ],
   build: {
     outDir: 'dist',
@@ -25,7 +34,7 @@ export default defineConfig({
     sourcemap: false,
     terserOptions: {
       compress: {
-        drop_console: true, // 콘솔 제거
+        drop_console: true,
         drop_debugger: true,
       },
     },
@@ -33,15 +42,14 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            return 'vendor'; // 모든 node_modules를 vendor로
+            return 'vendor';
           }
         },
       },
     },
   },
   esbuild: {
-    drop: ['console', 'debugger'], // build와 중복, 제거 가능
-    // jsx 설정은 plugin-react가 처리하므로 생략 권장
+    drop: ['console', 'debugger'],
   },
   resolve: {
     alias: {
