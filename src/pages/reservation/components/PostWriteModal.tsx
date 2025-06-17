@@ -17,6 +17,7 @@ interface PostWriteModalProps {
 }
 
 export function PostWriteModal({ closeModal, reservationId, initialData }: PostWriteModalProps) {
+  const { data: tagsItem, isLoading: tagLoading, isError: tagError } = useTagQuery();
   const [selectedTags, setSelectedTags] = useState<number[]>(initialData?.selectedTagIds || []);
   const [restaurant, setRestaurant] = useState<string>(initialData?.restaurant || "");
   const [content, setContent] = useState<string>(initialData?.content || "");
@@ -159,19 +160,16 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
         {/* 태그 선택 */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium">태그 선택 (최대 5개)</label>
+          {tagLoading && <p>로딩 중...</p>}
+          {tagError   && <p>태그 데이터를 불러오는 중 오류가 발생했습니다.</p>}
           <div className="flex flex-wrap gap-1.5 mt-1.5">
             {selectedTags.map((tagId) => {
-              
-              const { data: tagsItem, isLoading, isError } = useTagQuery();
-              if (isLoading) return <p>로딩 중...</p>;
-              if (isError) return <p>태그 데이터를 불러오는 중 오류가 발생했습니다.</p>;
-              if (!tagsItem) return null;
-              const currentTag = tagsItem.find(t => t.id === tagId);
+              const currentTag = tagsItem?.find((t) => t.id === tagId);
               return (
                 <span
                   key={tagId}
                   className="cursor-pointer text-xs py-1 px-3 rounded-full bg-[#f1815c] text-white"
-                  onClick={() => setSelectedTags(prev => prev.filter(id => id !== tagId))} // ID로 제거
+                  onClick={() => setSelectedTags(prev => prev.filter(id => id !== tagId))} 
                 >
                   {currentTag ? currentTag.name : `Tag ${tagId}`} X
                 </span>
