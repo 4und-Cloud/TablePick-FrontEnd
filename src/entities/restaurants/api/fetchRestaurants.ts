@@ -7,37 +7,29 @@ export const fetchRestaurantsLanding = async (): Promise<RestaurantLandingData[]
   return Array.isArray(restaurantsData) ? restaurantsData : [];
 };
 
-
 export const fetchRestaurantsList = async (
   currentPage: number,
   keyword: string = '',
-  tagIds: number[]
+  tagIds: number[] = []
 ): Promise<{ restaurants: RestaurantListData[]; totalPages: number }> => {
   const queryParams: string[] = [];
   queryParams.push(`page=${currentPage}`);
   queryParams.push('size=6');
 
-  let url = '';
+  let url = (keyword || tagIds.length)
+    ? "/api/restaurants/search"
+    : "/api/restaurants/list";
 
-  if (keyword || tagIds.length > 0) {
-    url = `/api/restaurants/search`;
-    
-    if (keyword) {
-      queryParams.push(`keyword=${encodeURIComponent(keyword)}`);
-    }
-    if (tagIds.length > 0) {
-      queryParams.push(`tagIds=${tagIds.join(',')}`);
-    }
-  } else {
-    url = `/api/restaurants/list`
-  }
+  if (keyword)  queryParams.push(`keyword=${encodeURIComponent(keyword)}`);
+  if (tagIds.length) queryParams.push(`tagIds=${tagIds.join(",")}`);
 
-  url += `?${queryParams.join('&')}`;
+  url += `?${queryParams.join("&")}`;
 
-  const response = await api.get(url);
+  const { data } = await api.get(url);
+
   return {
-    restaurants: response.data.restaurants || [],
-    totalPages: response.data.totalPages || 1
+    restaurants: data.restaurants ?? [],
+    totalPages: data.totalPages ?? 1,
   };
 };
 

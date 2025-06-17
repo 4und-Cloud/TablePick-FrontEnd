@@ -6,6 +6,7 @@ import {
 } from '../../../features/notification/lib/firebase';
 import { useState } from 'react';
 import api from '../../api/api';
+import { useFcmtokenUpdate } from '@/features/auth/hook/mutations/useFcmtokenUpdate';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -14,6 +15,8 @@ interface LoginModalProps {
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const { mutateAsync: updateFcmtoken } = useFcmtokenUpdate();
 
   const baseClasses =
     'w-[300px] h-12 flex items-center justify-center rounded font-medium text-base cursor-pointer px-4 mb-3';
@@ -51,7 +54,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
             // 서버에 토큰 저장
             if (fcmToken) {
-              await saveFCMToken(userId, fcmToken);
+              await saveFCMToken(userId, fcmToken, updateFcmtoken);
             }
           }
           setIsLoggingIn(false);

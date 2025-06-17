@@ -9,8 +9,6 @@ import {
 
 import { fetchMemberNotification } from '../api/fetchNotification';
 import { fetchNotificationTypes } from '../api/fetchNotification';
-import { useFcmTokenRemoveMutation } from '@/features/auth/hook/mutations/useFcmtokenRemoveMutation';
-import { useFcmtokenUpdate } from '@/features/auth/hook/mutations/useFcmtokenUpdate';
 
 // Firebase 설정 정보
 const firebaseConfig = {
@@ -138,9 +136,10 @@ export function getSavedFCMToken(): string | null {
 // FCM 토큰 서버 저장
 export async function saveFCMToken(
   userId: number,
-  token: string | null | undefined
+  token: string | null | undefined,
+  updateFcmtoken: (variables: { memberId: number; token: string }) => Promise<any> // 변경된 부분: mutateAsync 함수를 파라미터로 받음
 ): Promise<boolean> {
-  const { mutateAsync: updateFcmtoken } = useFcmtokenUpdate();
+  // useFcmtokenUpdate() 훅 호출 제거
   if (!token || token.trim() === '') {
     console.error('유효하지 않은 토큰:', token);
     return false;
@@ -153,18 +152,20 @@ export async function saveFCMToken(
       return false;
     }
 
-    await updateFcmtoken({ memberId, token });
+    await updateFcmtoken({ memberId, token }); // 파라미터로 받은 함수 사용
     console.log('토큰 서버 저장 성공');
     return true;
   } catch (error) {
     console.error('토큰 서버 저장 실패:', error);
     return false;
   }
-};
+}
 
-// FCM 토큰 삭제
-export async function deleteFCMToken(userId: number): Promise<boolean> {
-  const { mutateAsync: removeFcmtoken } = useFcmTokenRemoveMutation();
+export async function deleteFCMToken(
+  userId: number,
+  removeFcmtoken: (variables: { memberId: number }) => Promise<any> // 변경된 부분: mutateAsync 함수를 파라미터로 받음
+): Promise<boolean> {
+  // useFcmTokenRemoveMutation() 훅 호출 제거
 
   try {
     const memberId = typeof userId === 'string' ? parseInt(userId, 10) : userId;
@@ -173,7 +174,7 @@ export async function deleteFCMToken(userId: number): Promise<boolean> {
       return false;
     }
 
-    await removeFcmtoken({ memberId });
+    await removeFcmtoken({ memberId }); // 파라미터로 받은 함수 사용
     sessionStorage.removeItem('fcm_token');
     console.log('FCM 토큰 삭제 성공');
     return true;

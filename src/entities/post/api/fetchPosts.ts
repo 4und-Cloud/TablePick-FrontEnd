@@ -46,8 +46,8 @@ export const fetchPosts = async ({ restaurantId, page = 0, size = 6, }: FetchPos
         };
 
         return {
-            data: response.data.boardList || [],
-            totalPages: response.data.totalPages || 1,
+            data: response.data.boardList ?? [],
+            totalPages: response.data.totalPages ?? 1,
         };
     } catch (error) {
         console.error('게시글 목록 불러오기 실패 : ', error);

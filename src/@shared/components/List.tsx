@@ -8,8 +8,8 @@ interface CardListProps {
 
 export default function List( {items,  onDelete } : CardListProps) {
   return(
-    <div className="flex items-center justify-center">
-      <div className="grid grid-cols-3 gap-1 mx-2">
+    <div className="flex flex-col justify-start min-h-[1200px] py-4">
+      <div className="grid grid-cols-3 gap-4 mx-auto max-w-[1200px]">
         {items.map((item) => (
           <CardItem key={item.id} {...item} onDelete={onDelete}/>
         ))}
