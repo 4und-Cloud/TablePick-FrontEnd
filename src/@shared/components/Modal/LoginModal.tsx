@@ -1,12 +1,6 @@
 import pic from '@/@shared/images/login.png';
-import {
-  getFCMToken,
-  getSavedFCMToken,
-  saveFCMToken,
-} from '../../../features/notification/lib/firebase';
 import { useState } from 'react';
 import api from '../../api/api';
-import { useFcmtokenUpdate } from '@/features/auth/hook/mutations/useFcmtokenUpdate';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -15,8 +9,6 @@ interface LoginModalProps {
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-
-  const { mutateAsync: updateFcmtoken } = useFcmtokenUpdate();
 
   const baseClasses =
     'w-[300px] h-12 flex items-center justify-center rounded font-medium text-base cursor-pointer px-4 mb-3';
@@ -28,40 +20,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const handleLogin = async (provider: string) => {
     try {
       setIsLoggingIn(true);
-
       const currentUrl = window.location.pathname + window.location.search;
       const redirectUrl = encodeURIComponent(currentUrl);
-
-      // 로그인 성공 후 FCM 토큰 처리를 위한 이벤트 리스너 설정
-      window.addEventListener(
-        'message',
-        async (event) => {
-          // 로그인 성공 메시지를 받았을 때
-          if (
-            event.data &&
-            event.data.type === 'LOGIN_SUCCESS' &&
-            event.data.userId
-          ) {
-            const userId = event.data.userId;
-
-            // 저장된 FCM 토큰이 있는지 확인
-            let fcmToken = getSavedFCMToken();
-
-            // 저장된 토큰이 없으면 새로 발급
-            if (!fcmToken) {
-              fcmToken = await getFCMToken();
-            }
-
-            // 서버에 토큰 저장
-            if (fcmToken) {
-              await saveFCMToken(userId, fcmToken, updateFcmtoken);
-            }
-          }
-          setIsLoggingIn(false);
-        },
-        { once: true }
-      );
-
       window.location.href = `${api.defaults.baseURL}/oauth2/authorization/${provider}?redirect=${redirectUrl}`;
     } catch (error) {
       console.error('로그인 처리 중 오류:', error);
