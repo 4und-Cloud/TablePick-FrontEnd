@@ -8,6 +8,7 @@ import {
 } from '../../features/notification/lib/firebase';
 import defaultProfile from '@/@shared/images/user.png';
 import api from '../../@shared/api/api';
+import { useFcmtokenUpdate } from '@/features/auth/hook/mutations/useFcmtokenUpdate';
 
 export default function OauthSuccess() {
   const { login } = useAuth();
@@ -15,6 +16,8 @@ export default function OauthSuccess() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoginProcessed, setIsLoginProcessed] = useState(false); // 로그인 처리 플래그
+
+  const { mutateAsync: updateFcmtoken } = useFcmtokenUpdate();
 
   useEffect(() => {
     let isMounted = true; // 마운트 상태 체크
@@ -51,7 +54,7 @@ export default function OauthSuccess() {
         // FCM 토큰 서버 저장 (에러 무시)
         if (fcmToken && userData.id) {
           try {
-            await saveFCMToken(userData.id, fcmToken);
+            await saveFCMToken(userData.id, fcmToken, updateFcmtoken);
           } catch (fcmError) {
             console.error('FCM 토큰 서버 저장 실패:', fcmError);
           }
