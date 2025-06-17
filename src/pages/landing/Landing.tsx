@@ -169,10 +169,10 @@ export default function Landing() {
       const restaurantsData = await fetchRestaurantsLanding();
       setRestaurants(restaurantsData);
     } catch (error) {
-      console.error("레스토랑 데이터 가져오기 실패:", error)
-      setRestaurants([])
+      console.error('레스토랑 데이터 가져오기 실패:', error);
+      setRestaurants([]);
     }
-  }, [])
+  }, []);
 
   // 컴포넌트 마운트 시 데이터 가져오기
   useEffect(() => {
@@ -240,19 +240,17 @@ export default function Landing() {
           </div>
         </section>
 
-          {/* 추천 게시글 섹션 */}
-          <section className="p-8 border-gray-300">
-            <div className="container">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="text-3xl font-bold tracking-tighter">회원님을 위한 게시글 추천</h2>
-                  <p className="text-gray-500 mt-1 text-lg">회원님의 취향에 맞는 게시글을 추천해드려요</p>
-                </div>
-              </div>
-              <div className="flex justify-center gap-10 flex-wrap:no-wrap">
-                {dummy.map((item) => (
-                    <PostCard key={item.id} item={item} onClick={() => handleResDetail(item.id)} />
-                ))}
+        {/* 추천 게시글 섹션 */}
+        <section className="p-8 border-gray-300">
+          <div className="container">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tighter">
+                  회원님을 위한 게시글 추천
+                </h2>
+                <p className="text-gray-500 mt-1 text-lg">
+                  회원님의 취향에 맞는 게시글을 추천해드려요
+                </p>
               </div>
             </div>
             <div className="flex justify-center gap-10 flex-nowrap">

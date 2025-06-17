@@ -1,7 +1,6 @@
 // auth 커스텀 훅
 import { useContext } from "react";
 import { AuthContext, AuthContextType } from "@/app/provider/AuthContext";
->>>>>>> 54d2742 (폴더 구조 수정 및 api 로직 분리):src/features/auth/hook/useAuth.ts
 
 // 훅 선언
 export default function useAuth(): AuthContextType {
