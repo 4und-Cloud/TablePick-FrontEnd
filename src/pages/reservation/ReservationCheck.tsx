@@ -66,7 +66,6 @@ export default function ReservationCheck() {
           ),
           buttonPosition: 'bottom' as const, // 리터럴 타입 명시
         };
-        console.log("ReservationCheck - CardItem:", item); // 디버깅 로그
         return item;
       });
 

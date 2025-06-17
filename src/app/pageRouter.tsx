@@ -14,8 +14,6 @@ const Landing = React.lazy(() => import('@/pages/landing/Landing'));
     const NotificationsPage = React.lazy(() => import('@/pages/notification/NotificationsPage')); 
 
 export default function PageRouter() {
-
-    console.log('pageRouter')
     return (
         <Suspense fallback={<div>...Loading</div>}>
         <Routes>

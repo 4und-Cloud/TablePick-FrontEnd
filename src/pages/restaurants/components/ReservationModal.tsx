@@ -34,7 +34,6 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
 
   const handleDateChange: CalendarProps["onChange"] = (value) => {
     if (value instanceof Date) {
-      console.log('선택 날짜 확인 :', setSelectedDate(value));
       setSelectedDate(value)
     } else if (Array.isArray(value) && value[0] instanceof Date) {
       setSelectedDate(value[0])
@@ -105,12 +104,8 @@ export default function ReservationModal({closeModal, onSuccess, restaurantId}: 
         partySize: selectedPeople,
       };
 
-      console.log('Sending reservation data:', reservationData);
-
       // 예약 API 호출
       const result = await fetchReservation(reservationData);
-
-      console.log('Reservation response:', result);
 
       // 예약 성공 후 알림 스케줄링 API 호출
       await fetchNotificationScheduleReservation(result.reservationId);
