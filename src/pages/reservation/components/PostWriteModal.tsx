@@ -1,12 +1,3 @@
-<<<<<<< HEAD:src/components/Modal/PostWriteModal.tsx
-import {useEffect, useState} from "react";
-import Modal from "./Modal";
-import RoundedBtn from "../Button/RoundedBtn";
-import FilterModal from "./FilterModal";
-import useModal from "../../hooks/useModal";
-import { useTagContext } from "../../store/TagContext";
-import api from "../../lib/api";
-=======
 import { useState, useEffect } from "react";
 import Modal from "../../../@shared/components/Modal/Modal";
 import RoundedBtn from "../../../@shared/components/Button/RoundedBtn";
@@ -111,36 +102,14 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
     }
   };
 
-    const handleTagAdd = () => {
-        closeFilterModal();
-    };
-
-    return (
-        <Modal
-            width="600px"
-            height="auto"
-            close={
-                <button
-                    onClick={closeModal}
-                    className="text-main font-bold text-xl absolute top-2 right-2"
-                >
-                    X
-                </button>
-            }
-            footer={
-                <RoundedBtn
-                    text={initialData ? "수정" : "등록"}
-                    onClick={() => {
-                    }}
-                    bgColor="bg-main"
-                    textColor="text-white"
-                    borderColor="border-main"
-                    hoverColor="hover:bg-white"
-                    hoverTextColor="hover:text-main"
-                    hoverBorderColor="hover:border-main"
-                    width="w-full"
-                />
-            }
+  return (
+    <Modal
+      width="600px"
+      height="auto"
+      close={
+        <button
+          onClick={closeModal}
+          className="text-main font-bold text-xl absolute top-2 right-2"
         >
           X
         </button>

@@ -1,18 +1,3 @@
-<<<<<<< HEAD:src/pages/Mypage.tsx
-
-
-
-
-import { useState, useEffect } from "react";
-import { useUserExtraInfo } from "../store/UserInfoContext"
-import go5rae from '@/assets/images/profile_img.jpg';
-//import FilterModal from "../components/Modal/FilterModal";
-//import useModal from "../hooks/useModal";
-import useAuth from "../hooks/useAuth";
-import defaultProfile from '@/assets/images/user.png';
-import { useTagContext } from "../store/TagContext";
-import api from "../lib/api";
-=======
 import { useState, useEffect, useMemo } from "react";
 import FilterModal from "../../@shared/components/Modal/FilterModal";
 import useModal from "../../@shared/hook/useModal";
@@ -232,27 +217,25 @@ export default function Mypage() {
             />
           </div>
 
-                {/* 관심 태그 */}
-                <div className="flex-grow">
-                    <div className="mb-4">
-                        <label htmlFor="tags" className="block text-sm font-medium text-gray-700">관심 태그</label>
-                        
-                        <div className="mt-2 relative">
-                            <div className="flex flex-wrap gap-2 pr-12 max-h-32 overflow-y-auto rounded pt-2 ">
-                                {formData.tags.length > 0 ? (
-                                    
-                                    formData.tags.map((tag, index) => (
-                                        <span
-                                            key={index}
-                                            className="inline-block px-4 py-2 text-white bg-main rounded-full text-sm min-w-max"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))
-                                ) : (
-                                    <p className="text-gray-500">선택된 태그가 없습니다.</p>
-                                )}
-                            </div>
+          {/* 관심 태그 */}
+          <div className="flex-grow">
+            <div className="mb-4">
+              <label htmlFor="tags" className="block text-sm font-medium text-gray-700">관심 태그</label>        
+              <div className="mt-2 relative">
+                <div className="flex flex-wrap gap-2 pr-12 max-h-32 overflow-y-auto rounded pt-2 ">
+                  {tagNames.length > 0 ? (                  
+                    tagNames.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="inline-block px-4 py-2 text-white bg-main rounded-full text-sm min-w-max"
+                      >
+                        {tag}
+                      </span>
+                    ))
+                  ) : (
+                    <p className="text-gray-500">선택된 태그가 없습니다.</p>
+                  )}
+                </div>
                             
                 <button
                   type="button"
@@ -355,27 +338,33 @@ export default function Mypage() {
             )}
           </div>  
 
-                
-
-                <div className="flex justify-end space-x-4">
-                    <button
-                        type="button"
-                        onClick={() => alert("수정이 취소되었습니다.")}
-                        className="px-4 py-2 bg-gray-300 rounded text-sm text-gray-700"
-                    >
-                        취소
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleSave}
-                        className="px-4 py-2 bg-orange-500 text-white rounded text-sm"
-                    >
-                        저장
-                    </button>
-                </div>
-            </div>
-
-            
-        </div>
-    );
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="px-4 py-2 bg-gray-300 rounded text-sm text-gray-700"
+            >
+              취소
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              className="px-4 py-2 bg-orange-500 text-white rounded text-sm"
+            >
+              저장
+            </button>
+          </div>
+        </div>    
+			</div>
+			<FilterModal
+				isOpen={isOpen}
+				selectedTags={selectedTags}
+				setSelectedTags={setSelectedTags}
+				onClose={() => {
+					closeModal();
+				}}
+				onClick={handleTagAdd}
+			/>
+		</>    
+  );
 }
