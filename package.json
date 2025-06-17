@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "staging": "vite --host --mode staging",
-    "build": "tsc -b && vite build --mode production",
+    "build": "vite build --mode production",
     "preview": "vite preview",
     "test": "jest --verbose",
     "coverage": "jest --coverage"

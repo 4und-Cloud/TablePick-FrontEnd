@@ -8,7 +8,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "emitDeclarationOnly": true,
+
     "typeRoots": ["./node_modules/@types", "./src/@shared/types"],
     
 
