@@ -200,7 +200,7 @@ export function setupNotificationListener(
       const notificationTitle = payload.notification.title || '새 알림';
       const notificationOptions = {
         body: payload.notification.body || '새로운 메시지가 도착했습니다.',
-        icon: '@/@shared/images/logo.png',
+        icon: '/images/logo.png',
       };
       new Notification(notificationTitle, notificationOptions);
     }
