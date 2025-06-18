@@ -11,7 +11,6 @@ export const useFcmtokenUpdate = () => {
             return fetchFcmtokenUpdate({ memberId, token });
         },
         onSuccess: (data) => {
-            console.log('토큰 업데이트 성공 :', data);
         },
         onError: (error) => {
             console.error('토큰 업데이트 실패 : ', error.message);

@@ -7,25 +7,24 @@ importScripts(
 
 console.log('Service Worker 로딩');
 
-firebase.initializeApp({
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+firebase.initializeApp({ 
+  일부러 실패 뜨기
+  apiKey: '.env에 있는 키값 넣기',
+  authDomain: '.env에 있는 키값 넣기',
+  projectId: '.env에 있는 키값 넣기',
+  storageBucket: '.env에 있는 키값 넣기',
+  messagingSenderId: '.env에 있는 키값 넣기',
+  appId: '.env에 있는 키값 넣기',
+  measurementId: '.env에 있는 키값 넣기',
 });
 
 const messaging = firebase.messaging();
 
 // 포그라운드 메시지 처리
 self.addEventListener('push', (event) => {
-  console.log('푸시 이벤트 수신:', event);
 
   if (event.data) {
     const payload = event.data.json();
-    console.log('푸시 데이터:', JSON.stringify(payload, null, 2));
 
     // FCM 데이터 구조에서 실제 알림 데이터 추출
     const data = payload.data || {};
@@ -66,8 +65,6 @@ self.addEventListener('push', (event) => {
       requireInteraction: true // 디버깅용: 알림이 자동 닫히지 않음
     };
 
-    console.log('알림 옵션:', JSON.stringify(notificationOptions, null, 2));
-
     event.waitUntil(
       self.registration.showNotification(notificationTitle, notificationOptions)
     );
@@ -76,12 +73,10 @@ self.addEventListener('push', (event) => {
 
 // 백그라운드 메시지 처리
 messaging.onBackgroundMessage((payload) => {
-  console.log('백그라운드 메시지 수신:', JSON.stringify(payload, null, 2));
 
   // FCM 데이터 구조에서 데이터 추출
   const data = payload?.data || {};
   const notification = payload?.notification || {};
-  console.log('알림 데이터:', data);
 
   // 알림 제목과 내용 설정
   const notificationTitle = data.title || notification.title || '새 알림';
@@ -116,8 +111,6 @@ messaging.onBackgroundMessage((payload) => {
     },
     requireInteraction: true // 디버깅용
   };
-
-  console.log('알림 옵션:', JSON.stringify(notificationOptions, null, 2));
 
   return self.registration.showNotification(notificationTitle, notificationOptions);
 });
