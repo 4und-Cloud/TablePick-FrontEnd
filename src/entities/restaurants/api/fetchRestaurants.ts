@@ -10,25 +10,25 @@ export const fetchRestaurantsLanding = async (): Promise<RestaurantLandingData[]
 export const fetchRestaurantsList = async (
   currentPage: number,
   keyword: string = '',
-  tagIds: number[] = []
+  tagIds: number[] = [],
+  onlyOperating: boolean = false,
+  sort: string=''
 ): Promise<{ restaurants: RestaurantListData[]; totalPages: number }> => {
   const queryParams: string[] = [];
   queryParams.push(`page=${currentPage}`);
   queryParams.push('size=6');
 
-  let url = (keyword || tagIds.length)
-    ? "/api/restaurants/search"
-    : "/api/restaurants/list";
+  if (keyword) queryParams.push(`keyword=${encodeURIComponent(keyword.trim().toLowerCase())}`);
+  if (tagIds.length) queryParams.push(`tagIds=${tagIds.join(',')}`);
+  if (onlyOperating) queryParams.push(`onlyOperating=${onlyOperating}`);
+  if (sort) queryParams.push(`sort=${sort}`);
 
-  if (keyword)  queryParams.push(`keyword=${encodeURIComponent(keyword)}`);
-  if (tagIds.length) queryParams.push(`tagIds=${tagIds.join(",")}`);
-
-  url += `?${queryParams.join("&")}`;
+  const url = `/api/restaurants/v1/search?${queryParams.join('&')}`;
 
   const { data } = await api.get(url);
 
   return {
-    restaurants: data.restaurants ?? [],
+    restaurants: data.content ?? [],
     totalPages: data.totalPages ?? 1,
   };
 };

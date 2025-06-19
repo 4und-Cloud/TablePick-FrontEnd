@@ -11,12 +11,16 @@ interface SearchModalProps {
   onClose: () => void;
   currentKeyword?: string; 
   currentTagIds?: number[]; 
+  currentOnlyOperating?: boolean;
+  currentSort?: string;
 }
 
-export default function SearchModal({ isOpen, onClose, currentKeyword = '', currentTagIds = [] }: SearchModalProps) {
+export default function SearchModal({ isOpen, onClose, currentKeyword = '', currentTagIds = [], currentOnlyOperating=false, currentSort='' }: SearchModalProps) {
   const { data: tagsItems, isLoading, isError } = useTagQuery();
   const [inputText, setInputText] = useState(currentKeyword);
   const [selectedItems, setSelectedItems] = useState<number[]>(currentTagIds);
+  const [onlyOperating, setOnlyOperating] = useState(currentOnlyOperating);
+  const [sort, setSort] = useState(currentSort);
   const navigate = useNavigate();
 
   if (!isOpen) return null;
@@ -44,16 +48,13 @@ export default function SearchModal({ isOpen, onClose, currentKeyword = '', curr
     const tagIds = selectedItems; 
 
     const newSearchParams = new URLSearchParams();
-    if (keyword) {
-      newSearchParams.set('keyword', keyword);
-    }
-    if (tagIds.length > 0) {
-      newSearchParams.set('tagIds', tagIds.join(','));
-    }
-    newSearchParams.set('page','1');
+    if (keyword) newSearchParams.set('keyword', keyword);
+    if (tagIds.length) newSearchParams.set('tagIds', tagIds.join(','));
+    if (onlyOperating) newSearchParams.set('onlyOperating', 'true');
+    if (sort) newSearchParams.set('sort', sort);
+    newSearchParams.set('page', '1');
 
     const targetUrl = `/restaurants?${newSearchParams.toString()}`;
-
     navigate(targetUrl);
     onClose();
   };
