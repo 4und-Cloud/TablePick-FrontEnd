@@ -10,7 +10,6 @@ import defaultImg from '@/@shared/images/logo.png';
 
 import { fetchRestaurantDetail } from '@/entities/restaurants/api/fetchRestaurants';
 import { fetchRestaurantPost } from '@/entities/post/api/fetchPosts';
-import { fetchSendNotification } from '@/features/notification/api/fetchNotification';
 import { loadKakaoMapScript } from '@/entities/restaurants/util/loadKakaomap';
 
 type RestaurantData = {
@@ -142,11 +141,6 @@ export default function RestaurantDetail() {
       try {
         const restaurantData = await fetchRestaurantDetail(restaurantId);
         setData(restaurantData);
-
-        // 알림 전송 (실패해도 치명적 X)
-        fetchSendNotification(restaurantData.id, restaurantData.name).catch((e) =>
-          console.warn('알림 전송 실패', e),
-        );
       } catch (e: any) {
         console.error('식당 데이터를 불러오지 못했습니다', e?.response?.data ?? e);
       }

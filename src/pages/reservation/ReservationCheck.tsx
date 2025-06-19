@@ -6,6 +6,7 @@ import RoundedBtn from "@/@shared/components/Button/RoundedBtn";
 import { PostWriteModal } from "@/pages/reservation/components/PostWriteModal";
 import { fetchMemberReservation, fetchReservationDelete } from '@/features/reservation/api/fetchReservation';
 import { ReservationData } from "@/features/reservation/types/reservationType";
+import useAuth from "@/features/auth/hook/useAuth";
 
 export default function ReservationCheck() {
   const [reservations, setReservations] = useState<CardItemProps[]>([]);
@@ -13,9 +14,17 @@ export default function ReservationCheck() {
   const [selectedReservationData, setSelectedReservationData] = useState<ReservationData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { user } = useAuth();
+
   useEffect(() => {
-    fetchReservationCheck();
-  }, []);
+    if (user && user.id) {
+      console.log(`현재 로그인 아이디 :${user.id}`);
+      fetchReservationCheck();
+    } else {
+      console.log('로그아웃 상태');
+      setReservations([]);
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     if (selectedReservationData !== null && selectedReservationId !== null) {

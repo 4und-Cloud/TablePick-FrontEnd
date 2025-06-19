@@ -7,8 +7,7 @@ import {
   isSupported,
 } from 'firebase/messaging';
 
-import { fetchMemberNotification } from '../api/fetchNotification';
-import { fetchNotificationTypes } from '../api/fetchNotification';
+import { fetchMemberNotification, fetchNotificationTypes } from '../api/fetchNotification';
 
 // Firebase 설정 정보
 const firebaseConfig = {
@@ -22,10 +21,8 @@ const firebaseConfig = {
 };
 
 // Firebase 초기화
-let messaging: Messaging | null = null;
-
-const initializeFirebase = async () => {
-  if (typeof window === 'undefined') return;
+export const initializeFirebaseAppAndMessaging = async (): Promise<Messaging | null> => {
+  if (typeof window === 'undefined') return null; // 서버 사이드 렌더링(SSR) 환경 체크
 
   try {
     const app = initializeApp(firebaseConfig);
@@ -34,7 +31,7 @@ const initializeFirebase = async () => {
     if ('serviceWorker' in navigator) {
       try {
         const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-          scope: '/',
+          scope: '/', // 서비스 워커의 스코프를 웹사이트의 루트로 설정
         });
         console.log('서비스 워커 등록 성공:', registration.scope);
         
@@ -45,9 +42,8 @@ const initializeFirebase = async () => {
           return null;
         }
 
-        // 서비스 워커 등록 후에 messaging 초기화
-        messaging = getMessaging(app);
-        return messaging;
+        // 서비스 워커 등록 후에 messaging 초기화 및 반환
+        return getMessaging(app); // Messaging 인스턴스를 직접 반환
       } catch (error) {
         console.error('서비스 워커 등록 실패:', error);
         return null;
@@ -61,9 +57,6 @@ const initializeFirebase = async () => {
     return null;
   }
 };
-
-// Firebase 초기화 실행
-initializeFirebase();
 
 // 알림 권한 요청
 export async function requestNotificationPermission(): Promise<boolean> {
@@ -89,12 +82,11 @@ export async function requestNotificationPermission(): Promise<boolean> {
 }
 
 // FCM 토큰 가져오기
-export async function getFCMToken(): Promise<string | null> {
-  if (!messaging) {
-    console.error('Firebase 메시징 초기화 실패');
+export async function getFCMToken(messagingInstance: Messaging): Promise<string | null> {
+  if (!messagingInstance) {
+    console.error('Messaging 인스턴스가 초기화되지 않았습니다.');
     return null;
   }
-
   try {
     const permissionGranted = await requestNotificationPermission();
     if (!permissionGranted) {
@@ -110,9 +102,8 @@ export async function getFCMToken(): Promise<string | null> {
     }
 
     // 새 토큰 요청
-    const token = await getToken(messaging, {
-      vapidKey:
-        import.meta.env.VITE_FIREBASE_VAPID_KEY
+    const token = await getToken(messagingInstance, {
+      vapidKey: import.meta.env.VITE_VITE_FIREBASE_VAPID_KEY,
     });
 
     if (token) {
@@ -137,9 +128,8 @@ export function getSavedFCMToken(): string | null {
 export async function saveFCMToken(
   userId: number,
   token: string | null | undefined,
-  updateFcmtoken: (variables: { memberId: number; token: string }) => Promise<any> // 변경된 부분: mutateAsync 함수를 파라미터로 받음
+  updateFcmtoken: (variables: { memberId: number; token: string }) => Promise<any>
 ): Promise<boolean> {
-  // useFcmtokenUpdate() 훅 호출 제거
   if (!token || token.trim() === '') {
     console.error('유효하지 않은 토큰:', token);
     return false;
@@ -152,7 +142,7 @@ export async function saveFCMToken(
       return false;
     }
 
-    await updateFcmtoken({ memberId, token }); // 파라미터로 받은 함수 사용
+    await updateFcmtoken({ memberId, token });
     console.log('토큰 서버 저장 성공');
     return true;
   } catch (error) {
@@ -161,12 +151,11 @@ export async function saveFCMToken(
   }
 }
 
+// FCM 토큰 삭제
 export async function deleteFCMToken(
   userId: number,
-  removeFcmtoken: (variables: { memberId: number }) => Promise<any> // 변경된 부분: mutateAsync 함수를 파라미터로 받음
+  removeFcmtoken: (variables: { memberId: number }) => Promise<any>
 ): Promise<boolean> {
-  // useFcmTokenRemoveMutation() 훅 호출 제거
-
   try {
     const memberId = typeof userId === 'string' ? parseInt(userId, 10) : userId;
     if (isNaN(memberId)) {
@@ -174,7 +163,7 @@ export async function deleteFCMToken(
       return false;
     }
 
-    await removeFcmtoken({ memberId }); // 파라미터로 받은 함수 사용
+    await removeFcmtoken({ memberId });
     sessionStorage.removeItem('fcm_token');
     console.log('FCM 토큰 삭제 성공');
     return true;
@@ -186,23 +175,28 @@ export async function deleteFCMToken(
 
 // 포그라운드 알림 처리
 export function setupNotificationListener(
+  messagingInstance: Messaging,
   callback?: (payload: any) => void
 ): void {
-  if (!messaging) {
-    console.error('Firebase 메시징 초기화 실패');
-    return;
-  }
+  onMessage(messagingInstance, (payload) => {
+    console.log('포그라운드 메시지 수신:', JSON.stringify(payload, null, 2));
 
-  onMessage(messaging, (payload) => {
-    console.log('포그라운드 메시지 수신:', payload);
-
-    if (Notification.permission === 'granted' && payload.notification) {
-      const notificationTitle = payload.notification.title || '새 알림';
+    if (Notification.permission === 'granted') {
+      const notificationTitle = payload.notification?.title || payload.data?.title || '새 알림';
       const notificationOptions = {
-        body: payload.notification.body || '새로운 메시지가 도착했습니다.',
-        icon: '/images/logo.png',
+        body: payload.notification?.body || payload.data?.body || '새로운 메시지가 도착했습니다.',
+        icon: '/logo.png', // public 폴더의 실제 경로
+        data: payload.data, // 추가 데이터 저장
       };
-      new Notification(notificationTitle, notificationOptions);
+
+      try {
+        new Notification(notificationTitle, notificationOptions);
+        console.log('알림 표시 성공:', notificationTitle);
+      } catch (error) {
+        console.error('알림 표시 실패:', error);
+      }
+    } else {
+      console.warn('알림 권한이 허용되지 않음:', Notification.permission);
     }
 
     callback?.(payload);

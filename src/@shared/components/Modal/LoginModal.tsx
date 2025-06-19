@@ -1,6 +1,14 @@
 import pic from '@/@shared/images/login.png';
-import { useState } from 'react';
+import {
+  getFCMToken,
+  getSavedFCMToken,
+  initializeFirebaseAppAndMessaging,
+  saveFCMToken,
+} from '../../../features/notification/lib/firebase';
+import { useEffect, useState } from 'react';
 import api from '../../api/api';
+import { useFcmtokenUpdate } from '@/features/auth/hook/mutations/useFcmtokenUpdate';
+import { type Messaging } from 'firebase/messaging';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -9,10 +17,25 @@ interface LoginModalProps {
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [messagingInstance, setMessagingInstance] = useState<Messaging | null>(null);
+  const { mutateAsync: updateFcmtoken } = useFcmtokenUpdate();
 
   const baseClasses =
     'w-[300px] h-12 flex items-center justify-center rounded font-medium text-base cursor-pointer px-4 mb-3';
   const iconClasses = 'mr-2 w-5 h-5';
+
+  useEffect(() => {
+    const initFirebase = async () => {
+      const messaging = await initializeFirebaseAppAndMessaging();
+      setMessagingInstance(messaging);
+      if (messaging) {
+        console.log('firebase messaging 초기화 성공');
+      } else {
+        console.error('firebase messaging 초기화 실패');
+      }
+    };
+    initFirebase();
+  }, []);
 
   if (!isOpen) return null;
 
@@ -20,8 +43,43 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const handleLogin = async (provider: string) => {
     try {
       setIsLoggingIn(true);
+
       const currentUrl = window.location.pathname + window.location.search;
       const redirectUrl = encodeURIComponent(currentUrl);
+
+      // 로그인 성공 후 FCM 토큰 처리를 위한 이벤트 리스너 설정
+      window.addEventListener(
+        'message',
+        async (event) => {
+          // 로그인 성공 메시지 처리
+          if (
+            event.data &&
+            event.data.type === 'LOGIN_SUCCESS' &&
+            event.data.userId
+          ) {
+            const userId = event.data.userId;
+
+            // 저장된 FCM 토큰 확인
+            let fcmToken = getSavedFCMToken();
+
+            // 저장된 토큰이 없으면 새로 발급
+            if (!fcmToken && messagingInstance) {
+              fcmToken = await getFCMToken(messagingInstance);
+            }
+
+            // 서버에 토큰 저장
+            if (fcmToken) {
+              await saveFCMToken(userId, fcmToken, updateFcmtoken);
+              console.log('FCM 토큰 저장 성공:', userId);
+            } else {
+              console.warn('FCM 토큰을 가져오지 못했습니다. 알림 기능 비활성화.');
+            }
+          }
+          setIsLoggingIn(false);
+        },
+        { once: true }
+      );
+
       window.location.href = `${api.defaults.baseURL}/oauth2/authorization/${provider}?redirect=${redirectUrl}`;
     } catch (error) {
       console.error('로그인 처리 중 오류:', error);

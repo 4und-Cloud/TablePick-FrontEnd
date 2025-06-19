@@ -1,7 +1,8 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '@/features/auth/hook/useAuth'
 import {
+  initializeFirebaseAppAndMessaging,
   getFCMToken,
   getSavedFCMToken,
   saveFCMToken,
@@ -15,29 +16,34 @@ export default function OauthSuccess() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isLoginProcessed, setIsLoginProcessed] = useState(false);
-  const tokenUpdateAttempted = useRef(false);
+  const [isLoginProcessed, setIsLoginProcessed] = useState(false); // 로그인 처리 플래그
 
   const { mutateAsync: updateFcmtoken } = useFcmtokenUpdate();
 
   useEffect(() => {
-    let isMounted = true;
+    let isMounted = true; // 마운트 상태 체크
 
     async function fetchUserInfoAndHandleFCM() {
-      if (!isMounted || tokenUpdateAttempted.current) return;
+      if (!isMounted) return; // 컴포넌트가 언마운트된 경우 중단
 
       try {
         setLoading(true);
-        tokenUpdateAttempted.current = true;
+
+        const messagingInstance = await initializeFirebaseAppAndMessaging();
+
+        if (!messagingInstance) {
+          console.log('firebase 초기화 실패');
+        }
 
         // FCM 토큰 처리와 사용자 정보 요청을 병렬로 실행
         const [userResponse, fcmToken] = await Promise.all([
           api.get(`/api/members`),
           (async () => {
+            if (!messagingInstance) return null;
             try {
               let token = getSavedFCMToken();
               if (!token) {
-                token = await getFCMToken();
+                token = await getFCMToken(messagingInstance);
               }
               return token;
             } catch (fcmError) {
@@ -111,28 +117,29 @@ export default function OauthSuccess() {
           const redirectUrl = params.get('redirect') || '/';
 
           if (!shouldShowAdditionalInfoModal) {
-            alert('로그인 성공');
+            alert('로그인 성공'); // 한 번만 호출
             navigate(redirectUrl);
           } else {
             navigate('/', { state: { redirectUrl, showFilterModal: true } });
           }
 
-          setIsLoginProcessed(true);
+          setIsLoginProcessed(true); // 로그인 처리 완료 표시
         }
       } catch (error) {
         console.error('사용자 정보 가져오기 실패:', error);
         setError('로그인 처리 중 오류가 발생했습니다.');
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) setLoading(false); // 마운트 상태 확인 후 로딩 해제
       }
     }
 
     fetchUserInfoAndHandleFCM();
 
+    // 클린업
     return () => {
-      isMounted = false;
+      isMounted = false; // 컴포넌트 언마운트 시 마운트 상태 변경
     };
-  }, [login, navigate]);
+  }, [login, navigate, location.search]); 
 
   const isRecentlyCreated = (createdAtStr: string): boolean => {
     const createdAt = new Date(createdAtStr);
