@@ -6,7 +6,6 @@ import {
   type Messaging,
   isSupported,
 } from 'firebase/messaging';
-
 import { fetchMemberNotification, fetchNotificationTypes } from '../api/fetchNotification';
 
 // Firebase 설정 정보
@@ -22,28 +21,25 @@ const firebaseConfig = {
 
 // Firebase 초기화
 export const initializeFirebaseAppAndMessaging = async (): Promise<Messaging | null> => {
-  if (typeof window === 'undefined') return null; // 서버 사이드 렌더링(SSR) 환경 체크
+  if (typeof window === 'undefined') return null;
 
   try {
     const app = initializeApp(firebaseConfig);
     
-    // 서비스 워커 등록
     if ('serviceWorker' in navigator) {
       try {
         const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-          scope: '/', // 서비스 워커의 스코프를 웹사이트의 루트로 설정
+          scope: '/',
         });
         console.log('서비스 워커 등록 성공:', registration.scope);
         
-        // FCM 지원 여부 확인
         const supported = await isSupported();
         if (!supported) {
           console.error('이 브라우저는 Firebase Cloud Messaging을 지원하지 않습니다.');
           return null;
         }
 
-        // 서비스 워커 등록 후에 messaging 초기화 및 반환
-        return getMessaging(app); // Messaging 인스턴스를 직접 반환
+        return getMessaging(app);
       } catch (error) {
         console.error('서비스 워커 등록 실패:', error);
         return null;
@@ -94,14 +90,12 @@ export async function getFCMToken(messagingInstance: Messaging): Promise<string 
       return null;
     }
 
-    // 기존 토큰 확인
     const savedToken = sessionStorage.getItem('fcm_token');
     if (savedToken) {
       console.log('저장된 FCM 토큰 사용:', savedToken);
       return savedToken;
     }
 
-    // 새 토큰 요청
     const token = await getToken(messagingInstance, {
       vapidKey: import.meta.env.VITE_VITE_FIREBASE_VAPID_KEY,
     });
@@ -178,19 +172,35 @@ export function setupNotificationListener(
   messagingInstance: Messaging,
   callback?: (payload: any) => void
 ): void {
+  const seenNotifications = new Set<string>(); // 중복 알림 방지용 Set
+
   onMessage(messagingInstance, (payload) => {
     console.log('포그라운드 메시지 수신:', JSON.stringify(payload, null, 2));
+
+    const notificationKey = `${payload.data?.memberId || ''}-${payload.data?.type || ''}`;
+    if (notificationKey && seenNotifications.has(notificationKey)) {
+      console.log('중복 알림 무시:', notificationKey);
+      return;
+    }
+    if (notificationKey) {
+      seenNotifications.add(notificationKey);
+    }
 
     if (Notification.permission === 'granted') {
       const notificationTitle = payload.notification?.title || payload.data?.title || '새 알림';
       const notificationOptions = {
         body: payload.notification?.body || payload.data?.body || '새로운 메시지가 도착했습니다.',
-        icon: '/logo.png', // public 폴더의 실제 경로
-        data: payload.data, // 추가 데이터 저장
+        data: payload.data,
       };
 
       try {
-        new Notification(notificationTitle, notificationOptions);
+        const notification = new Notification(notificationTitle, notificationOptions);
+        notification.onclick = () => {
+          console.log('알림 클릭됨:', payload.data?.url);
+          if (payload.data?.url) {
+            window.open(payload.data.url, '_blank');
+          }
+        };
         console.log('알림 표시 성공:', notificationTitle);
       } catch (error) {
         console.error('알림 표시 실패:', error);

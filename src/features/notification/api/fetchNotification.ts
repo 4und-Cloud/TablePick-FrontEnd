@@ -64,20 +64,17 @@ export const useNotificationTypeMapInitializer = () => {
   return initialized;
 };
 
-export const fetchNotificationScheduleReservation = async (reservationId: number) => {
-  if (!notificationTypeMap['RESERVATION_COMPLETED']) {
+export const fetchNotificationSchedule = async (
+  notificationType: NotificationTypes,
+  memberId: number,
+  extraData?: { reservationId?: number; restaurantName?: string }
+) => {
+  if (!notificationTypeMap[notificationType]) {
     console.warn('notificationTypeMap이 초기화되지 않음, 재시도');
     await initializeNotificationTypeMap();
-    if (!notificationTypeMap['RESERVATION_COMPLETED']) {
+    if (!notificationTypeMap[notificationType]) {
       throw new Error('알림 타입 초기화 실패');
     }
-  }
-
-  const userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
-  const memberId = userInfo?.id;
-  if (!memberId) {
-    console.error('session storage에서 memberId를 찾을 수 없음');
-    throw new Error('memberId 없음');
   }
 
   const fcmToken = getSavedFCMToken();
@@ -96,21 +93,43 @@ export const fetchNotificationScheduleReservation = async (reservationId: number
 
   const payload = {
     memberId,
-    notificationTypeId: notificationTypeMap['RESERVATION_COMPLETED'],
-    reservationId,
+    notificationTypeId: notificationTypeMap[notificationType],
     scheduledAt: new Date().toISOString(),
-    title: notificationDetails['RESERVATION_COMPLETED']?.title || '예약 완료',
-    body: notificationDetails['RESERVATION_COMPLETED']?.body || '예약이 성공적으로 완료되었습니다.',
+    notification: {
+      title: notificationDetails[notificationType]?.title || `${notificationType} 알림`,
+      body: notificationDetails[notificationType]?.body || `${notificationType}이 완료되었습니다.`,
+    },
+    data: {
+      title: notificationDetails[notificationType]?.title || `${notificationType} 알림`,
+      body: notificationDetails[notificationType]?.body || `${notificationType}이 완료되었습니다.`,
+      url: notificationDetails[notificationType]?.url || '/profile',
+      ...(extraData?.reservationId && { reservationId: extraData.reservationId.toString() }),
+      ...(extraData?.restaurantName && { restaurantName: extraData.restaurantName }),
+      memberId: memberId.toString(),
+      type: notificationType,
+    },
+    collapseKey: `${notificationType}_${memberId}`, // 중복 방지용 collapseKey
   };
 
   try {
-    const response = await api.post(`/api/notifications/schedule/reservation/${reservationId}`, payload);
-    console.log(`예약 ${reservationId}에 대한 알림 스케줄링 성공:`, response.data);
+    const response = await api.post(`/api/notifications/schedule`, payload);
+    console.log(`${notificationType} 알림 스케줄링 성공:`, response.data);
     return response.data;
   } catch (error) {
-    console.error('알림 스케줄링 실패:', error);
+    console.error(`${notificationType} 알림 스케줄링 실패:`, error);
     throw error;
   }
+};
+
+export const fetchNotificationScheduleReservation = async (reservationId: number, restaurantName?: string) => {
+  const userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
+  const memberId = userInfo?.id;
+  if (!memberId) {
+    console.error('session storage에서 memberId를 찾을 수 없음');
+    throw new Error('memberId 없음');
+  }
+
+  return fetchNotificationSchedule('RESERVATION_COMPLETED', memberId, { reservationId, restaurantName });
 };
 
 export const fetchMemberNotification = async (memberId: number, status?: string) => {
