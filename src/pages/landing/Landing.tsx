@@ -9,6 +9,7 @@ import { fetchPosts } from '@/entities/post/api/fetchPosts';
 import { Post } from '@/entities/post/types/postType';
 import { fetchRestaurantsLanding } from '@/entities/restaurants/api/fetchRestaurants';
 import { RestaurantLandingData } from '@/entities/restaurants/types/restaurantType';
+import defaultImage from '@/@shared/images/logo.png'
 
 // 레스토랑 카드 컴포넌트
 function RestaurantCard({
@@ -88,7 +89,7 @@ function PostCard({ item, onClick }: { item: Post; onClick?: () => void }) {
       {/* 이미지 컨테이너 */}
       <div className="w-full h-[250px] overflow-hidden">
         <img
-          src={item.imageUrl}
+          src={item.imageUrl || defaultImage}
           alt={item.restaurantName}
           className="w-full h-full object-cover"
         />

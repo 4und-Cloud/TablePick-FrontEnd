@@ -38,6 +38,7 @@ export default function RestaurantList() {
       try {
         const { restaurants, totalPages: fetchedTotalPages } = await fetchRestaurantsList(fetchPage, keyword, tagIds);
         console.log("Fetched restaurants:", restaurants);
+        console.log("Total pages:", fetchedTotalPages);
         const converted: CardItemProps[] = restaurants.map(
           (item: RestaurantListData): CardItemProps => ({
             id: item.id,
@@ -68,6 +69,7 @@ export default function RestaurantList() {
   );
 
   useEffect(() => {
+    console.log("Search params changed:", searchParams.toString());
     setPage(0);
     setRestaurantList([]);
     setHasMore(true);
@@ -79,12 +81,13 @@ export default function RestaurantList() {
 
   useEffect(() => {
     if (page === 0) return;
+    console.log("Page changed:", page);
     const { currentKeyword, currentTagIds } = getCurrentSearchParams();
     fetchData(page, currentKeyword, currentTagIds, false);
   }, [page, fetchData]);
 
   const sentinelRef = useIntersectionObserver(
-    () => {
+    useCallback(() => {
       if (!loading && hasMore && !isFetching.current) {
         console.log("Intersection Observer triggered, incrementing page");
         setPage((p) => {
@@ -93,7 +96,7 @@ export default function RestaurantList() {
           return nextPage;
         });
       }
-    },
+    }, [loading, hasMore])
   );
 
   const { currentKeyword, currentTagIds } = getCurrentSearchParams();
@@ -107,9 +110,26 @@ export default function RestaurantList() {
     ) : null;
   });
 
+  useEffect(() => {
+  const handleScroll = () => {
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 200) {
+      if (!loading && hasMore && !isFetching.current) {
+        console.log("Scroll event triggered, incrementing page");
+        setPage((p) => {
+          const nextPage = p + 1;
+          console.log(`New page: ${nextPage}`);
+          return nextPage;
+        });
+      }
+    }
+  };
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, [loading, hasMore]);
+
   return (
-    <div className="mx-[300px]">
-      <div className="flex justify-between mx-6 my-2">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="flex justify-between my-2">
         <div className="flex overflow-x-auto items-center">
           {displayedTagElements}
           {currentKeyword && (
@@ -125,7 +145,15 @@ export default function RestaurantList() {
       ) : (
         <>
           <List items={restaurantList} />
-          {hasMore && <div ref={sentinelRef} />}
+          {hasMore && (
+            <div ref={sentinelRef} id="sentinel" className="my-4">
+              {loading ? (
+                <p className="text-center text-gray-500">더 많은 식당을 불러오는 중...</p>
+              ) : (
+                <div className="w-full h-[100px]" />
+              )}
+            </div>
+          )}
           {loading && <p className="text-center my-4 text-gray-500">불러오는 중...</p>}
           {!hasMore && !loading && (
             <p className="text-center my-4 text-gray-500">모든 식당을 불러왔습니다.</p>
