@@ -28,14 +28,38 @@ export const fetchRestaurantsList = async (
   const { data } = await api.get(url);
 
   return {
-    restaurants: data.content ?? [],
+    restaurants: (data.content ?? []).map((item: any) => ({
+      ...item,
+      restaurantImage: item.restaurantImage ? item.restaurantImage : null,
+      restaurantTags: item.restaurantTags || [],
+      restaurantCategory: typeof item.restaurantCategory === "string" ? item.restaurantCategory : item.restaurantCategory?.name || "기타",
+    })),
     totalPages: data.totalPages ?? 1,
   };
 };
 
 export const fetchRestaurantDetail = async (id: string | number) => {
+  try {
     const response = await api.get(`/api/restaurants/${id}`);
-    return response.data;
+    const data = response.data;
+
+    let processedRestaurantImage: { imageUrl: string } | null = null;
+    if (typeof data.restaurantImage === 'string') {
+      processedRestaurantImage = { imageUrl: data.restaurantImage };
+    } else if (data.restaurantImage && typeof data.restaurantImage === 'object' && 'imageUrl' in data.restaurantImage) {
+      processedRestaurantImage = data.restaurantImage;
+    }
+
+    return {
+      ...data,
+      restaurantImage: processedRestaurantImage,
+      restaurantTags: data.restaurantTags || [],
+      restaurantOperatingHours: data.restaurantOperatingHours || [],
+      menus: data.menus || [],
+    };
+  } catch (error) {
+    throw new Error('식당 데이터 불러오지 못함');
+  }
 }
   
 

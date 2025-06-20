@@ -12,11 +12,21 @@ export interface RestaurantListData {
   name: string;
   address: string;
   restaurantPhoneNumber: string;
+  restaurantCategory: string | { id: number; name: string }; 
+  restaurantImage: string | null; 
+  restaurantTags: string[] | null;
+}
+
+export interface RestaurantDetailData {
+  id: number;
+  name: string;
+  address: string;
+  restaurantPhoneNumber: string;
   restaurantCategory: {
     id: number;
     name: string;
   };
-  restaurantImage: string;
+  restaurantImage: { imageUrl: string } | null;
   restaurantOperatingHours: Array<{
     dayOfWeek: string;
     openTime: string | null;
@@ -24,4 +34,7 @@ export interface RestaurantListData {
     holiday: boolean;
   }>;
   restaurantTags: string[];
+  menus: { name: string; price: number }[];
+  xcoordinate: number;
+  ycoordinate: number;
 };

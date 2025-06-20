@@ -1,31 +1,12 @@
 import { CardItemProps } from "@/@shared/types/cardItemsType";
 import List from "@/@shared/components/List";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useSearchParams} from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useTagQuery } from "@/entities/tag/hook/useTagQuery";
-import defaultImg from '@/@shared/images/logo.png';
+import defaultImg from "@/@shared/images/logo.png";
 import { fetchRestaurantsList } from "@/entities/restaurants/api/fetchRestaurants";
+import { RestaurantListData } from "@/entities/restaurants/types/restaurantType";
 import useIntersectionObserver from "@/@shared/hook/useIntersectionObserver";
-
-
-interface RestaurantData {
-  id: number;
-  name: string;
-  address: string;
-  restaurantPhoneNumber: string;
-  restaurantCategory: {
-    id: number;
-    name: string;
-  };
-  restaurantImage: string;
-  restaurantOperatingHours: Array<{
-    dayOfWeek: string;
-    openTime: string | null;
-    closeTime: string | null;
-    holiday: boolean;
-  }>;
-  restaurantTags: string[];
-}
 
 export default function RestaurantList() {
   const [restaurantList, setRestaurantList] = useState<CardItemProps[]>([]);
@@ -42,52 +23,49 @@ export default function RestaurantList() {
   const getCurrentSearchParams = () => {
     const currentKeyword = searchParams.get("keyword") || "";
     const currentTagIds = searchParams.get("tagIds")
-        ? searchParams.get("tagIds")?.split(",").map(Number).filter((id) => !isNaN(id)) || []
-        : [];
+      ? searchParams.get("tagIds")?.split(",").map(Number).filter((id) => !isNaN(id)) || []
+      : [];
     return { currentKeyword, currentTagIds };
   };
 
   const isFetching = useRef(false);
 
-  // 데이터 가져오기 
   const fetchData = useCallback(
-  async (fetchPage: number, keyword: string, tagIds: number[], isInitialLoad: boolean) => {
-    if (isFetching.current) return;
-    isFetching.current = true;
-    setLoading(true);
-    try {
-      const { restaurants, totalPages: fetchedTotalPages } = await fetchRestaurantsList(fetchPage, keyword, tagIds);
+    async (fetchPage: number, keyword: string, tagIds: number[], isInitialLoad: boolean) => {
+      if (isFetching.current) return;
+      isFetching.current = true;
+      setLoading(true);
+      try {
+        const { restaurants, totalPages: fetchedTotalPages } = await fetchRestaurantsList(fetchPage, keyword, tagIds);
+        console.log("Fetched restaurants:", restaurants);
+        const converted: CardItemProps[] = restaurants.map(
+          (item: RestaurantListData): CardItemProps => ({
+            id: item.id,
+            image: item.restaurantImage || defaultImg,
+            restaurantName: item.name,
+            description: item.address,
+            tags: item.restaurantTags || [],
+            linkTo: `/restaurants/${item.id}`,
+          })
+        );
 
-      const converted: CardItemProps[] = restaurants.map(
-        (item: RestaurantData): CardItemProps => ({
-          id: item.id,
-          image: item.restaurantImage || defaultImg,
-          restaurantName: item.name,
-          description: item.address,
-          tags: item.restaurantTags || [],
-          linkTo: `/restaurants/${item.id}`,
-        })
-      );
-
-      setRestaurantList((prev) => {
-        if (isInitialLoad) {
-          return converted;
-        } else {
-          const existingsIds = new Set(prev.map((item) => item.id));
-          const newItems = converted.filter((item) => !existingsIds.has(item.id));
-          return isInitialLoad ? converted : [...prev, ...newItems];
-        }
-      });
-      setHasMore(fetchPage < fetchedTotalPages - 1);
-    } catch (error) {
-      setHasMore(false);
-    } finally {
-      isFetching.current = false;
-      setLoading(false);
-    }
-  },
-  []
-);
+        setRestaurantList((prev) => {
+          const existingIds = new Set(prev.map((item) => item.id));
+          const newItems = converted.filter((item) => !existingIds.has(item.id));
+          console.log("Adding items:", newItems);
+          return isInitialLoad ? newItems : [...prev, ...newItems];
+        });
+        setHasMore(fetchPage < fetchedTotalPages - 1);
+      } catch (error) {
+        console.error("Fetch error:", error);
+        setHasMore(false);
+      } finally {
+        isFetching.current = false;
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     setPage(0);
@@ -106,18 +84,18 @@ export default function RestaurantList() {
   }, [page, fetchData]);
 
   const sentinelRef = useIntersectionObserver(
-  () => {
-    if (!loading && hasMore && !isFetching.current) {
-      console.log("Intersection Observer triggered, incrementing page");
-      setPage((p) => {
-        const nextPage = p + 1;
-        console.log(`New page: ${nextPage}`);
-        return nextPage;
-      });
-    }
-  },
-);
-  
+    () => {
+      if (!loading && hasMore && !isFetching.current) {
+        console.log("Intersection Observer triggered, incrementing page");
+        setPage((p) => {
+          const nextPage = p + 1;
+          console.log(`New page: ${nextPage}`);
+          return nextPage;
+        });
+      }
+    },
+  );
+
   const { currentKeyword, currentTagIds } = getCurrentSearchParams();
 
   const displayedTagElements = currentTagIds.map((tagId) => {
@@ -147,14 +125,8 @@ export default function RestaurantList() {
       ) : (
         <>
           <List items={restaurantList} />
-
-          {hasMore && (
-            <div ref={sentinelRef}/>
-          )}
-
-          {loading && (
-            <p className="text-center my-4 text-gray-500">불러오는 중...</p>
-          )}
+          {hasMore && <div ref={sentinelRef} />}
+          {loading && <p className="text-center my-4 text-gray-500">불러오는 중...</p>}
           {!hasMore && !loading && (
             <p className="text-center my-4 text-gray-500">모든 식당을 불러왔습니다.</p>
           )}
