@@ -70,7 +70,13 @@ export default function RestaurantList() {
       );
 
       setRestaurantList((prev) => {
-        return isInitialLoad ? converted : [...prev, ...converted];
+        if (isInitialLoad) {
+          return converted;
+        } else {
+          const existingsIds = new Set(prev.map((item) => item.id));
+          const newItems = converted.filter((item) => !existingsIds.has(item.id));
+          return isInitialLoad ? converted : [...prev, ...newItems];
+        }
       });
       setHasMore(fetchPage < fetchedTotalPages - 1);
     } catch (error) {
@@ -87,6 +93,8 @@ export default function RestaurantList() {
     setPage(0);
     setRestaurantList([]);
     setHasMore(true);
+    setLoading(true);
+    isFetching.current = false;
     const { currentKeyword, currentTagIds } = getCurrentSearchParams();
     fetchData(0, currentKeyword, currentTagIds, true);
   }, [searchParams, fetchData]);
@@ -97,30 +105,18 @@ export default function RestaurantList() {
     fetchData(page, currentKeyword, currentTagIds, false);
   }, [page, fetchData]);
 
-  const sentinelRef = useIntersectionObserver(() => {
-    if (!loading && hasMore) {
+  const sentinelRef = useIntersectionObserver(
+  () => {
+    if (!loading && hasMore && !isFetching.current) {
+      console.log("Intersection Observer triggered, incrementing page");
       setPage((p) => {
-        return p + 1;
+        const nextPage = p + 1;
+        console.log(`New page: ${nextPage}`);
+        return nextPage;
       });
     }
-  });
-
-    useEffect(() => {
-    }, [restaurantList]);
-  
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 200) {
-        if (!loading && hasMore) {
-          setPage((p) => {
-            return p + 1;
-          });
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [loading, hasMore]);
+  },
+);
   
   const { currentKeyword, currentTagIds } = getCurrentSearchParams();
 

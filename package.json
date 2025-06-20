@@ -2,7 +2,6 @@
   "name": "tablepick-frontend",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "staging": "vite --host --mode staging",
@@ -36,6 +35,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/cypress": "^0.1.6",
     "@types/jest": "^29.5.14",
     "@types/leaflet": "^1.9.17",
     "@types/lodash": "^4.17.17",
@@ -44,6 +44,7 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
+    "cypress": "^14.5.0",
     "globals": "^16.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.0.0-beta.3",

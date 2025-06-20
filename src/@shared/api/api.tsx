@@ -20,7 +20,6 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log('API 요청 헤더:', config.headers); // 디버깅 로그
     return config;
   },
   (error) => Promise.reject(error)

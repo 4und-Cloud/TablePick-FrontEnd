@@ -79,6 +79,7 @@ export default function AuthHeader() {
                   내 게시글
                 </Link>
                 <Link
+                  data-cy="header-my-page-button"
                   to="/mypage"
                   className={`text-lg font-bold ${pathname === '/mypage' ? 'text-main' : 'text-black'} transition-colors hover:text-main`}
                 >
@@ -122,6 +123,7 @@ export default function AuthHeader() {
             <>
               <div>
                 <img
+                  data-cy="header-profile-image"
                   width={40}
                   height={40}
                   src={user.profileImage || defaultProfile}
@@ -131,6 +133,7 @@ export default function AuthHeader() {
               </div>
 
               <RoundedBtn
+                data-cy="header-logout-button"
                 onClick={handleLogout}
                 text="Logout"
                 bgColor="bg-main"
