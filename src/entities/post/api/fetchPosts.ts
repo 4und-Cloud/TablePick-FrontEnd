@@ -1,6 +1,7 @@
 import api from "@/@shared/api/api";
 import { CardItemProps } from "@/@shared/types/cardItemsType";
 import { Post, FetchPostsParams, PostData, RestaurantReviewPost, FetchPostResponse } from "../types/postType";
+import defaultImage from '@/@shared/images/logo.png'
 
 export const convertedPostListData = (posts: Post[], defaultProfile: string): CardItemProps[] => {
     return posts.map((item, i) => ({
@@ -11,7 +12,7 @@ export const convertedPostListData = (posts: Post[], defaultProfile: string): Ca
         restaurantCategoryName: item.restaurantCategoryName || "정보 없음",
         memberNickname: item.memberNickname || "정보 없음",
         memberProfileImage: item.memberProfileImage || defaultProfile,
-        image: item.imageUrl,
+        image: item.imageUrl || defaultImage,
         linkTo: `/posts/${item.id}`
     }));
 };
