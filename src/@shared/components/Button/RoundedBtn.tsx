@@ -12,6 +12,7 @@ interface RoundedBtnProps{
     hoverTextColor? : string; // hover 시 텍스트 색
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
     disabled?: () => void;
+    ['data-cy']?: string;
 }
 
 export default function RoundedBtn({
@@ -25,9 +26,10 @@ export default function RoundedBtn({
     hoverBorderColor = 'hover:border-white',
     hoverTextColor = 'hover:text-white',
     onClick,
+    ['data-cy']: dataCy,
 } : RoundedBtnProps) {
     return (
-        <button onClick={(event) => {
+        <button data-cy={dataCy} onClick={(event) => {
         event.stopPropagation(); // 이벤트 전파 차단
         if (onClick) {
           onClick(event); // onClick이 정의된 경우에만 호출

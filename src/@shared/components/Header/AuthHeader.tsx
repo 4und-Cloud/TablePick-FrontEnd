@@ -37,7 +37,7 @@ export default function AuthHeader() {
 
   return (
     <>
-      <header className="py-4 sticky top-0 z-50 border-b flex justify-center border-main bg-white backdrop-blur">
+      <header data-cy="header-authenticated" className="py-4 sticky top-0 z-50 border-b flex justify-center border-main bg-white backdrop-blur">
         <div className="flex  gap-24 h-16 items-center justify-around">
           {/* logo */}
           <Link to="/" className="flex items-center">
@@ -67,12 +67,14 @@ export default function AuthHeader() {
             {isAuthenticated && (
               <>
                 <Link
+                  data-cy="header-reservation-check-button"
                   to="/reservation-check"
                   className={`text-lg font-bold ${pathname === '/reservation-check' ? 'text-main' : 'text-black'} transition-colors hover:text-main`}
                 >
                   예약 확인
                 </Link>
                 <Link
+                  data-cy="header-my-post-button"
                   to="/my-posts"
                   className={`text-lg font-bold ${pathname === '/my-posts' ? 'text-main' : 'text-black'} transition-colors hover:text-main`}
                 >
@@ -107,6 +109,7 @@ export default function AuthHeader() {
 
             {isAuthenticated && (
               <button
+                data-cy="header-notification-list-button"
                 onClick={handleNavigateToAlarms}
                 type="button"
                 className="text-muted-foreground hover:text-foreground relative"

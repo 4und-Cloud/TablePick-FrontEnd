@@ -145,15 +145,17 @@ export default function ReservationModal({ closeModal, onSuccess, restaurantId }
 
   return (
     <Modal
+      data-cy="reservation-modal"
       width="400px"
       height="630px"
       close={
-        <button onClick={closeModal} className="text-main font-bold text-xl inset-0 z-50">
+        <button data-cy="reservation-modal-close-button" onClick={closeModal} className="text-main font-bold text-xl inset-0 z-50">
           X
         </button>
       }
       footer={
         <RoundedBtn
+          data-cy="reservation-submit-button"
           text={isSubmitting ? "예약 처리 중..." : "예약하기"}
           onClick={handleReservation}
           bgColor="bg-main"
@@ -186,6 +188,7 @@ export default function ReservationModal({ closeModal, onSuccess, restaurantId }
         <div className="flex justify-start space-x-4 mt-2 overflow-x-auto whitespace-nowrap scrollbar-hide px-2">
           {[1, 2, 3, 4, 5, 6].map((people) => (
             <button
+              data-cy="reservation-people-button"
               key={people}
               onClick={() => handlePeopleSelect(people)}
               className={`px-4 py-2 rounded-full border-2 transition-all ${
@@ -206,6 +209,7 @@ export default function ReservationModal({ closeModal, onSuccess, restaurantId }
           ) : availableTimes.length > 0 ? (
             availableTimes.map((time) => (
               <button
+                data-cy="reservation-time-button"
                 key={time}
                 onClick={() => handleTimeSelect(time)}
                 className={`px-4 py-2 rounded-full border-2 transition-all ${

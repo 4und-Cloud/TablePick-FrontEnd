@@ -51,7 +51,7 @@ export default function MyPosts() {
       <div className="m-4">
         <div>
           {post.length > 0 ? (
-            <List onDelete={handleDeletePost} items={post} />
+            <List data-cy="my-post-list-item" onDelete={handleDeletePost} items={post} />
           ) : (
             <p className="text-center text-gray-500 mt-10">게시글 내역이 없습니다.</p>
           )}

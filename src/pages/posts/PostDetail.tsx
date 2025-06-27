@@ -38,12 +38,12 @@ export default function PostDetail() {
   }
 
   return (
-    <div className="p-5">
+    <div data-cy="post-detail-info" className="p-5">
       {/* 상단 정보 (위치 + 작성일자) */}
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center">
           <img width={16} height={16} src={location} className="w-[16px] h-[16px]" alt="Location Icon" />
-          <p className="ml-2">{data?.restaurantName}</p>
+          <p data-cy="board-detail-restaurant-name" className="ml-2">{data?.restaurantName}</p>
         </div>
         <div>
           <p>{ data?.createdAt}</p> {/* 임시 작성일자 */}
@@ -94,7 +94,7 @@ export default function PostDetail() {
       {/* 내용 영역 */}
       <div className="my-4">
         <p className="font-semibold text-gray-800">내용</p>
-        <p className="text-gray-600">{data?.content}</p>
+        <p data-cy="board-detail-content" className="text-gray-600">{data?.content}</p>
       </div>
     </div>
   );

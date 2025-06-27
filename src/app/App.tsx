@@ -75,7 +75,7 @@ export default function App() {
     <div className="relative w-full min-h-screen flex justify-center bg-white">
       {/* 실제 콘텐츠 영역 */}
       <div className="relative min-h-screen w-full bg-white">
-        {isAuthenticated ? <AuthHeader /> : <UnAuthHeader />}
+        {isAuthenticated ? <AuthHeader data-cy="header-authenticated"/> : <UnAuthHeader data-cy="header-guest"/>}
         <PageRouter />
       </div>
     </div>

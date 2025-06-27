@@ -47,6 +47,7 @@ export default function ReservationCheck() {
           button: (
             <div className="flex flex-row gap-2 w-full justify-between">
               <RoundedBtn
+                data-cy="post-write-button"
                 text='게시글 작성하러 가기'
                 width="w-[170px]"
                 bgColor="bg-main"
@@ -61,6 +62,7 @@ export default function ReservationCheck() {
                 }}
               />
               <RoundedBtn
+                data-cy="reservation-cancel-button"
                 text='예약 취소'
                 width="w-[170px]"
                 bgColor="bg-red-500"
@@ -114,9 +116,9 @@ export default function ReservationCheck() {
 
   return (
     <div className="m-4">
-      <div>
+      <div data-cy="reservation-list-container">
         {reservations.length > 0 ? (
-          <List items={reservations}/>
+          <List data-cy="reservation-list-item-info" items={reservations}/>
         ) : (
           <p className="text-center text-gray-500 mt-10">예약 내역이 없습니다.</p>
         )}
@@ -126,6 +128,7 @@ export default function ReservationCheck() {
       </div>
       {isModalOpen && selectedReservationData && (
         <PostWriteModal
+          data-cy="post-write-modal"
           closeModal={handleCloseModal}
           reservationId={selectedReservationId}
           initialData={{

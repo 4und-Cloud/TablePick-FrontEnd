@@ -92,7 +92,6 @@ export const fetchNotificationSchedule = async (
   }
 
   const payload = {
-    memberId,
     notificationTypeId: notificationTypeMap[notificationType],
     scheduledAt: new Date().toISOString(),
     notification: {

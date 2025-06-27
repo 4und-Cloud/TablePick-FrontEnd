@@ -143,8 +143,8 @@ export default function RestaurantList() {
       {restaurantList.length === 0 && !loading ? (
         <p className="text-center my-10 text-gray-500">검색 결과가 없습니다.</p>
       ) : (
-        <>
-          <List items={restaurantList} />
+        <div data-cy="restaurant-list-container">
+          <List data-cy="restaurant-list-item" items={restaurantList} />
           {hasMore && (
             <div ref={sentinelRef} id="sentinel" className="my-4">
               {loading ? (
@@ -158,7 +158,7 @@ export default function RestaurantList() {
           {!hasMore && !loading && (
             <p className="text-center my-4 text-gray-500">모든 식당을 불러왔습니다.</p>
           )}
-        </>
+        </div>
       )}
     </div>
   );

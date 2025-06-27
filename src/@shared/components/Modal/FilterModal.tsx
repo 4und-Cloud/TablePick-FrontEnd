@@ -38,9 +38,11 @@ export default function FilterModal({
 
   return (
     <Modal
+      data-cy="filter-modal"
       onClose={onClose}
       close={
         <button
+          data-cy="modal-close-button"
     onClick={(e) => {
       e.stopPropagation();
       onClose();
@@ -52,6 +54,7 @@ export default function FilterModal({
       }
       footer={
         <RoundedBtn
+          data-cy="filter-save-button"
           text="적용하기"
           bgColor="bg-main"
           textColor="text-white"
@@ -81,9 +84,11 @@ export default function FilterModal({
                     <div
                       key={tag.id}
                       className="flex items-center bg-main rounded-lg px-2 py-1 text-sm font-medium text-white"
+                      data-cy={`selected-tag-${tag.id}`}
                     >
                       <span>{tag.name}</span>
                       <button
+                        data-cy={`tag-delete-button-${tag.id}`}
                         onClick={() => handleRemoveTag(tag.id)}
                         className="ml-2 text-white font-bold"
                       >
@@ -101,6 +106,7 @@ export default function FilterModal({
         <div className="space-y-2">
           {tagsItem.map((tag) => (
             <label
+              data-cy={`tag-filter-option-${tag.id}`}
               key={tag.id}
               className="flex items-center gap-2 cursor-pointer"
             >

@@ -209,6 +209,7 @@ export default function Mypage() {
           {/* 프로필 이미지 */}
           <div className="flex-shrink-0">
             <img
+              data-cy="mypage-profile"
               width={32}
               height={32}
               src={formData.profileImage || defaultProfile}
@@ -226,6 +227,7 @@ export default function Mypage() {
                   {tagNames.length > 0 ? (                  
                     tagNames.map((tag, index) => (
                       <span
+                        data-cy="mypage-member-tags"
                         key={index}
                         className="inline-block px-4 py-2 text-white bg-main rounded-full text-sm min-w-max"
                       >
@@ -238,6 +240,7 @@ export default function Mypage() {
                 </div>
                             
                 <button
+                  data-cy="add-tag-button"
                   type="button"
                   onClick={() => {
                     // user가 null이 아닐 때만 memberTags 접근
@@ -262,6 +265,7 @@ export default function Mypage() {
           <div className="mb-4">
             <label htmlFor="nickname" className="block text-sm font-medium text-gray-700">이름</label>
             <input
+              data-cy="mypage-profile-nickname"
               type="text"
               id="nickname"
               name="nickname"
@@ -274,6 +278,7 @@ export default function Mypage() {
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">이메일</label>
             <input
+              data-cy="mypage-email"
               type="email"
               id="email"
               name="email"
@@ -286,7 +291,7 @@ export default function Mypage() {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">성별</label>
-            <div className="flex items-center">
+            <div className="flex items-center" data-cy="mypage-gender">
               <label className="mr-5">
                 <input
                   className="mr-2"
@@ -313,6 +318,7 @@ export default function Mypage() {
           <div className="mb-4">
             <label htmlFor="birth" className="block text-sm font-medium text-gray-700">생일</label>
             <input
+              data-cy="mypage-birthdate"
               type="date"
               id="birth"
               name="birthdate"
@@ -325,6 +331,7 @@ export default function Mypage() {
           <div className="mb-4">
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700">전화번호</label>
             <input
+              data-cy="mypage-phoneNumber"
               type="tel"
               id="phone"
               name="phoneNumber"
@@ -340,6 +347,7 @@ export default function Mypage() {
 
           <div className="flex justify-end space-x-4">
             <button
+              data-cy="mypage-cancel-button"
               type="button"
               onClick={handleCancel}
               className="px-4 py-2 bg-gray-300 rounded text-sm text-gray-700"
@@ -347,6 +355,7 @@ export default function Mypage() {
               취소
             </button>
             <button
+              data-cy="mypage-apply-button"
               type="button"
               onClick={handleSave}
               className="px-4 py-2 bg-orange-500 text-white rounded text-sm"
@@ -356,7 +365,8 @@ export default function Mypage() {
           </div>
         </div>    
 			</div>
-			<FilterModal
+      <FilterModal
+        data-cy="filter-modal"
 				isOpen={isOpen}
 				selectedTags={selectedTags}
 				setSelectedTags={setSelectedTags}

@@ -7,6 +7,7 @@ import { Link, useLocation } from "react-router-dom"
 import SearchModal from "../../../features/search/components/SearchModal"
 
 export default function UnAuthHeader() {
+  console.log('🧪 [DEBUG] UnAuthHeader 렌더링됨');
   const location = useLocation();
   const pathname = location.pathname;
   const { isOpen, openModal, closeModal } = useModal({ initialState: false });
@@ -14,7 +15,7 @@ export default function UnAuthHeader() {
 
   return (
     <>
-      <header className="py-4 sticky top-0 z-50 w-full border-b flex justify-center border-main bg-white backdrop-blur">
+      <header data-cy="header-guest" className="py-4 sticky top-0 z-50 w-full border-b flex justify-center border-main bg-white backdrop-blur">
         <div className="container gap-32 flex h-16  items-center justify-around">
           {/* logo */}
           <Link to="/" className="flex items-center">
@@ -30,12 +31,14 @@ export default function UnAuthHeader() {
               홈
             </Link>
             <Link
+              data-cy="header-restaurants-list-link"
               to="/restaurants"
               className={`text-lg font-bold ${pathname === "/restaurants" ? "text-main" : "text-black"} transition-colors hover:text-main`}
             >
               맛집 리스트
             </Link>
             <Link
+              data-cy="header-posts-list-link"
               to="/posts"
               className={`text-lg font-bold ${pathname === "/posts" ? "text-main" : "text-black"} transition-colors hover:text-main`}
             >
@@ -53,6 +56,7 @@ export default function UnAuthHeader() {
               <img src={search} alt="Search" width={32} height={32} className="w-[32px] h-[32px]" />
             </button>
             <RoundedBtn
+              data-cy="header-login-button"
               onClick={openModal}
               text="Login"
               bgColor="bg-main"

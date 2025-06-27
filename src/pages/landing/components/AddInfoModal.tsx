@@ -51,7 +51,11 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
             ? 'female'
             : undefined
       );
-      setDate(user.birthdate ? new Date(user.birthdate) : null);
+      const initialBirthdate = user.birthdate;
+    const dateObject = initialBirthdate && !isNaN(new Date(initialBirthdate).getTime())
+                       ? new Date(initialBirthdate)
+                       : null;
+    setDate(dateObject);
       const formattedPhone = user.phoneNumber ? formatPhoneNumber(user.phoneNumber) : '';
       setPhone(formattedPhone);
       setIsPhoneValid(formattedPhone ? isValidPhoneNumber(formattedPhone) : true);
@@ -128,9 +132,11 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
   return (
     <>
       <Modal
+        data-cy="add-info-modal"
         onClose={onClose}
         footer={
           <RoundedBtn
+            data-cy="add-info-save-button"
             text="적용하기"
             bgColor="bg-main"
             textColor="text-white"
@@ -184,11 +190,27 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
             <label htmlFor='birth' className="font-semibold text-lg mb-2">생년월일</label>
             <div className="relative">
               <input
+                data-cy="add-info-birth-input"
                 type="date"
                 id='birth'
                 name='birthdate'
                 value={date ? date.toISOString().slice(0, 10) : ''}
-                onChange={(e) => setDate(new Date(e.target.value))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value) { // 입력값이 존재할 때만 Date 객체 생성 시도
+                    const newDate = new Date(value);
+                    // newDate가 유효한 Date 객체인지 확인 (Invalid Date가 아닌지)
+                    if (!isNaN(newDate.getTime())) {
+                      setDate(newDate);
+                    } else {
+                      // 유효하지 않은 날짜인 경우 (예: 잘못된 형식 입력), null로 설정
+                      setDate(null);
+                    }
+                  } else {
+                    // 입력값이 없으면 (clear 등으로 비워진 경우) null로 설정
+                    setDate(null);
+                  }
+                }}
                 className="w-full border p-2 rounded"
               />
             </div>
@@ -198,6 +220,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
           <div>
             <p className="font-semibold text-lg mb-2">전화번호</p>
             <input
+              data-cy="add-info-phone-input"
               type="text"
               value={phone}
               onChange={handlePhoneChange}
@@ -213,6 +236,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
           <div>
             <p className="font-semibold text-lg mb-2">관심 카테고리</p>
             <button
+              data-cy="tag-select-button"
               onClick={openFilterModal}
               className="px-3 py-1 rounded border border-main text-main hover:bg-main hover:text-white transition"
             >
@@ -237,6 +261,7 @@ export default function AddinfoModal({ isOpen, onClose }: AddinfoModalProps) {
       </Modal>
 
       <FilterModal
+        data-cy="filter-modal"
         isOpen={isFilterModalOpen}
         selectedTags={selectedTagIds}
         setSelectedTags={setSelectedTagIds}

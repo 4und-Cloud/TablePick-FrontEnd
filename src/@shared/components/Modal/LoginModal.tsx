@@ -89,9 +89,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div data-cy="login-modal" className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 modal-wrapper">
         <div className="bg-login w-[800px] h-[600px] shadow-2xl flex relative">
           <button
+            data-cy="modal-close-button"
             onClick={onClose}
             className="absolute text-black top-4 right-4 text-2xl z-10"
           >
@@ -107,6 +108,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             <p className="text-main text-[40px] mb-[100px] font-bold">Login</p>
             <div className="flex items-center flex-col gap-4">
               <button
+                data-cy="kakao-login-button"
                 onClick={() => handleLogin('kakao')}
                 disabled={isLoggingIn}
                 className={`${baseClasses} bg-[#FEE500] text-black hover:opacity-90 transition ${

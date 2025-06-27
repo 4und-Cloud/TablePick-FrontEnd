@@ -21,6 +21,7 @@ function RestaurantCard({
 }) {
   return (
     <div
+      data-cy="landing-restaurants-item"
       onClick={onClick}
       className="w-[250px] h-[400px] border border-gray-300 rounded-2xl cursor-pointer flex flex-col shadow-lg overflow-hidden"
     >
@@ -83,6 +84,7 @@ function RestaurantCard({
 function PostCard({ item, onClick }: { item: Post; onClick?: () => void }) {
   return (
     <div
+      data-cy="landing-posts-item"
       onClick={onClick}
       className="w-[250px] h-[400px] border border-gray-300 rounded-2xl cursor-pointer flex flex-col shadow-lg overflow-hidden"
     >
@@ -232,6 +234,7 @@ export default function Landing() {
             <div className="flex justify-center gap-10 flex-nowrap">
               {restaurants.map((restaurant) => (
                 <RestaurantCard
+                  data-cy="landing-res-card-item"
                   key={restaurant.id}
                   item={restaurant}
                   onClick={() => handleResDetail(restaurant.id)}
@@ -257,6 +260,7 @@ export default function Landing() {
             <div className="flex justify-center gap-10 flex-nowrap">
               {posts.map((post) => (
                 <PostCard
+                  data-cy="landing-post-card-item"
                   key={post.id}
                   item={post}
                   onClick={() => handlePostDetail(post.id)}

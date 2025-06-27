@@ -104,7 +104,7 @@ export default function PostList() {
         <div className="flex overflow-x-auto items-center justify-center">{tagElements}</div>
       </div>
 
-      <div>
+      <div data-cy="post-list-container">
         {(loading && postList.length === 0 && page === 0) ? (
           <p className="text-center my-10">불러오는 중...</p>
         ) : (
@@ -113,7 +113,7 @@ export default function PostList() {
               <p className="text-center my-10 text-gray-500">게시글이 없습니다.</p>
               ) : (
                     <Suspense fallback>
-                <LazyList  items={postList} />
+                <LazyList data-cy="post-list-item"  items={postList} />
               </Suspense>
               )}
 

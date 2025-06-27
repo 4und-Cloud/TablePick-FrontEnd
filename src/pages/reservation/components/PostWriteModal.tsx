@@ -104,10 +104,12 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
 
   return (
     <Modal
+      data-cy="post-write-modal"
       width="600px"
       height="auto"
       close={
         <button
+          data-cy="post-write-modal-close-button"
           onClick={closeModal}
           className="text-main font-bold text-xl absolute top-2 right-2"
         >
@@ -116,6 +118,7 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
       }
       footer={
         <RoundedBtn
+          data-cy="post-write-save-button"
           text='등록'
           onClick={handlePostSubmit}
           bgColor="bg-main"
@@ -148,6 +151,7 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
             내용 <span className="text-red-500">*</span>
           </label>
           <textarea
+            data-cy="post-write-content-textarea"
             id="content"
             placeholder="내용을 입력하세요"
             className="h-24 min-h-0 border-[#f1815c]/20 focus:border-[#f1815c] focus:ring-[#f1815c]/20 w-full p-2 rounded-md"
@@ -177,6 +181,7 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
             })}
             {selectedTags.length < 5 && (
               <button
+                data-cy="add-tag-button"
                 type="button"
                 onClick={openModal}
                 className="cursor-pointer text-xs py-1 px-3 rounded-full bg-background hover:bg-[#f1815c]/10 border-[#f1815c]/30 text-foreground"
@@ -229,6 +234,7 @@ export function PostWriteModal({ closeModal, reservationId, initialData }: PostW
 
       {isOpen && (
         <FilterModal
+          data-cy="filter-modal"
           isOpen={isOpen}
           selectedTags={selectedTags} 
           setSelectedTags={setSelectedTags} 

@@ -9,7 +9,7 @@
     "paths": {
       "@/*" : ["src/*"]
     },
-    "types" : ["vite/client", "cypress", "node"],
+    "types" : ["vite/client", "node"],
     "lib": ["ES2022", "DOM", "DOM.Iterable", "ESNext"],
     "outDir": "./dist" ,
     "jsx": "react-jsx"
